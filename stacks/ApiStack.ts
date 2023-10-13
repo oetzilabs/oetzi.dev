@@ -102,7 +102,7 @@ export function ApiStack({ stack }: StackContext) {
   });
 
   stack.addOutputs({
-    ApiEndpoint: api.url,
+    ApiEndpoint: api.customDomainUrl || api.url,
     AuthEndpoint: auth.url,
   });
 
