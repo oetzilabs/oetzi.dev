@@ -149,37 +149,37 @@ importers:
   packages/functions:
     dependencies:
       '@aws-sdk/client-s3':
-        specifier: ^3.428.0
+        specifier: 3.428.0
         version: 3.428.0
       '@aws-sdk/s3-request-presigner':
-        specifier: 3.427.0
-        version: 3.427.0
+        specifier: 3.428.0
+        version: 3.428.0
       '@libsql/client':
         specifier: 0.3.5
         version: 0.3.5
       '@libsql/linux-x64-gnu':
-        specifier: 0.1.23
-        version: 0.1.23
+        specifier: 0.1.29
+        version: 0.1.29
+      '@libsql/linux-x64-musl':
+        specifier: 0.1.29
+        version: 0.1.29
       '@octokit/rest':
         specifier: 20.0.2
         version: 20.0.2
-      '@types/uuid':
-        specifier: ^9.0.5
-        version: 9.0.5
       dayjs:
         specifier: 1.11.10
         version: 1.11.10
       http-status-codes:
-        specifier: ^2.3.0
+        specifier: 2.3.0
         version: 2.3.0
       node-fetch:
-        specifier: ^3.3.2
+        specifier: 3.3.2
         version: 3.3.2
       uuid:
         specifier: 9.0.1
         version: 9.0.1
       zod:
-        specifier: ^3.22.4
+        specifier: 3.22.4
         version: 3.22.4
     devDependencies:
       '@types/aws-lambda':
@@ -188,6 +188,9 @@ importers:
       '@types/node':
         specifier: ^20.8.5
         version: 20.8.5
+      '@types/uuid':
+        specifier: 9.0.5
+        version: 9.0.5
       sst:
         specifier: ^2.29.2
         version: 2.29.2
@@ -1275,13 +1278,13 @@ packages:
       '@smithy/util-middleware': 2.0.4
       tslib: 2.6.2
 
-  /@aws-sdk/s3-request-presigner@3.427.0:
-    resolution: {integrity: sha512-BJuzCADG8XJoqEM9lTi402tFDF0URWnj2YGWdKSbW/ISsBt5qsp6SDcFFMr+vAR1jbSJK8zdx3Jhtxrp2xIoWg==}
+  /@aws-sdk/s3-request-presigner@3.428.0:
+    resolution: {integrity: sha512-Jup4vrMm4Xk/5aEitktjtFmFW21PQsqA4MXvhxEaUh6yk9CgLKKGIk4UvyazaNrCEqo/G/EsnMGandXN5wYnpw==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@aws-sdk/signature-v4-multi-region': 3.425.0
-      '@aws-sdk/types': 3.425.0
-      '@aws-sdk/util-format-url': 3.425.0
+      '@aws-sdk/signature-v4-multi-region': 3.428.0
+      '@aws-sdk/types': 3.428.0
+      '@aws-sdk/util-format-url': 3.428.0
       '@smithy/middleware-endpoint': 2.1.1
       '@smithy/protocol-http': 3.0.7
       '@smithy/smithy-client': 2.1.11
@@ -1306,17 +1309,6 @@ packages:
       - supports-color
       - utf-8-validate
     dev: true
-
-  /@aws-sdk/signature-v4-multi-region@3.425.0:
-    resolution: {integrity: sha512-7n2FRPE9rLaVa26xXQJ8TExrt53dWN824axQd1a0r5va0SmMQYG/iV5LBmwUlAntUSq46Lse4Q5YnbOVedGOmw==}
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@aws-sdk/types': 3.425.0
-      '@smithy/protocol-http': 3.0.7
-      '@smithy/signature-v4': 2.0.11
-      '@smithy/types': 2.3.5
-      tslib: 2.6.2
-    dev: false
 
   /@aws-sdk/signature-v4-multi-region@3.428.0:
     resolution: {integrity: sha512-ImuontXK1vEHtxK+qiPVfLTk/+bKSwYqrVkE2/o5rnsqD78/wySzTn5RnkA73Nb+UL4qSd0dkOcuubEee2aUpQ==}
@@ -1379,14 +1371,6 @@ packages:
     transitivePeerDependencies:
       - aws-crt
 
-  /@aws-sdk/types@3.425.0:
-    resolution: {integrity: sha512-6lqbmorwerN4v+J5dqbHPAsjynI0mkEF+blf+69QTaKKGaxBBVaXgqoqul9RXYcK5MMrrYRbQIMd0zYOoy90kA==}
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@smithy/types': 2.3.5
-      tslib: 2.6.2
-    dev: false
-
   /@aws-sdk/types@3.428.0:
     resolution: {integrity: sha512-4T0Ps2spjg3qbWE6ZK13Vd3FnzpfliaiotqjxUK5YhjDrKXeT36HJp46JhDupElQuHtTkpdiJOSYk2lvY2H4IA==}
     engines: {node: '>=14.0.0'}
@@ -1407,11 +1391,11 @@ packages:
       '@aws-sdk/types': 3.428.0
       tslib: 2.6.2
 
-  /@aws-sdk/util-format-url@3.425.0:
-    resolution: {integrity: sha512-qkqua+CwQqv15OMQ5Bb5n182Jt26DSZH2zzj3T1helEeJQJeywAInUYaq+ncIZLx7qKlWMWR/7ICTTSQiredCQ==}
+  /@aws-sdk/util-format-url@3.428.0:
+    resolution: {integrity: sha512-Jx3VwsGXaIGtFNRVg9IqGWMm7wTDsdTRLn29Tn2a6N38TaqrRMpC3T0YK3YrWKjNYhClo5tUIJLi5QGk2d2vBg==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@aws-sdk/types': 3.425.0
+      '@aws-sdk/types': 3.428.0
       '@smithy/querystring-builder': 2.0.11
       '@smithy/types': 2.3.5
       tslib: 2.6.2
@@ -3466,19 +3450,12 @@ packages:
     dev: false
     optional: true
 
-  /@libsql/linux-x64-gnu@0.1.23:
-    resolution: {integrity: sha512-U11LdjayakOj0lQCHDYkTgUfe4Q+7AjZZh8MzgEDF/9l0bmKNI3eFLWA3JD2Xm98yz65lUx95om0WKOKu5VW/w==}
-    cpu: [x64]
-    os: [linux]
-    dev: false
-
   /@libsql/linux-x64-gnu@0.1.29:
     resolution: {integrity: sha512-EE3YpxqSRXnvxwPq38A9j1/poqzEJrDXnGEKcVcWqC2FB/qPJHxnAITBUNYicovdrrZYWRE5EM0LdSO6CMWi6A==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: false
-    optional: true
 
   /@libsql/linux-x64-musl@0.1.29:
     resolution: {integrity: sha512-CJc+hKbUzF0JpAqQHT7P3SPb/NLCWsPzBD6j8fvHH34JLRYaIu9H8WrXsxAcVF65B7Jvat/CXnSe+iOctonBow==}
@@ -3486,7 +3463,6 @@ packages:
     os: [linux]
     requiresBuild: true
     dev: false
-    optional: true
 
   /@libsql/win32-x64-msvc@0.1.29:
     resolution: {integrity: sha512-pIdMzY+NOKHDHiTUGLwMd3TICUiHbcxPedPRYJAI6ofTSu77JEmkmfkXcCOL8L8B9gio4ZuNeok+1i/ZPf6oeQ==}
@@ -4959,6 +4935,7 @@ packages:
 
   /@types/uuid@9.0.5:
     resolution: {integrity: sha512-xfHdwa1FMJ082prjSJpoEI57GZITiQz10r3vEJCHa2khEFQjKy91aWKz6+zybzssCvXUwE1LQWgWVwZ4nYUvHQ==}
+    dev: true
 
   /@types/ws@8.5.7:
     resolution: {integrity: sha512-6UrLjiDUvn40CMrAubXuIVtj2PEfKDffJS7ychvnPU44j+KVeXmdHHTgqcM/dxLUTHxlXHiFM8Skmb8ozGdTnQ==}
