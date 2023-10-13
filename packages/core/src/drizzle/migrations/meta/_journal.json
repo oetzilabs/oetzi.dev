@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1697200970804,
+      "tag": "0000_natural_susan_delgado",
+      "breakpoints": true
+    }
+  ]
+}
