@@ -1,22 +1,28 @@
 import { createMutation, createQuery } from "@tanstack/solid-query";
 import { createEffect } from "solid-js";
-import { useLocation } from "solid-start";
+import { useLocation, useSearchParams } from "solid-start";
 import { Queries } from "../utils/api/queries";
 
 const AuthPage = () => {
-  const { hash } = useLocation();
+  const [sp] = useSearchParams<{ code: string }>();
 
-  const x = createMutation((token: string) => {
-    return fetch("/api/auth/callback", {
-      body: JSON.stringify({ token }),
+  const x = createMutation((code: string) => {
+    return fetch(`${import.meta.env.VITE_AUTH_URL}/token`, {
       method: "POST",
-    }).then((res) => res.json());
+      body: new URLSearchParams({
+        grant_type: "authorization_code",
+        client_id: "github",
+        code,
+        redirect_uri: `${location.origin}/auth`,
+      }),
+    }).then((r) => r.json() as Promise<{ access_token: string }>);
   });
 
   createEffect(async () => {
-    const token = hash.split("#")[1].split("=")[1];
+    const token = sp.code;
     const session_set = await x.mutateAsync(token);
     if (session_set) {
+      document.cookie = `session=${session_set.access_token}; path=/;`;
       console.log("session set", session_set);
       setTimeout(() => {
         window.location.href = "/";
