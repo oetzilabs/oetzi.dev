@@ -1,7 +1,6 @@
-import { createMutation, createQuery } from "@tanstack/solid-query";
+import { createMutation } from "@tanstack/solid-query";
 import { createEffect } from "solid-js";
-import { useLocation, useSearchParams } from "solid-start";
-import { Queries } from "../utils/api/queries";
+import { useSearchParams } from "solid-start";
 
 const AuthPage = () => {
   const [sp] = useSearchParams<{ code: string }>();
@@ -22,8 +21,6 @@ const AuthPage = () => {
     const token = sp.code;
     const session_set = await x.mutateAsync(token);
     if (session_set) {
-      document.cookie = `session=${session_set.access_token}; path=/;`;
-      console.log("session set", session_set);
       setTimeout(() => {
         window.location.href = "/";
       }, 5000);
