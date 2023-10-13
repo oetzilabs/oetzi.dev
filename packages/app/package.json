@@ -9,6 +9,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "@types/aws-lambda": "8.10.124",
     "@types/node-fetch": "2.6.6",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",

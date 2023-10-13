@@ -3,10 +3,9 @@ import fetch from "node-fetch";
 
 export const GET = async (event: APIEvent) => {
   const url = new URL(event.request.url);
-  console.log(url);
   const code = url.searchParams.get("code");
   if (!code) {
-    return json({ error: `No code` }, { status: 400 });
+    return json({ error: `No code`, url, h: event.params }, { status: 400 });
   }
   const response = await fetch(`${import.meta.env.VITE_AUTH_URL}/token`, {
     method: "POST",

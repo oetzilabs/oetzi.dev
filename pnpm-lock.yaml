@@ -90,6 +90,9 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
+      '@types/aws-lambda':
+        specifier: 8.10.124
+        version: 8.10.124
       '@types/node-fetch':
         specifier: 2.6.6
         version: 2.6.6

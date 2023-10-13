@@ -22,22 +22,13 @@ export const handler = AuthHandler({
       console.error(error);
       return { body: JSON.stringify(error), statusCode: 500, headers: {} };
     },
-    async index(event) {
-      return {
-        body: JSON.stringify({ event }),
-      };
-    },
-    connect: {
-      async success(session, input) {
-        return {
-          body: JSON.stringify({ session, input }),
-        };
-      },
-    },
     auth: {
       async allowClient(clientID, redirect) {
         if (clientID === "github") return true;
         return false;
+      },
+      async start(event) {
+        console.log("starting auth", event);
       },
       async error(error) {
         console.error(error);
@@ -93,7 +84,10 @@ export const handler = AuthHandler({
           });
         }
 
-        throw new Error("Unknown provider");
+        return response.session({
+          type: "public",
+          properties: {},
+        });
       },
     },
   },

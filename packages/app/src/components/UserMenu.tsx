@@ -105,11 +105,11 @@ export const UserMenu = () => {
                 <A
                   href={`${
                     import.meta.env.VITE_AUTH_URL
-                  }/authorize?provider=github&response_type=code&client_id=github&redirect_uri=${
+                  }/authorize?provider=github&response_type=token&client_id=github&redirect_uri=${
                     window.location.origin
-                  }/api/auth/callback`}
+                  }/auth`}
                   rel="noreferrer"
-                  class="py-1 px-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
+                  class="py-1 px-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-800"
                 >
                   Sign in with GitHub
                 </A>
