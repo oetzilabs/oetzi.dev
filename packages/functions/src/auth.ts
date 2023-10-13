@@ -4,7 +4,6 @@ import fetch from "node-fetch";
 import { Config } from "sst/node/config";
 import { AuthHandler, GithubAdapter, createSessionBuilder } from "sst/node/future/auth";
 import { Octokit } from "@octokit/rest";
-import { useCookies } from "sst/node/api";
 
 export const sessions = createSessionBuilder<{
   user: {
@@ -49,6 +48,7 @@ export const handler = AuthHandler({
           const { access_token, refresh_token, expires_at, expires_in } = input.tokenset;
           const okto = new Octokit({
             auth: `bearer ${access_token}`,
+            request: { fetch },
           });
           const user = await okto.users.getAuthenticated();
           const email = user.status === 200 ? user.data.email : undefined;

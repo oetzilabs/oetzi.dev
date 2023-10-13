@@ -16,7 +16,7 @@ export function SolidStartStack({ stack, app }: StackContext) {
     path: "packages/app",
     buildCommand: "pnpm build",
     environment: {
-      VITE_API_URL: api.url,
+      VITE_API_URL: api.customDomainUrl || api.url,
       VITE_S3_BUCKET: bucket.bucketName,
       VITE_AUTH_URL: auth.url,
     },

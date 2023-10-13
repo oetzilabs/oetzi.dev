@@ -9,6 +9,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "@types/node-fetch": "2.6.6",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
     "solid-start-node": "^0.3.6",
@@ -31,6 +32,7 @@
     "@solidjs/router": "^0.8.3",
     "@t3-oss/env-core": "^0.6.1",
     "@tanstack/solid-query": "4.35.3",
+    "node-fetch": "3.3.2",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
     "solid-js": "^1.8.1",

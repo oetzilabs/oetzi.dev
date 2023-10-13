@@ -1,10 +1,12 @@
-import { APIEvent, redirect, serializeCookie } from "solid-start";
+import { APIEvent, json, redirect, serializeCookie } from "solid-start";
+import fetch from "node-fetch";
 
 export const GET = async (event: APIEvent) => {
   const url = new URL(event.request.url);
+  console.log(url);
   const code = url.searchParams.get("code");
   if (!code) {
-    throw new Error("Code missing");
+    return json({ error: `No code` }, { status: 400 });
   }
   const response = await fetch(`${import.meta.env.VITE_AUTH_URL}/token`, {
     method: "POST",
@@ -14,7 +16,7 @@ export const GET = async (event: APIEvent) => {
       code,
       redirect_uri: `${url.origin}${url.pathname}`,
     }),
-  }).then((r) => r.json());
+  }).then((r) => r.json() as Promise<{ access_token: string }>);
   const c = serializeCookie("session", response.access_token, {
     path: "/",
     sameSite: "strict",

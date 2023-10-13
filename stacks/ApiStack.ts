@@ -19,6 +19,10 @@ export function ApiStack({ stack }: StackContext) {
 
   const auth = new Auth(stack, "auth", {
     authenticator: {
+      nodejs: {
+        install: ["@libsql/linux-x64-gnu", "@libsql/client"],
+        // esbuild: { external: ["@libsql/linux-x64-gnu"] },
+      },
       bind: [
         secrets.GITHUB_CLIENT_ID,
         secrets.GITHUB_CLIENT_SECRET,
@@ -43,7 +47,7 @@ export function ApiStack({ stack }: StackContext) {
     defaults: {
       function: {
         nodejs: {
-          install: ["@libsql/linux-x64-gnu", "@libsql/client/web"],
+          install: ["@libsql/linux-x64-gnu", "@libsql/client"],
           // esbuild: { external: ["@libsql/linux-x64-gnu"] },
         },
         // handler: "packages/functions/src/migrator.handler",
