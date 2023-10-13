@@ -1,8 +1,10 @@
 import { Api, Config, StackContext, use } from "sst/constructs";
 import { Auth } from "sst/constructs/future";
 import { StorageStack } from "./StorageStack";
+import { DNSStack } from "./DNSStack";
 
 export function ApiStack({ stack }: StackContext) {
+  const dns = use(DNSStack);
   const secrets = Config.Secret.create(
     stack,
     "GITHUB_CLIENT_ID",
@@ -28,15 +30,15 @@ export function ApiStack({ stack }: StackContext) {
       handler: "packages/functions/src/auth.handler",
     },
     customDomain: {
-      domainName: "auth.oetzi.dev",
-      hostedZone: "oetzi.dev",
+      domainName: "auth." + dns.domain,
+      hostedZone: dns.zone.zoneName,
     },
   });
 
   const api = new Api(stack, "api", {
     customDomain: {
-      domainName: "api.oetzi.dev",
-      hostedZone: "oetzi.dev",
+      domainName: "api." + dns.domain,
+      hostedZone: dns.zone.zoneName,
     },
     defaults: {
       function: {
@@ -55,10 +57,6 @@ export function ApiStack({ stack }: StackContext) {
           {
             from: "packages/core/src/drizzle",
             to: "drizzle",
-          },
-          {
-            from: "node_modules/@sparticuz/chromium/bin",
-            to: "packages/functions/bin",
           },
         ],
       },

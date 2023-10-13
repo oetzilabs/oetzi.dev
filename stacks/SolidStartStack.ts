@@ -2,8 +2,10 @@ import { SolidStartSite, StackContext, use } from "sst/constructs";
 import { ApiStack } from "./ApiStack";
 // import { DatabaseStack } from "./DatabaseStack";
 import { StorageStack } from "./StorageStack";
+import { DNSStack } from "./DNSStack";
 
 export function SolidStartStack({ stack, app }: StackContext) {
+  const dns = use(DNSStack);
   const { api, auth, GITHUB_CLIENT_ID, GITHUB_APP_CLIENT_ID, GITHUB_APP_CLIENT_SECRET, GITHUB_CLIENT_SECRET } =
     use(ApiStack);
   // const { db } = use(DatabaseStack);
@@ -19,14 +21,13 @@ export function SolidStartStack({ stack, app }: StackContext) {
       VITE_AUTH_URL: auth.url,
     },
     customDomain: {
-      domainName: "oetzi.dev",
-      hostedZone: "oetzi.dev",
-      domainAlias: "www.oetzi.dev",
+      domainName: dns.domain,
+      hostedZone: dns.zone.zoneName,
     },
   });
 
   stack.addOutputs({
-    SiteUrl: solidStartApp.url || "http://localhost:3000",
+    SiteUrl: solidStartApp.customDomainUrl || "http://localhost:3000",
   });
 
   return {
