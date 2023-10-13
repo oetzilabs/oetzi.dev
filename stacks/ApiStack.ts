@@ -42,6 +42,10 @@ export function ApiStack({ stack }: StackContext) {
     },
     defaults: {
       function: {
+        nodejs: {
+          install: ["@libsql/linux-x64-gnu", "@libsql/client/web"],
+          // esbuild: { external: ["@libsql/linux-x64-gnu"] },
+        },
         // handler: "packages/functions/src/migrator.handler",
         bind: [
           secrets.GITHUB_CLIENT_ID,

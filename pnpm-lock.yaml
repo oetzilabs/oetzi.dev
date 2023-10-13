@@ -114,9 +114,6 @@ importers:
       '@libsql/client':
         specifier: 0.3.5
         version: 0.3.5
-      '@libsql/linux-x64-gnu':
-        specifier: 0.1.29
-        version: 0.1.29
       dayjs:
         specifier: 1.11.10
         version: 1.11.10
@@ -133,6 +130,9 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
+      '@libsql/linux-x64-gnu':
+        specifier: 0.1.29
+        version: 0.1.29
       '@types/node':
         specifier: ^20.8.5
         version: 20.8.5
@@ -160,9 +160,6 @@ importers:
       '@libsql/client':
         specifier: 0.3.5
         version: 0.3.5
-      '@libsql/linux-x64-gnu':
-        specifier: 0.1.29
-        version: 0.1.29
       '@octokit/rest':
         specifier: 20.0.2
         version: 20.0.2
@@ -182,6 +179,9 @@ importers:
         specifier: 3.22.4
         version: 3.22.4
     devDependencies:
+      '@libsql/linux-x64-gnu':
+        specifier: 0.1.29
+        version: 0.1.29
       '@types/aws-lambda':
         specifier: ^8.10.124
         version: 8.10.124
@@ -3455,7 +3455,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: false
 
   /@libsql/linux-x64-musl@0.1.29:
     resolution: {integrity: sha512-CJc+hKbUzF0JpAqQHT7P3SPb/NLCWsPzBD6j8fvHH34JLRYaIu9H8WrXsxAcVF65B7Jvat/CXnSe+iOctonBow==}
