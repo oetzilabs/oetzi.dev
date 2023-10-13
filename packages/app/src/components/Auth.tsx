@@ -1,10 +1,5 @@
-import { A } from "@solidjs/router";
-import { Accessor, Match, Show, Suspense, Switch, createEffect, createSignal, useContext } from "solid-js";
-import { parseCookie } from "solid-start";
+import { Accessor, Setter, createContext, createSignal, useContext } from "solid-js";
 import { User } from "../../../core/src/entities/users";
-import { createContext, Setter } from "solid-js";
-import { createQueries, createQuery } from "@tanstack/solid-query";
-import { Queries } from "../utils/api/queries";
 
 type UseAuth = {
   isLoading: boolean;

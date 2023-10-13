@@ -114,6 +114,9 @@ importers:
       '@libsql/client':
         specifier: 0.3.5
         version: 0.3.5
+      '@libsql/linux-x64-gnu':
+        specifier: 0.1.29
+        version: 0.1.29
       dayjs:
         specifier: 1.11.10
         version: 1.11.10
@@ -158,9 +161,6 @@ importers:
         specifier: 0.3.5
         version: 0.3.5
       '@libsql/linux-x64-gnu':
-        specifier: 0.1.29
-        version: 0.1.29
-      '@libsql/linux-x64-musl':
         specifier: 0.1.29
         version: 0.1.29
       '@octokit/rest':
@@ -3463,6 +3463,7 @@ packages:
     os: [linux]
     requiresBuild: true
     dev: false
+    optional: true
 
   /@libsql/win32-x64-msvc@0.1.29:
     resolution: {integrity: sha512-pIdMzY+NOKHDHiTUGLwMd3TICUiHbcxPedPRYJAI6ofTSu77JEmkmfkXcCOL8L8B9gio4ZuNeok+1i/ZPf6oeQ==}
