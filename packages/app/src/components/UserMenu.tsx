@@ -105,7 +105,9 @@ export const UserMenu = () => {
                 <A
                   href={`${
                     import.meta.env.VITE_AUTH_URL
-                  }/authorize?provider=github&response_type=code&client_id=github&redirect_uri=http://localhost:3000/api/auth/callback`}
+                  }/authorize?provider=github&response_type=code&client_id=github&redirect_uri=${
+                    window.location.origin
+                  }/api/auth/callback`}
                   rel="noreferrer"
                   class="py-1 px-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
                 >

@@ -55,6 +55,10 @@ export const handler = AuthHandler({
           if (!email) throw new Error("No email");
           let userRecord = await User.findByEmail(email);
           if (!userRecord) {
+            // is the user allowed to sign up?
+            // check if the email is in the allowed table
+            const allowed = await User.isAllowedToSignUp({ email });
+            if (!allowed) throw new Error("Not allowed to sign up");
             userRecord = await User.create(
               {
                 email,
@@ -72,6 +76,13 @@ export const handler = AuthHandler({
                 expires_in: expires_in ? dayjs.unix(expires_in).toDate() : null,
               }
             );
+          } else {
+            await User.updateTokens(userRecord.id, {
+              access_token,
+              refresh_token,
+              expires_at: expires_at ? expires_at : null,
+              expires_in: expires_in ? expires_in : null,
+            });
           }
           return response.session({
             type: "user",

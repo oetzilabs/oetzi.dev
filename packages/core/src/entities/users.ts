@@ -1,8 +1,9 @@
-import { eq, isNull, sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { db } from "../drizzle/sql";
-import { ProfileSelect, profiles, users, sessions } from "../drizzle/sql/schema";
+import { ProfileSelect, profiles, users, sessions, allowed_users } from "../drizzle/sql/schema";
+import dayjs from "dayjs";
 
 export * as User from "./users";
 
@@ -87,6 +88,26 @@ const update = z
       .returning();
   });
 
+export const updateTokens = z
+  .function(
+    z.tuple([
+      z.string().uuid(),
+      z.object({
+        access_token: z.string().optional(),
+        refresh_token: z.string().optional(),
+        expires_at: z.union([z.number().transform((v) => dayjs.unix(v).toDate()), z.null()]),
+        expires_in: z.union([z.number().transform((v) => dayjs.unix(v).toDate()), z.null()]),
+      }),
+    ])
+  )
+  .implement(async (id, tokens) => {
+    return db
+      .update(sessions)
+      .set({ ...tokens, updatedAt: new Date() })
+      .where(eq(sessions.userId, id))
+      .returning();
+  });
+
 export const markAsDeleted = z.function(z.tuple([z.object({ id: z.string().uuid() })])).implement(async (input) => {
   return update({ id: input.id, deletedAt: new Date() });
 });
@@ -96,6 +117,22 @@ export const updateName = z
   .implement(async (input) => {
     return update({ id: input.id, name: input.name });
   });
+
+export const isAllowedToSignUp = z.function(z.tuple([z.object({ email: z.string() })])).implement(async (input) => {
+  const [x] = await db
+    .select({
+      count: sql<number>`COUNT(${users.id})`,
+    })
+    .from(users)
+    .where(and(isNull(users.deletedAt), eq(users.email, input.email)));
+  const [isInAllowedUsers] = await db
+    .select({
+      count: sql<number>`COUNT(${users.id})`,
+    })
+    .from(allowed_users)
+    .where(and(isNull(users.deletedAt), eq(users.email, input.email)));
+  return x.count === 0 && isInAllowedUsers.count > 0;
+});
 
 export type Frontend = Awaited<ReturnType<typeof findById>>;
 
