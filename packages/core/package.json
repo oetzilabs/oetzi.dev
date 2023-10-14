@@ -8,10 +8,10 @@
     "generate": "drizzle-kit generate:sqlite"
   },
   "devDependencies": {
-    "@types/node": "^20.8.5",
+    "@libsql/linux-x64-gnu": "0.1.29",
+    "@types/node": "^20.8.6",
     "@types/uuid": "^9.0.5",
     "drizzle-kit": "^0.19.13",
-    "@libsql/linux-x64-gnu": "0.1.29",
     "sst": "^2.29.2",
     "vitest": "^0.34.6"
   },

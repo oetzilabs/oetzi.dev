@@ -27,9 +27,6 @@ export const handler = AuthHandler({
         if (clientID === "github") return true;
         return false;
       },
-      async start(event) {
-        console.log("starting auth", event);
-      },
       async error(error) {
         console.error(error);
         return { body: JSON.stringify(error), statusCode: 500, headers: {} };
@@ -48,8 +45,11 @@ export const handler = AuthHandler({
           if (!userRecord) {
             // is the user allowed to sign up?
             // check if the email is in the allowed table
-            const allowed = await User.isAllowedToSignUp({ email });
-            if (!allowed) throw new Error("Not allowed to sign up");
+            const withAllowed = false;
+            if (withAllowed) {
+              const allowed = await User.isAllowedToSignUp({ email });
+              if (!allowed) throw new Error("Not allowed to sign up");
+            }
             userRecord = await User.create(
               {
                 email,

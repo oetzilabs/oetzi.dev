@@ -95,6 +95,30 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the migrator function",
         },
       },
+      "GET /user/projects/all": {
+        function: {
+          handler: "packages/functions/src/user.allProjects",
+          description: "This is the all user projects function",
+        },
+      },
+      "POST /user/projects/sync": {
+        function: {
+          handler: "packages/functions/src/user.syncProjects",
+          description: "This is the sync projects function",
+        },
+      },
+      "GET /user/projects/participated": {
+        function: {
+          handler: "packages/functions/src/user.participatedProjects",
+          description: "This is the participated projects function",
+        },
+      },
+      "GET /projects/all": {
+        function: {
+          handler: "packages/functions/src/projects.all",
+          description: "This is the all projects function",
+        },
+      },
     },
     cors: {
       allowOrigins: ["*", "http://localhost:3000"],

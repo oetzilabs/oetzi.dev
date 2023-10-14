@@ -8,7 +8,7 @@ import { cn } from "../utils/cn";
 import { useAuth } from "./Auth";
 
 export const UserMenu = () => {
-  const [isEnabled, setIsEnabled] = createSignal(false);
+  const [isEnabled, setIsEnabled] = createSignal(true);
   const [AuthStore, setAuthStore] = useAuth();
   const itemClass =
     "flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 font-medium items-center justify-start select-none min-w-[150px]";
@@ -78,6 +78,11 @@ export const UserMenu = () => {
         <A href="/" class="hover:underline">
           oetzi.dev
         </A>
+        <Show when={AuthStore().isAuthenticated && AuthStore().user}>
+          <A href="/dashboard" class="ml-2 hover:underline">
+            Dashboard
+          </A>
+        </Show>
       </div>
       <Suspense
         fallback={

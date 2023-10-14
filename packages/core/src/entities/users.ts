@@ -50,6 +50,12 @@ export const findById = z.function(z.tuple([z.string()])).implement(async (input
     where: (users, operations) => operations.eq(users.id, input),
     with: {
       profile: true,
+      projects: true,
+      project_participants: {
+        with: {
+          project: true,
+        },
+      },
     },
   });
 });
@@ -75,17 +81,18 @@ const update = z
   .function(
     z.tuple([
       createInsertSchema(users)
-        .deepPartial()
+        .partial()
         .omit({ createdAt: true, updatedAt: true })
         .merge(z.object({ id: z.string().uuid() })),
     ])
   )
   .implement(async (input) => {
-    return db
+    let [u] = await db
       .update(users)
       .set({ ...input, updatedAt: new Date() })
       .where(eq(users.id, input.id))
       .returning();
+    return u;
   });
 
 export const updateTokens = z
@@ -130,7 +137,7 @@ export const isAllowedToSignUp = z.function(z.tuple([z.object({ email: z.string(
       count: sql<number>`COUNT(${users.id})`,
     })
     .from(allowed_users)
-    .where(and(isNull(users.deletedAt), eq(users.email, input.email)));
+    .where(and(isNull(allowed_users.deletedAt), eq(allowed_users.email, input.email)));
   return x.count === 0 && isInAllowedUsers.count > 0;
 });
 
