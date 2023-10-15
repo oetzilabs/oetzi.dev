@@ -22,9 +22,7 @@ const AuthPage = () => {
     const session_set = await x.mutateAsync(token);
     if (session_set) {
       document.cookie = `session=${session_set.access_token}; path=/`;
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 5000);
+      window.location.href = "/";
     }
   });
 

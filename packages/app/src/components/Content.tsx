@@ -2,6 +2,7 @@ import { JSX } from "solid-js";
 import { FileRoutes, Routes } from "solid-start";
 import { useHeader } from "./Header";
 import { cn } from "../utils/cn";
+import Background from "./Background";
 
 export default function Content() {
   const { visible } = useHeader();
@@ -11,6 +12,7 @@ export default function Content() {
         "pt-0": !visible(),
       })}
     >
+      <Background />
       <Routes>
         <FileRoutes />
       </Routes>

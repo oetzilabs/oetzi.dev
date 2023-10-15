@@ -57,7 +57,7 @@ export default function Root() {
               <AuthP>
                 <Header
                   header={
-                    <div class="flex items-center justify-between flex-wrap  container mx-auto py-2 px-8">
+                    <div class="flex items-center justify-between flex-wrap  container mx-auto py-2">
                       <UserMenu />
                     </div>
                   }

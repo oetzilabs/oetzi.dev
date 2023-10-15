@@ -1,8 +1,11 @@
-import { createMutation } from "@tanstack/solid-query";
+import { createMutation, createQuery } from "@tanstack/solid-query";
 import { Mutations } from "../utils/api/mutations";
 import { Modal } from "./Modal";
 import { useAuth } from "./Auth";
-import { createSignal } from "solid-js";
+import { Show, createSignal } from "solid-js";
+import { Select, TextField } from "@kobalte/core";
+import { Queries } from "../utils/api/queries";
+import { cn } from "../utils/cn";
 
 export default function NewProject() {
   const [user] = useAuth();
@@ -16,12 +19,39 @@ export default function NewProject() {
   });
 
   const [modalOpen, setModalOpen] = createSignal(false);
+  const [project, setProject] = createSignal<Parameters<typeof Mutations.createProject>[1]>({
+    name: "",
+    description: "",
+    protected: "", // length 0 means no password
+    visibility: "private",
+    organization: "",
+  });
+
+  const organizations = createQuery(
+    () => ["organizations"],
+    () => {
+      const u = user();
+      const token = u.token;
+      if (!token) return Promise.reject("You are not logged in.");
+      return Queries.organizations(token);
+    },
+    {
+      get enabled() {
+        const u = user();
+        return !u.isLoading && u.isAuthenticated && u.token !== null;
+      },
+      refetchInterval: 60_000,
+      refetchOnWindowFocus: false,
+    }
+  );
+  const isAvailableRepositoryName = (name: string) =>
+    organizations.data?.every((org) => org.repos.every((p) => p !== name)) ?? false;
 
   return (
     <Modal
       open={modalOpen()}
       onOpenChange={setModalOpen}
-      title=""
+      title="Create a new project"
       trigger={
         <button class="p-2 py-1 flex items-center justify-center bg-black dark:bg-white gap-2.5 hover:bg-neutral-950 rounded-md active:bg-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-200 text-white dark:text-black">
           <svg
@@ -43,23 +73,162 @@ export default function NewProject() {
       }
     >
       <div class="w-full flex flex-col gap-2.5">
-        <label class="text-sm font-medium">Name</label>
-        <input
-          type="text"
-          class="p-2 py-1 w-full bg-neutral-50 dark:bg-neutral-950 rounded-md border border-neutral-200 dark:border-neutral-800"
-        />
+        <Show when={organizations.isSuccess}>
+          <Select.Root
+            value={project().organization}
+            placeholder="Select an organization"
+            onChange={(i) => {
+              setProject({ ...project(), organization: i });
+            }}
+            placement="bottom-start"
+            required
+            options={organizations.data?.map((org) => org.name) ?? []}
+            itemComponent={(props) => (
+              <Select.Item
+                item={props.item}
+                class="flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 font-medium select-none min-w-[150px] items-center justify-between"
+              >
+                <Select.ItemLabel class="capitalize">{props.item.rawValue}</Select.ItemLabel>
+                <Select.ItemIndicator class="">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </Select.ItemIndicator>
+              </Select.Item>
+            )}
+          >
+            <Select.Trigger>
+              <div class="p-2 py-1 w-full bg-neutral-50 dark:bg-neutral-950 rounded-md border border-neutral-200 dark:border-neutral-800 flex flex-row gap-2 items-center justify-center">
+                <Select.Value<string> class="font-bold select-none capitalize">
+                  {(state) => state.selectedOption()}
+                </Select.Value>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </div>
+            </Select.Trigger>
+            <Select.Portal>
+              <Select.Content class="z-50 self-end w-fit bg-white dark:bg-black rounded-md border border-neutral-200 dark:border-neutral-800 shadow-md overflow-clip">
+                <Select.Listbox />
+              </Select.Content>
+            </Select.Portal>
+          </Select.Root>
+        </Show>
+        <TextField.Root
+          required
+          class="w-full flex flex-col gap-0.5"
+          value={project().name}
+          onChange={(name) => {
+            setProject({ ...project(), name });
+          }}
+        >
+          <TextField.Label class="text-sm font-medium">Name</TextField.Label>
+          <TextField.Input
+            disabled={organizations.isLoading || project().organization.length === 0}
+            placeholder="What should the repository be called?"
+            class="p-2 py-1 w-full bg-neutral-50 dark:bg-neutral-950 rounded-md border border-neutral-200 dark:border-neutral-800"
+          />
+          <Show when={project().name.length > 0}>
+            <TextField.Description
+              class={cn("text-sm text-neutral-500 dark:text-neutral-400", {
+                "!text-red-500": !isAvailableRepositoryName(project().name),
+              })}
+            >
+              {!isAvailableRepositoryName(project().name) ? "This name is already taken." : "This name is available."}
+            </TextField.Description>
+          </Show>
+        </TextField.Root>
+        <label class="text-sm font-medium">Visibility</label>
+        <Select.Root
+          defaultValue={"private" as Parameters<typeof Mutations.createProject>[1]["visibility"]}
+          value={project().visibility}
+          placeholder="Select a visibility"
+          onChange={(i) => {
+            setProject({ ...project(), visibility: i });
+          }}
+          placement="bottom-start"
+          required
+          options={["private", "public"] as Parameters<typeof Mutations.createProject>[1]["visibility"][]}
+          itemComponent={(props) => (
+            <Select.Item
+              item={props.item}
+              class="flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 font-medium select-none min-w-[150px] items-center justify-between"
+            >
+              <Select.ItemLabel class="capitalize">{props.item.rawValue}</Select.ItemLabel>
+              <Select.ItemIndicator class="">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </Select.ItemIndicator>
+            </Select.Item>
+          )}
+        >
+          <Select.Trigger>
+            <div class="p-2 py-1 w-full bg-neutral-50 dark:bg-neutral-950 rounded-md border border-neutral-200 dark:border-neutral-800 flex flex-row gap-2 items-center justify-center">
+              <Select.Value<
+                Parameters<typeof Mutations.createProject>[1]["visibility"]
+              > class="font-bold select-none capitalize">
+                {(state) => state.selectedOption()}
+              </Select.Value>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </div>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Content class="z-50 self-end w-fit bg-white dark:bg-black rounded-md border border-neutral-200 dark:border-neutral-800 shadow-md overflow-clip">
+              <Select.Listbox />
+            </Select.Content>
+          </Select.Portal>
+        </Select.Root>
         <label class="text-sm font-medium">Description</label>
         <textarea class="p-2 py-1 w-full bg-neutral-50 dark:bg-neutral-950 rounded-md border border-neutral-200 dark:border-neutral-800"></textarea>
         <div class="flex flex-row items-center justify-end gap-2.5">
           <button
             class="p-2 py-1 flex items-center justify-center bg-black dark:bg-white gap-2.5 hover:bg-neutral-950 rounded-md active:bg-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-200 text-white dark:text-black"
             onClick={async () => {
-              await createProject.mutateAsync({
-                name: "test",
-                description: "test",
-                protected: "",
-                visibility: "public",
-              });
+              const p = project();
+              await createProject.mutateAsync(p);
               setModalOpen(false);
             }}
           >

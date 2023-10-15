@@ -14,6 +14,7 @@ export const createProject = z
         description: z.string().optional(),
         protected: z.string().optional(),
         visibility: z.union([z.literal("public"), z.literal("private")]).optional(),
+        organization: z.string(),
       }),
     ])
   )

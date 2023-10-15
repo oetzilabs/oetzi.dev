@@ -95,7 +95,7 @@ export const handler = AuthHandler({
     github: GithubAdapter({
       clientID: Config.GITHUB_APP_CLIENT_ID,
       clientSecret: Config.GITHUB_APP_CLIENT_SECRET,
-      scope: "user",
+      scope: "user read:org repo",
       mode: "oauth",
     }),
   },

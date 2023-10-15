@@ -95,10 +95,22 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the migrator function",
         },
       },
+      "GET /user/organizations/all": {
+        function: {
+          handler: "packages/functions/src/user.allOrganizations",
+          description: "This is the all user organizations function",
+        },
+      },
       "GET /user/projects/all": {
         function: {
           handler: "packages/functions/src/user.allProjects",
           description: "This is the all user projects function",
+        },
+      },
+      "GET /user/projects/is-available": {
+        function: {
+          handler: "packages/functions/src/user.projectIsAvailable",
+          description: "This is the is available function",
         },
       },
       "POST /user/projects/sync": {
