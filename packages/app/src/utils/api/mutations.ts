@@ -14,14 +14,14 @@ export const createProject = z
         description: z.string().optional(),
         protected: z.string().optional(),
         visibility: z.union([z.literal("public"), z.literal("private")]).optional(),
-        organization: z.string(),
+        org: z.string(),
       }),
     ])
   )
   .implement(async (token, input) =>
-    fetch(`${API_BASE}/projects/create`, {
+    fetch(`${API_BASE}/user/projects/create`, {
       method: "POST",
-      body: JSON.stringify(input),
+      body: new URLSearchParams(input),
       headers: {
         authorization: `Bearer ${token}`,
       },

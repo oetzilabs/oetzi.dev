@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "../drizzle/sql";
 import { ProfileSelect, profiles, users, sessions, allowed_users } from "../drizzle/sql/schema";
 import dayjs from "dayjs";
+import { Config } from "sst/node/config";
 
 export * as User from "./users";
 
@@ -140,6 +141,52 @@ export const isAllowedToSignUp = z.function(z.tuple([z.object({ email: z.string(
     .from(allowed_users)
     .where(and(isNull(allowed_users.deletedAt), eq(allowed_users.email, input.email)));
   return x.count === 0 && isInAllowedUsers.count > 0;
+});
+
+export const getFreshAccessToken = z.function(z.tuple([z.string().uuid()])).implement(async (input) => {
+  const user = await findById(input);
+  if (!user) throw new Error("User not found");
+  const hasAccessTokens = user.sessions.find((s) => s.access_token);
+  if (!hasAccessTokens) throw new Error("No access tokens found");
+  const expiredAt = hasAccessTokens.expires_at;
+  if (!expiredAt) throw new Error("No expired at");
+  const expired = dayjs(expiredAt).isBefore(dayjs());
+  if (expired) {
+    const refresh_token = hasAccessTokens.refresh_token;
+    if (!refresh_token) throw new Error("No refresh token found");
+    const response = await fetch("https://github.com/login/oauth/access_token", {
+      body: JSON.stringify({
+        client_id: Config.GITHUB_APP_CLIENT_ID,
+        client_secret: Config.GITHUB_APP_CLIENT_SECRET,
+        refresh_token,
+        grant_type: "refresh_token",
+      }),
+    })
+      .then(
+        (r) =>
+          r.json() as Promise<{
+            access_token: string;
+            expires_in: number;
+            refresh_token: string;
+            refresh_token_expires_in: number;
+            scope: string;
+            token_type: string;
+          }>
+      )
+      .catch((e) => {
+        return { error: e };
+      });
+    if ("error" in response) throw new Error("Error refreshing token");
+    await updateTokens(user.id, {
+      expires_at: dayjs().add(response.expires_in, "second").unix(),
+      expires_in: response.expires_in,
+      access_token: response.access_token,
+      refresh_token: response.refresh_token,
+    });
+  }
+  const access_token = hasAccessTokens.access_token;
+  if (!access_token) throw new Error("No access token found");
+  return access_token;
 });
 
 export type Frontend = Awaited<ReturnType<typeof findById>>;

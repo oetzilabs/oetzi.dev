@@ -114,7 +114,7 @@ export const UserMenu = () => {
                       import.meta.env.VITE_AUTH_URL
                     }/authorize?provider=github&response_type=code&client_id=github&redirect_uri=${
                       window.location.origin
-                    }/auth`}
+                    }/auth${encodeURIComponent(`?redirect=${window.location.pathname}`)}`}
                     rel="noreferrer"
                     class="py-1 px-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-800"
                   >

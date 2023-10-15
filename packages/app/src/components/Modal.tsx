@@ -19,7 +19,7 @@ export function Modal(props: ModalProps) {
       <Dialog.Portal>
         <Dialog.Overlay class="fixed inset-0 bg-black/[0.02] backdrop-blur-sm z-50" />
         <div class="flex flex-col">
-          <Dialog.Content class="z-50 absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex flex-col gap-2 h-auto w-[500px] max-w-full bg-white dark:bg-black p-4 border border-black/10 dark:border-white/10 rounded-md shadow-xl">
+          <Dialog.Content class="z-50 absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex flex-col gap-2 h-auto w-[500px] max-w-full bg-white dark:bg-black p-4 border border-black/10 dark:border-white/10 rounded-md shadow-xl transition-[height]">
             <div class="flex flex-row items-center justify-between">
               <div>
                 <Show when={props.title && props.title}>

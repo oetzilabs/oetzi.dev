@@ -1,11 +1,9 @@
-import { Project } from "@oetzidev/core/entities/projects";
-import { ApiHandler, useQueryParam } from "sst/node/api";
-import { getUser } from "./utils";
 import { Octokit } from "@octokit/rest";
+import { Project } from "@oetzidev/core/entities/projects";
 import fetch from "node-fetch";
-import dayjs from "dayjs";
-import { Config } from "sst/node/config";
-import { User } from "@oetzidev/core/entities/users";
+import { ApiHandler, useQueryParam } from "sst/node/api";
+import { getFreshAccessToken } from "../../core/src/entities/users";
+import { getUser } from "./utils";
 
 export const allProjects = ApiHandler(async (_evt) => {
   const user = await getUser();
@@ -45,63 +43,40 @@ export const syncProjects = ApiHandler(async (_evt) => {
 
 export const allOrganizations = ApiHandler(async (_evt) => {
   const user = await getUser();
-  const hasAccessTokens = user.sessions.find((s) => s.access_token);
-  if (!hasAccessTokens) throw new Error("No access tokens found");
-  const expiredAt = hasAccessTokens.expires_at;
-  if (!expiredAt) throw new Error("No expired at");
-  const expired = dayjs(expiredAt).isBefore(dayjs());
-  if (expired) {
-    const refresh_token = hasAccessTokens.refresh_token;
-    if (!refresh_token) throw new Error("No refresh token found");
-    const response = await fetch("https://github.com/login/oauth/access_token", {
-      body: JSON.stringify({
-        client_id: Config.GITHUB_APP_CLIENT_ID,
-        client_secret: Config.GITHUB_APP_CLIENT_SECRET,
-        refresh_token,
-        grant_type: "refresh_token",
-      }),
-    })
-      .then(
-        (r) =>
-          r.json() as Promise<{
-            access_token: string;
-            expires_in: number;
-            refresh_token: string;
-            refresh_token_expires_in: number;
-            scope: string;
-            token_type: string;
-          }>
-      )
-      .catch((e) => {
-        return { error: e };
-      });
-    if ("error" in response) throw new Error("Error refreshing token");
-    await User.updateTokens(user.id, {
-      expires_at: dayjs().add(response.expires_in, "second").unix(),
-      expires_in: response.expires_in,
-      access_token: response.access_token,
-      refresh_token: response.refresh_token,
-    });
-  }
-  const access_token = hasAccessTokens.access_token;
-  if (!access_token) throw new Error("No access token found");
+  const freshAccessToken = await getFreshAccessToken(user.id);
+
   const okto = new Octokit({
-    auth: `bearer ${access_token}`,
+    auth: `bearer ${freshAccessToken}`,
     request: { fetch },
   });
 
   const userRecord = await okto.users.getAuthenticated();
   if (userRecord.status !== 200) throw new Error("Not authenticated");
+
   const organizations = await okto.orgs.listForAuthenticatedUser();
-  let orgs: Record<string, any>[] = [];
+
+  let orgs: Record<
+    string,
+    {
+      repos: Array<{
+        name: string;
+        type: "public" | "private";
+        isTemplate: boolean;
+      }>;
+    }
+  > = {};
+
   for (const org of organizations.data) {
     const repos = await okto.repos.listForOrg({ org: org.login, type: "all" });
-    orgs.push({
-      name: org.login,
-      repos: repos.data.map((r) => r.name),
-    });
+    orgs[org.login] = {
+      repos: repos.data.map((r) => ({
+        name: r.name,
+        type: r.private ? "private" : "public",
+        isTemplate: r.is_template ?? false,
+      })),
+    };
   }
-  // console.log(orgs);
+
   return {
     statusCode: 200,
     headers: {

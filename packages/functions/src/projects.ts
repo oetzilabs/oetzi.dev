@@ -7,9 +7,8 @@ export const create = ApiHandler(async (_evt) => {
   const form = useFormData();
   if (!form) throw new Error("No form data");
   const projectInput = Project.parse(Object.fromEntries(form.entries()));
-  const result = await Project.create({
+  const result = await Project.create(user.id, {
     ...projectInput,
-    ownerId: user.id,
   });
 
   return {

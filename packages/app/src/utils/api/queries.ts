@@ -50,10 +50,17 @@ export const organizations = z.function(z.tuple([z.string()])).implement(async (
   }).then(
     (res) =>
       res.json() as Promise<
-        Array<{
-          name: string;
-          repos: Array<string>;
-        }>
+        Record<
+          string,
+          {
+            name: string;
+            repos: Array<{
+              name: string;
+              type: "public" | "private";
+              isTemplate: boolean;
+            }>;
+          }
+        >
       >
   )
 );

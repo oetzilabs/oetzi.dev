@@ -107,6 +107,12 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the all user projects function",
         },
       },
+      "POST /user/projects/create": {
+        function: {
+          handler: "packages/functions/src/projects.create",
+          description: "This is the create project function",
+        },
+      },
       "GET /user/projects/is-available": {
         function: {
           handler: "packages/functions/src/user.projectIsAvailable",

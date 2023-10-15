@@ -3,15 +3,60 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { db } from "../drizzle/sql";
 import { ProjectSelect, projects } from "../drizzle/sql/schema";
+import { Octokit } from "@octokit/rest";
+import { User } from "./users";
+import { organizations } from "../../../app/src/utils/api/queries";
 
 export * as Project from "./projects";
 
-export const create = z.function(z.tuple([createInsertSchema(projects)])).implement(async (projectInput) => {
-  const [x] = await db.insert(projects).values(projectInput).returning();
-  return {
-    ...x,
-  };
-});
+export const CreateProjectZod = createInsertSchema(projects)
+  .omit({
+    ownerId: true,
+    deletedAt: true,
+    id: true,
+    remote: true,
+    createdAt: true,
+    updatedAt: true,
+    syncedAt: true,
+  })
+  .extend({
+    org: z.string(),
+  });
+
+export type CreateProjectInput = z.infer<typeof CreateProjectZod>;
+
+export const create = z
+  .function(z.tuple([z.string().uuid(), CreateProjectZod]))
+  .implement(async (userId, projectInput) => {
+    const freshAccessToken = await User.getFreshAccessToken(userId);
+    const octo = new Octokit({
+      auth: `bearer ${freshAccessToken}`,
+    });
+    // create repo on organization
+    const repo = await octo.repos.createInOrg({
+      name: projectInput.name,
+      org: projectInput.org,
+      private: projectInput.visibility === "private",
+      description: projectInput.description ?? "",
+    });
+
+    const [x] = await db
+      .insert(projects)
+      .values({
+        ...projectInput,
+        name: repo.data.name,
+        description: repo.data.description,
+        visibility: repo.data.private ? "private" : "public",
+        ownerId: userId,
+        createdAt: new Date(),
+        deletedAt: null,
+        remote: repo.data.url,
+      })
+      .returning();
+    return {
+      ...x,
+    };
+  });
 
 export const countAll = z.function(z.tuple([])).implement(async () => {
   const [x] = await db
@@ -85,7 +130,7 @@ export const updateName = z
     return update({ id: input.id, name: input.name });
   });
 
-export const parse = createInsertSchema(projects).parse;
+export const parse = CreateProjectZod.parse;
 
 export type Frontend = Awaited<ReturnType<typeof findById>>;
 

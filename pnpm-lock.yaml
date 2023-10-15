@@ -123,6 +123,9 @@ importers:
       '@libsql/client':
         specifier: 0.3.5
         version: 0.3.5
+      '@octokit/rest':
+        specifier: 20.0.2
+        version: 20.0.2
       dayjs:
         specifier: 1.11.10
         version: 1.11.10
