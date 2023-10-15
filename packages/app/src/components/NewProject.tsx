@@ -1,5 +1,5 @@
 import { Select, Tabs, TextField } from "@kobalte/core";
-import { createMutation, createQuery } from "@tanstack/solid-query";
+import { createMutation, createQuery, QueryClient, useQueryClient } from "@tanstack/solid-query";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
 import { Mutations } from "../utils/api/mutations";
 import { Queries } from "../utils/api/queries";
@@ -9,14 +9,23 @@ import { Modal } from "./Modal";
 
 export default function NewProject() {
   const [user] = useAuth();
-  const createProject = createMutation(async (input: Parameters<typeof Mutations.createProject>[1]) => {
-    let u = user();
-    if (!u) return;
-    if (!u.isAuthenticated) return;
-    if (!u.token) return;
+  const queryClient = useQueryClient();
+  const createProject = createMutation(
+    async (input: Parameters<typeof Mutations.createProject>[1]) => {
+      let u = user();
+      if (!u) return;
+      if (!u.isAuthenticated) return;
+      if (!u.token) return;
 
-    return Mutations.createProject(u.token, input);
-  });
+      return Mutations.createProject(u.token, input);
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(["projects"]);
+        await queryClient.invalidateQueries(["user_projects"]);
+      },
+    }
+  );
 
   const [modalOpen, setModalOpen] = createSignal(false);
   const [project, setProject] = createSignal<Parameters<typeof Mutations.createProject>[1]>({
@@ -94,7 +103,7 @@ export default function NewProject() {
               description: "",
               protected: "", // length 0 means no password
               visibility: "private",
-              org: "",
+              org: Object.keys(organizations.data ?? {})[0] ?? "",
             });
             setCurrentTab("project");
           }}
@@ -194,7 +203,7 @@ export default function NewProject() {
                 }
               >
                 <Switch>
-                  <Match when={(organizations.data ?? []).length === 0}>
+                  <Match when={Object.keys(organizations.data ?? {}).length === 0}>
                     <div class="flex items-center justify-center bg-neutral-100 dark:bg-neutral-900 rounded-md border border-neutral-100 dark:border-neutral-900 p-2 py-1 w-max gap-2.5 select-none">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -287,6 +296,7 @@ export default function NewProject() {
                 required
                 class="w-full flex flex-col gap-0.5"
                 value={project().name}
+                name="repositoy-name"
                 onChange={(name) => {
                   setProject({ ...project(), name });
                 }}
@@ -317,6 +327,7 @@ export default function NewProject() {
                 onChange={(i) => {
                   setProject({ ...project(), visibility: i });
                 }}
+                name="repositoy-visiblity"
                 placement="bottom-start"
                 required
                 options={["private", "public"] as Parameters<typeof Mutations.createProject>[1]["visibility"][]}
@@ -381,6 +392,7 @@ export default function NewProject() {
                 onChange={(description) => {
                   setProject({ ...project(), description });
                 }}
+                name="repositoy-description"
               >
                 <TextField.Label class="text-sm font-medium">Description</TextField.Label>
                 <TextField.TextArea
@@ -392,6 +404,7 @@ export default function NewProject() {
               <TextField.Root
                 class="w-full flex flex-col gap-0.5"
                 value={project().protected}
+                name="repositoy-protected"
                 onChange={(prot) => {
                   setProject({ ...project(), protected: prot });
                 }}
@@ -406,9 +419,15 @@ export default function NewProject() {
               </TextField.Root>
             </form>
           </Tabs.Content>
-          <Tabs.Content value="template" class="flex flex-col gap-2.5 w-full"></Tabs.Content>
-          <Tabs.Content value="notifications" class="flex flex-col gap-2.5 w-full"></Tabs.Content>
-          <Tabs.Content value="ci-cd" class="flex flex-col gap-2.5 w-full"></Tabs.Content>
+          <Tabs.Content value="template" class="flex flex-col gap-2.5 w-full">
+            <div class="flex flex-col gap-2.5 bg-neutral-100 dark:bg-neutral-900 rounded-md p-10"></div>
+          </Tabs.Content>
+          <Tabs.Content value="notifications" class="flex flex-col gap-2.5 w-full">
+            <div class="flex flex-col gap-2.5 bg-neutral-100 dark:bg-neutral-900 rounded-md p-10"></div>
+          </Tabs.Content>
+          <Tabs.Content value="ci-cd" class="flex flex-col gap-2.5 w-full">
+            <div class="flex flex-col gap-2.5 bg-neutral-100 dark:bg-neutral-900 rounded-md p-10"></div>
+          </Tabs.Content>
           <Tabs.Content value="overview" class="flex flex-col gap-2.5 w-full">
             <div class="flex flex-col gap-2.5">
               <div class="flex flex-col gap-2.5">

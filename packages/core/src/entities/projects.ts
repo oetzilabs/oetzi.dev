@@ -44,7 +44,7 @@ export const create = z
       .insert(projects)
       .values({
         ...projectInput,
-        name: repo.data.name,
+        name: `${projectInput.org}/${repo.data.name}`,
         description: repo.data.description,
         visibility: repo.data.private ? "private" : "public",
         ownerId: userId,
