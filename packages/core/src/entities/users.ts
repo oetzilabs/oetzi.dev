@@ -58,6 +58,7 @@ export const findById = z.function(z.tuple([z.string()])).implement(async (input
         },
       },
       sessions: true,
+      templates: true,
     },
   });
 });
@@ -187,6 +188,17 @@ export const getFreshAccessToken = z.function(z.tuple([z.string().uuid()])).impl
   const access_token = hasAccessTokens.access_token;
   if (!access_token) throw new Error("No access token found");
   return access_token;
+});
+
+export const allTemplates = z.function(z.tuple([z.string().uuid()])).implement(async (userId) => {
+  const u = await db.query.users.findFirst({
+    where: (users, operations) => operations.eq(users.id, userId),
+    with: {
+      templates: true,
+    },
+  });
+  if (!u) throw new Error("User not found");
+  return u.templates;
 });
 
 export type Frontend = Awaited<ReturnType<typeof findById>>;

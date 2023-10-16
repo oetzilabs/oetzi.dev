@@ -2,7 +2,7 @@ import { Octokit } from "@octokit/rest";
 import { Project } from "@oetzidev/core/entities/projects";
 import fetch from "node-fetch";
 import { ApiHandler, useQueryParam } from "sst/node/api";
-import { getFreshAccessToken } from "../../core/src/entities/users";
+import { User, getFreshAccessToken } from "../../core/src/entities/users";
 import { getUser } from "./utils";
 
 export const allProjects = ApiHandler(async (_evt) => {
@@ -113,5 +113,17 @@ export const projectIsAvailable = ApiHandler(async (_evt) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(isAvailable),
+  };
+});
+
+export const allTemplates = ApiHandler(async (_evt) => {
+  const user = await getUser();
+  const result = await User.allTemplates(user.id);
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(result),
   };
 });

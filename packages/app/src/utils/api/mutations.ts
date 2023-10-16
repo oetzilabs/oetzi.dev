@@ -36,3 +36,30 @@ export const syncProjects = z.function(z.tuple([z.string()])).implement(async (t
     },
   }).then((r) => r.json() as Promise<NonNullable<Project.Frontend>[]>)
 );
+
+export const createTemplate = z
+  .function(
+    z.tuple([
+      z.string(),
+      z.object({
+        name: z.string(),
+        description: z.string().optional(),
+        s3Key: z.string(),
+        hidden: z
+          .boolean()
+          .optional()
+          .default(false)
+          .transform((v) => (v ? "true" : "false")),
+        protected: z.string().optional(),
+      }),
+    ])
+  )
+  .implement(async (token, input) =>
+    fetch(`${API_BASE}/user/templates/create`, {
+      method: "POST",
+      body: new URLSearchParams(input),
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }).then((r) => r.json() as Promise<Project.Frontend>)
+  );

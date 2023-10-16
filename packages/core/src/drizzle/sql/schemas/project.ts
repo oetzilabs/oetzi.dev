@@ -3,6 +3,7 @@ import { Entity } from "./entity";
 import { users } from "./users";
 import { relations } from "drizzle-orm";
 import { project_participants } from "./project_participants";
+import { stacks } from "./stacks";
 
 export const projects = sqliteTable("projects", {
   ...Entity.defaults,
@@ -19,6 +20,9 @@ export const projects = sqliteTable("projects", {
     .notNull()
     .$defaultFn(() => "public"),
   remote: text("remote").notNull(),
+  stackId: text("stack_id")
+    .notNull()
+    .references(() => stacks.id),
 });
 
 export type ProjectSelect = typeof projects.$inferSelect;
@@ -30,4 +34,8 @@ export const projectRelation = relations(projects, ({ one, many }) => ({
     references: [users.id],
   }),
   participants: many(project_participants),
+  stack: one(stacks, {
+    fields: [projects.stackId],
+    references: [stacks.id],
+  }),
 }));

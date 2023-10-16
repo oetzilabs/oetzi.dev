@@ -146,7 +146,7 @@ export const UserMenu = () => {
                 <DropdownMenu.Root placement="bottom-end">
                   <DropdownMenu.Trigger>
                     <div class="flex w-max flex-row items-center gap-1">
-                      <div class="flex items-center text-sm gap-1 cursor-pointer">
+                      <div class="flex items-center text-sm gap-2.5 cursor-pointer">
                         <img class="w-7 h-7 rounded-full" src={user().profile.image} alt={user().name} />
                         <span class="text-sm">{user().name}</span>
                       </div>

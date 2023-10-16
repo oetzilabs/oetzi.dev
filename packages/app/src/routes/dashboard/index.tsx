@@ -1,10 +1,10 @@
 import { createMutation, createQuery } from "@tanstack/solid-query";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
-import { useAuth } from "../components/Auth";
-import NewProject from "../components/NewProject";
-import { Mutations } from "../utils/api/mutations";
-import { Queries } from "../utils/api/queries";
-import { cn } from "../utils/cn";
+import { useAuth } from "../../components/Auth";
+import NewProject from "../../components/NewProject";
+import { Mutations } from "../../utils/api/mutations";
+import { Queries } from "../../utils/api/queries";
+import { cn } from "../../utils/cn";
 
 export default function DashboardPage() {
   const [user] = useAuth();

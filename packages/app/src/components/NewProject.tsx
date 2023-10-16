@@ -1,11 +1,19 @@
 import { Select, Tabs, TextField } from "@kobalte/core";
 import { createMutation, createQuery, QueryClient, useQueryClient } from "@tanstack/solid-query";
-import { For, Match, Show, Switch, createSignal } from "solid-js";
+import { For, Match, Show, Switch, createEffect, createSignal } from "solid-js";
 import { Mutations } from "../utils/api/mutations";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
 import { useAuth } from "./Auth";
 import { Modal } from "./Modal";
+
+const DefaultProject = {
+  name: "",
+  description: "",
+  protected: "",
+  visibility: "private",
+  org: "",
+} as Parameters<typeof Mutations.createProject>[1];
 
 export default function NewProject() {
   const [user] = useAuth();
@@ -28,13 +36,7 @@ export default function NewProject() {
   );
 
   const [modalOpen, setModalOpen] = createSignal(false);
-  const [project, setProject] = createSignal<Parameters<typeof Mutations.createProject>[1]>({
-    name: "",
-    description: "",
-    protected: "", // length 0 means no password
-    visibility: "private",
-    org: "",
-  });
+  const [project, setProject] = createSignal<Parameters<typeof Mutations.createProject>[1]>(DefaultProject);
 
   const organizations = createQuery(
     () => ["organizations"],
@@ -88,6 +90,20 @@ export default function NewProject() {
       overview: "ci-cd",
     },
   };
+
+  createEffect(() => {
+    // reset project if the modal is closed
+    if (!modalOpen()) {
+      setProject({ ...DefaultProject, org: Object.keys(organizations.data ?? {})[0] ?? "" });
+      setCurrentTab("project");
+    }
+  });
+  createEffect(() => {
+    // use the first organization as the default after it got loaded, and if the project has no org
+    if (organizations.isSuccess && project().org.length === 0) {
+      setProject({ ...project(), org: Object.keys(organizations.data ?? {})[0] ?? "" });
+    }
+  });
 
   return (
     <Modal
@@ -171,6 +187,7 @@ export default function NewProject() {
               onSubmit={(e) => {
                 e.preventDefault();
               }}
+              class="flex flex-col gap-2.5 w-full"
             >
               <Show
                 when={organizations.isSuccess}
@@ -435,7 +452,9 @@ export default function NewProject() {
                   {([key, value]) => (
                     <div class="flex flex-row items-center justify-between">
                       <span>{key}</span>
-                      <span>{value}</span>
+                      <span>
+                        {key !== "protected" ? value.toString() : Array(value.toString().length).fill("*").join("")}
+                      </span>
                     </div>
                   )}
                 </For>
@@ -457,7 +476,19 @@ export default function NewProject() {
         </Tabs.Root>
         <div class="flex flex-row items-center justify-between gap-2.5">
           <div class="flex flex-row gap-2.5">
-            <button class="p-2 py-1 flex items-center justify-center bg-white dark:bg-black gap-2.5 hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-100 dark:active:bg-neutral-800 text-black dark:text-white">
+            <button
+              class="p-2 py-1 flex items-center justify-center bg-white dark:bg-black gap-2.5 hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-100 dark:active:bg-neutral-800 text-black dark:text-white"
+              onClick={() => {
+                setProject({
+                  name: "",
+                  description: "",
+                  protected: "",
+                  visibility: "private",
+                  org: Object.keys(organizations.data ?? {})[0] ?? "",
+                });
+                setModalOpen(false);
+              }}
+            >
               <span class="font-bold select-none">Cancel</span>
             </button>
           </div>

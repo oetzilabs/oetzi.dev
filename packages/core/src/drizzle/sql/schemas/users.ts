@@ -5,6 +5,7 @@ import { profiles } from "./profile";
 import { sessions } from "./session";
 import { projects } from "./project";
 import { project_participants } from "./project_participants";
+import { templates } from "./templates";
 
 export const users = sqliteTable("users", {
   ...Entity.defaults,
@@ -22,6 +23,7 @@ export const userRelation = relations(users, ({ one, many }) => ({
     references: [profiles.userId],
   }),
   sessions: many(sessions),
+  templates: many(templates),
   projects: many(projects),
   project_participants: many(project_participants),
 }));

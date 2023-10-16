@@ -131,10 +131,28 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the participated projects function",
         },
       },
+      "GET /user/templates/all": {
+        function: {
+          handler: "packages/functions/src/user.allTemplates",
+          description: "This is the all templates of the user function",
+        },
+      },
       "GET /projects/all": {
         function: {
           handler: "packages/functions/src/projects.all",
           description: "This is the all projects function",
+        },
+      },
+      "GET /stacks/all": {
+        function: {
+          handler: "packages/functions/src/stacks.all",
+          description: "This is the all stacks function",
+        },
+      },
+      "GET /technologies/all": {
+        function: {
+          handler: "packages/functions/src/technologies.all",
+          description: "This is the all technologies function",
         },
       },
     },
