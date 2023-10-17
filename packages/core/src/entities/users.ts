@@ -58,7 +58,19 @@ export const findById = z.function(z.tuple([z.string()])).implement(async (input
         },
       },
       sessions: true,
-      templates: true,
+      stacks: {
+        with: {
+          stack: {
+            with: {
+              usedByTechnologies: {
+                with: {
+                  technology: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
 });
@@ -190,16 +202,38 @@ export const getFreshAccessToken = z.function(z.tuple([z.string().uuid()])).impl
   return access_token;
 });
 
-export const allTemplates = z.function(z.tuple([z.string().uuid()])).implement(async (userId) => {
+export const allUserStacks = z.function(z.tuple([z.string().uuid()])).implement(async (userId) => {
   const u = await db.query.users.findFirst({
     where: (users, operations) => operations.eq(users.id, userId),
     with: {
-      templates: true,
+      stacks: {
+        with: {
+          stack: {
+            with: {
+              usedByTechnologies: {
+                with: {
+                  technology: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
   if (!u) throw new Error("User not found");
-  return u.templates;
+  return u.stacks;
 });
+
+// export const allTemplates = z.function(z.tuple([z.string().uuid()])).implement(async (userId) => {
+//   const u = await db.query.users.findFirst({
+//     where: (users, operations) => operations.eq(users.id, userId),
+//     with: {
+//     },
+//   });
+//   if (!u) throw new Error("User not found");
+//   return u.templates;
+// });
 
 export type Frontend = Awaited<ReturnType<typeof findById>>;
 

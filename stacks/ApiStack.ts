@@ -131,10 +131,16 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the participated projects function",
         },
       },
-      "GET /user/templates/all": {
+      "GET /user/stacks/all": {
         function: {
-          handler: "packages/functions/src/user.allTemplates",
-          description: "This is the all templates of the user function",
+          handler: "packages/functions/src/user.allUserStacks",
+          description: "This is the all stacks of the user function",
+        },
+      },
+      "POST /user/stacks/create": {
+        function: {
+          handler: "packages/functions/src/user.createStack",
+          description: "This is the create user-stacks function",
         },
       },
       "GET /projects/all": {
@@ -147,6 +153,18 @@ export function ApiStack({ stack }: StackContext) {
         function: {
           handler: "packages/functions/src/stacks.all",
           description: "This is the all stacks function",
+        },
+      },
+      "POST /stacks/check-url": {
+        function: {
+          handler: "packages/functions/src/stacks.checkUrl",
+          description: "This is the checkUrl stacks function",
+        },
+      },
+      "POST /stacks/check-file": {
+        function: {
+          handler: "packages/functions/src/stacks.checkFile",
+          description: "This is the checkFile stacks function",
         },
       },
       "GET /technologies/all": {

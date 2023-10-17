@@ -80,17 +80,6 @@ CREATE TABLE `stacks` (
 	`protected` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `stack_used_by_technologies` (
-	`id` text PRIMARY KEY NOT NULL,
-	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
-	`updated_at` integer,
-	`deleted_at` integer,
-	`technology_id` text NOT NULL,
-	`stack_id` text NOT NULL,
-	FOREIGN KEY (`technology_id`) REFERENCES `technologies`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`stack_id`) REFERENCES `stacks`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
 CREATE TABLE `stack_used_by_users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
@@ -99,6 +88,17 @@ CREATE TABLE `stack_used_by_users` (
 	`user_id` text NOT NULL,
 	`stack_id` text NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`stack_id`) REFERENCES `stacks`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `stack_used_by_technologies` (
+	`id` text PRIMARY KEY NOT NULL,
+	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
+	`updated_at` integer,
+	`deleted_at` integer,
+	`technology_id` text NOT NULL,
+	`stack_id` text NOT NULL,
+	FOREIGN KEY (`technology_id`) REFERENCES `technologies`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`stack_id`) REFERENCES `stacks`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
@@ -112,18 +112,4 @@ CREATE TABLE `technologies` (
 	`description` text,
 	`hidden` integer DEFAULT false NOT NULL,
 	`protected` text NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE `templates` (
-	`id` text PRIMARY KEY NOT NULL,
-	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
-	`updated_at` integer,
-	`deleted_at` integer,
-	`user_id` text NOT NULL,
-	`name` text NOT NULL,
-	`s3_key` text,
-	`description` text,
-	`hidden` integer DEFAULT false NOT NULL,
-	`protected` text NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );

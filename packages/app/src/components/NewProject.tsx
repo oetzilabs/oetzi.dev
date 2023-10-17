@@ -158,10 +158,10 @@ export default function NewProject() {
               Project
             </Tabs.Trigger>
             <Tabs.Trigger
-              value={"template" as TabStep}
+              value={"stack" as TabStep}
               class="border-neutral-100 dark:border-neutral-900 border-b-2 dark:ui-selected:border-b-white ui-selected:border-b-black py-1 px-2 font-medium ui-selected:font-bold"
             >
-              Template
+              Stack
             </Tabs.Trigger>
             <Tabs.Trigger
               value={"notifications" as TabStep}
@@ -436,7 +436,7 @@ export default function NewProject() {
               </TextField.Root>
             </form>
           </Tabs.Content>
-          <Tabs.Content value="template" class="flex flex-col gap-2.5 w-full">
+          <Tabs.Content value="stack" class="flex flex-col gap-2.5 w-full">
             <div class="flex flex-col gap-2.5 bg-neutral-100 dark:bg-neutral-900 rounded-md p-10"></div>
           </Tabs.Content>
           <Tabs.Content value="notifications" class="flex flex-col gap-2.5 w-full">

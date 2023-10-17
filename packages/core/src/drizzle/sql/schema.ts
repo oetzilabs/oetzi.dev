@@ -5,6 +5,6 @@ export * from "./schemas/users";
 export * from "./schemas/profile";
 export * from "./schemas/session";
 export * from "./schemas/stacks";
-export * from "./schemas/stackUsedBy";
+export * from "./schemas/stackUsedByUsers";
+export * from "./schemas/stackUsedByTechnologies";
 export * from "./schemas/technologies";
-export * from "./schemas/templates";

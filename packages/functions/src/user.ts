@@ -1,9 +1,11 @@
 import { Octokit } from "@octokit/rest";
 import { Project } from "@oetzidev/core/entities/projects";
 import fetch from "node-fetch";
-import { ApiHandler, useQueryParam } from "sst/node/api";
+import { ApiHandler, useFormData, useQueryParam } from "sst/node/api";
 import { User, getFreshAccessToken } from "../../core/src/entities/users";
 import { getUser } from "./utils";
+import { Stack } from "@oetzidev/core/entities/stacks";
+import { StatusCodes } from "http-status-codes";
 
 export const allProjects = ApiHandler(async (_evt) => {
   const user = await getUser();
@@ -116,9 +118,41 @@ export const projectIsAvailable = ApiHandler(async (_evt) => {
   };
 });
 
-export const allTemplates = ApiHandler(async (_evt) => {
+export const createStack = ApiHandler(async (evt) => {
   const user = await getUser();
-  const result = await User.allTemplates(user.id);
+  if (!user) throw new Error("User not found");
+  const form = useFormData();
+  if (!form) throw new Error("No form data");
+  const name = form.get("name");
+  const description = form.get("description");
+  const technologies = form.getAll("technologies");
+  const protected_ = form.get("protected");
+  if (!name) throw new Error("No name");
+  if (!description) throw new Error("No description");
+  if (!technologies) throw new Error("No technologies");
+  if (Array.isArray(technologies)) throw new Error("Technologies is not an array");
+  if (!protected_) throw new Error("No protected");
+
+  const result = await Stack.create(user.id, {
+    name,
+    description,
+    hidden: false,
+    protected: protected_,
+    technologies,
+  });
+
+  return {
+    statusCode: StatusCodes.OK,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(result),
+  };
+});
+
+export const allUserStacks = ApiHandler(async (_evt) => {
+  const user = await getUser();
+  const result = await User.allUserStacks(user.id);
   return {
     statusCode: 200,
     headers: {

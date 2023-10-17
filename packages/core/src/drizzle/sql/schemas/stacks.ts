@@ -1,8 +1,9 @@
 import { relations } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { Entity } from "./entity";
-import { stackUsedByTechnologies, stackUsedByUsers } from "./stackUsedBy";
+import { stackUsedByUsers } from "./stackUsedByUsers";
 import { projects } from "./project";
+import { stackUsedByTechnologies } from "./stackUsedByTechnologies";
 
 export const stacks = sqliteTable("stacks", {
   ...Entity.defaults,

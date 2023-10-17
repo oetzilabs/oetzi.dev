@@ -37,7 +37,7 @@ export const syncProjects = z.function(z.tuple([z.string()])).implement(async (t
   }).then((r) => r.json() as Promise<NonNullable<Project.Frontend>[]>)
 );
 
-export const createTemplate = z
+export const createStack = z
   .function(
     z.tuple([
       z.string(),
@@ -55,7 +55,7 @@ export const createTemplate = z
     ])
   )
   .implement(async (token, input) =>
-    fetch(`${API_BASE}/user/templates/create`, {
+    fetch(`${API_BASE}/user/stack/create`, {
       method: "POST",
       body: new URLSearchParams(input),
       headers: {
@@ -63,3 +63,23 @@ export const createTemplate = z
       },
     }).then((r) => r.json() as Promise<Project.Frontend>)
   );
+
+export const checkStackFromUrl = z.function(z.tuple([z.string(), z.string().url()])).implement(async (token, url) =>
+  fetch(`${API_BASE}/stacks/check-url`, {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+    body: new URLSearchParams({ url }),
+  }).then((r) => r.json() as Promise<boolean>)
+);
+
+export const checkStackFromFile = z.function(z.tuple([z.string(), z.string()])).implement(async (token, filecontent) =>
+  fetch(`${API_BASE}/stacks/check-file`, {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+    body: new URLSearchParams({ file: filecontent }),
+  }).then((r) => r.json() as Promise<any>)
+);

@@ -1,19 +1,19 @@
 import { createQuery } from "@tanstack/solid-query";
 import { useAuth } from "../../../components/Auth";
-import { CreateTemplate } from "../../../components/CreateTemplate";
+import { CreateStack } from "../../../components/CreateStack";
 import { Queries } from "../../../utils/api/queries";
 
 const CreateTemplatePage = () => {
   const [user] = useAuth();
 
-  const templates = createQuery(
-    () => ["user_templates"],
+  const stacks = createQuery(
+    () => ["user_stacks"],
     () => {
       const u = user();
       if (!u.isAuthenticated) return Promise.reject("You are not logged in.");
       const token = u.token;
       if (!token) return Promise.reject("You are not logged in.");
-      return Queries.userTemplates(token);
+      return Queries.userStacks(token);
     },
     {
       get enabled() {
@@ -25,7 +25,7 @@ const CreateTemplatePage = () => {
 
   return (
     <div class="container mx-auto flex flex-col gap-4">
-      <CreateTemplate templates={templates.data ?? []} />
+      <CreateStack stacks={stacks.data ?? []} />
     </div>
   );
 };

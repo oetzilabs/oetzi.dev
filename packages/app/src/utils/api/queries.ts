@@ -67,12 +67,12 @@ export const organizations = z.function(z.tuple([z.string()])).implement(async (
   )
 );
 
-export const userTemplates = z.function(z.tuple([z.string()])).implement(async (token) =>
-  fetch(`${API_BASE}/user/templates/all`, {
+export const userStacks = z.function(z.tuple([z.string()])).implement(async (token) =>
+  fetch(`${API_BASE}/user/stacks/all`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
-  }).then((res) => res.json() as Promise<NonNullable<User.Frontend>["templates"]>)
+  }).then((res) => res.json() as Promise<NonNullable<User.Frontend>["stacks"]>)
 );
 
 export const stacks = z.function(z.tuple([z.string()])).implement(async (token) =>
