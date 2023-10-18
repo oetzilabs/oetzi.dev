@@ -68,6 +68,43 @@ export const checkFile = ApiHandler(async (evt) => {
       body: JSON.stringify({ error: "Unknown Error" }),
     };
   }
+  collection =
+    collection.length > 0
+      ? collection
+      : [
+          {
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            deletedAt: null,
+            description: "No description",
+            hidden: false,
+            id: "id",
+            version: "0.0.0",
+            name: "name",
+            protected: "",
+            template: `
+const test = () => {
+  alert("Hello World");
+}
+`,
+          },
+          {
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            deletedAt: null,
+            description: "No description",
+            hidden: false,
+            id: "asdasd",
+            version: "0.0.1:latest",
+            name: "name-2",
+            protected: "",
+            template: `
+const test2 = () => {
+  alert("Hello World 2");
+}
+`,
+          },
+        ];
   return {
     statusCode: StatusCodes.OK,
     headers: {

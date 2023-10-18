@@ -71,9 +71,15 @@ importers:
       dayjs:
         specifier: ^1.11.10
         version: 1.11.10
+      highlight.js:
+        specifier: ^11.9.0
+        version: 11.9.0
       node-fetch:
         specifier: 3.3.2
         version: 3.3.2
+      solid-highlight:
+        specifier: ^0.1.12
+        version: 0.1.12
       solid-js:
         specifier: ^1.8.3
         version: 1.8.3
@@ -7183,6 +7189,11 @@ packages:
       readable-stream: 3.6.2
     dev: true
 
+  /highlight.js@11.9.0:
+    resolution: {integrity: sha512-fJ7cW7fQGCYAkgv4CPfwFHrfd/cLS4Hau96JuJ+ZTOWhjnhoeN1ub1tFmALm/+lW5z4WCAuAV9bm05AP0mS6Gw==}
+    engines: {node: '>=12.0.0'}
+    dev: false
+
   /html-entities@2.3.3:
     resolution: {integrity: sha512-DV5Ln36z34NNTDgnz0EWGBLZENelNAtkiFA4kyNOG2tDI6Mz1uSWiq1wAKdyjnJwyDiDO7Fa2SO1CTxPXL8VxA==}
 
@@ -8780,6 +8791,14 @@ packages:
     dependencies:
       solid-js: 1.8.3
       solid-use: 0.6.2(solid-js@1.8.3)
+    dev: false
+
+  /solid-highlight@0.1.12:
+    resolution: {integrity: sha512-1zTiNeuD8SDjil//wcdNGeYVrsgkhVdyHD65WBuO2SV33onTRHXZR8agH60Kpe9GcFmjDmz0UwKWj1zFXesnig==}
+    engines: {node: '>=10', yarn: '>=1.22.5'}
+    dependencies:
+      highlight.js: 11.9.0
+      solid-js: 1.8.3
     dev: false
 
   /solid-js@1.8.3:

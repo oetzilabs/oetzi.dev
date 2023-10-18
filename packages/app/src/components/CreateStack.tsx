@@ -9,6 +9,8 @@ import { Mutations } from "../utils/api/mutations";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
 import { useAuth } from "./Auth";
+import Highlight from "./CodePreview";
+import "highlight.js/styles/obsidian.min.css";
 
 const DefaultTemplate: Parameters<typeof Mutations.createStack>[1] = {
   name: "",
@@ -192,11 +194,6 @@ export const CreateStack = (props: CreateStackProps) => {
     if (!token) return Promise.reject("You are not logged in.");
 
     return Mutations.checkStackFromFile(token, file);
-  });
-
-  const [createTemplateError, setCreateTemplateError] = createSignal({
-    tab: "none" as TabStep | "none",
-    error: "",
   });
 
   return (
@@ -485,8 +482,24 @@ export const CreateStack = (props: CreateStackProps) => {
                         }
                       >
                         {(techs) => (
-                          <div class="flex flex-col gap-2.5 bg-neutral-100 dark:bg-neutral-900 rounded-md items-center justify-center">
-                            <For each={techs()}>{(tech) => <pre class="text-xs">{tech.template}</pre>}</For>
+                          <div class="flex flex-col gap-2.5 bg-neutral-100 dark:bg-neutral-900 rounded-md items-center justify-center p-4 w-full">
+                            <For each={techs()}>
+                              {(tech) => (
+                                <div class="flex flex-col p-4 w-full height-auto bg-neutral-50 dark:bg-neutral-950 rounded-md border border-neutral-200 dark:border-neutral-800 gap-2">
+                                  <span class="text-teal-500">
+                                    {tech.name} ({tech.version})
+                                  </span>
+                                  <Highlight
+                                    class="!bg-transparent !p-0"
+                                    autoDetect={false}
+                                    language="typescript"
+                                    ignoreIllegals
+                                  >
+                                    {tech.template}
+                                  </Highlight>
+                                </div>
+                              )}
+                            </For>
                           </div>
                         )}
                       </Match>
@@ -547,7 +560,7 @@ export const CreateStack = (props: CreateStackProps) => {
                         </Match>
                         <Match when={checkStackFromFile.isSuccess}>
                           <Switch>
-                            <Match when={"error" in checkStackFromFile.data}>
+                            <Match when={"error" in checkStackFromFile.data!}>
                               <div class="p-2 py-1 flex items-center justify-center bg-red-500 gap-2.5 hover:bg-red-600 rounded-md active:bg-red-700 text-white w-full">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -565,10 +578,15 @@ export const CreateStack = (props: CreateStackProps) => {
                                   <path d="m3 12.5 5 5" />
                                   <path d="m8 12.5-5 5" />
                                 </svg>
-                                <span class="font-medium">{checkStackFromFile.data.error}</span>
+                                <span class="font-medium">
+                                  {
+                                    // @ts-ignore
+                                    checkStackFromFile.data!.error
+                                  }
+                                </span>
                               </div>
                             </Match>
-                            <Match when={!("error" in checkStackFromFile.data)}>
+                            <Match when={!("error" in checkStackFromFile.data!)}>
                               <div class="p-2 py-1 flex items-center justify-center bg-green-500 gap-2.5 hover:bg-green-600 rounded-md active:bg-green-700 text-white w-full">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
