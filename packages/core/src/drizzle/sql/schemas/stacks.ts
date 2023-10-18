@@ -7,6 +7,7 @@ import { stackUsedByTechnologies } from "./stackUsedByTechnologies";
 
 export const stacks = sqliteTable("stacks", {
   ...Entity.defaults,
+  version: text("version").notNull(),
   name: text("name").notNull(),
   description: text("description"),
   hidden: integer("hidden", { mode: "boolean" }).notNull().default(false),

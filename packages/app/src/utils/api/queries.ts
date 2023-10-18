@@ -90,3 +90,11 @@ export const technologies = z.function(z.tuple([z.string()])).implement(async (t
     },
   }).then((res) => res.json() as Promise<NonNullable<Technology.Frontend>[]>)
 );
+
+export const calculateStackVersion = z.function(z.tuple([z.string(), z.string()])).implement(async (token, name) =>
+  fetch(`${API_BASE}/stacks/calculate-version?name=${encodeURIComponent(name)}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json() as Promise<string>)
+);

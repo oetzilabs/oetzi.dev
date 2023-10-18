@@ -1,0 +1,1 @@
+ALTER TABLE technologies ADD `version` text NOT NULL;

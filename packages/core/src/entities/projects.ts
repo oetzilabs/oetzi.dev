@@ -132,6 +132,6 @@ export const updateName = z
 
 export const parse = CreateProjectZod.parse;
 
-export type Frontend = Awaited<ReturnType<typeof findById>>;
+export type Frontend = NonNullable<Awaited<ReturnType<typeof findById>>>;
 
 export type Project = ProjectSelect;

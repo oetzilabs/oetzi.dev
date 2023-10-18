@@ -77,6 +77,6 @@ export const updateName = z
     return update({ id: input.id, name: input.name });
   });
 
-export type Frontend = Awaited<ReturnType<typeof findById>>;
+export type Frontend = NonNullable<Awaited<ReturnType<typeof findById>>>;
 
 export type Technology = TechnologySelect;

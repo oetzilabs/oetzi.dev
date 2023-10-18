@@ -1,4 +1,6 @@
 import * as Project from "@oetzidev/core/entities/projects";
+import { Stack } from "@oetzidev/core/entities/stacks";
+import { Technology } from "@oetzidev/core/entities/technologies";
 import { z } from "zod";
 
 export * as Mutations from "./mutations";
@@ -42,6 +44,7 @@ export const createStack = z
     z.tuple([
       z.string(),
       z.object({
+        version: z.string(),
         name: z.string(),
         description: z.string().optional(),
         s3Key: z.string(),
@@ -71,7 +74,7 @@ export const checkStackFromUrl = z.function(z.tuple([z.string(), z.string().url(
       authorization: `Bearer ${token}`,
     },
     body: new URLSearchParams({ url }),
-  }).then((r) => r.json() as Promise<boolean>)
+  }).then((r) => r.json() as Promise<Array<Technology.Frontend> | { error: any }>)
 );
 
 export const checkStackFromFile = z.function(z.tuple([z.string(), z.string()])).implement(async (token, filecontent) =>
@@ -81,5 +84,5 @@ export const checkStackFromFile = z.function(z.tuple([z.string(), z.string()])).
       authorization: `Bearer ${token}`,
     },
     body: new URLSearchParams({ file: filecontent }),
-  }).then((r) => r.json() as Promise<any>)
+  }).then((r) => r.json() as Promise<Array<Technology.Frontend> | { error: any }>)
 );

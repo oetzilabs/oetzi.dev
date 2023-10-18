@@ -64,7 +64,11 @@ export const countAll = z.function(z.tuple([])).implement(async () => {
 export const findById = z.function(z.tuple([z.string()])).implement(async (input) => {
   return db.query.stacks.findFirst({
     where: (stacks, operations) => operations.eq(stacks.id, input),
-    with: {},
+    with: {
+      usedByTechnologies: {
+        with: { technology: true },
+      },
+    },
   });
 });
 
@@ -102,14 +106,76 @@ export const updateName = z
     return update({ id: input.id, name: input.name });
   });
 
-export const isValid = z.function(z.tuple([z.string()])).implement(async (input) => {
-  const toml = (await import("toml")).parse;
-  let result: any = {};
-  result = toml(input);
-  // TODO: validate the stack via zod
-  return result;
+export const StackZod = z.object({
+  technologies: z.array(
+    z.object({
+      name: z.union([
+        z.literal("db:pg"),
+        z.literal("db:sqlite"),
+        z.literal("db:turso"),
+        z.literal("db:mysql"),
+        z.literal("db:mssql"),
+        z.literal("db:redis"),
+        z.literal("db:mongo"),
+        z.literal("auth:sst"),
+        z.literal("api"),
+        z.literal("storage"),
+        z.literal("queue"),
+      ]),
+      version: z.string(),
+    })
+  ),
 });
 
-export type Frontend = Awaited<ReturnType<typeof findById>>;
+const StackTechnologiesValidation = z.function(z.tuple([StackZod])).implement(async (input) =>
+  db.query.technologies.findMany({
+    where: (fields, operations) =>
+      operations.inArray(
+        fields.name,
+        input.technologies.map((t) => t.name)
+      ),
+  })
+);
+
+export type StackToml = z.infer<typeof StackZod>;
+
+export const isValid = z.function(z.tuple([z.string()])).implement(async (input) => {
+  const toml = (await import("toml")).parse;
+  let result: StackToml | undefined = undefined;
+  result = toml(input);
+  const stack = StackZod.safeParse(result);
+  if (!stack.success) {
+    throw new Error(stack.error.message);
+  }
+  result = stack.data;
+  const collection = await StackTechnologiesValidation(result);
+
+  return collection;
+});
+
+export const calculateVersion = z.function(z.tuple([z.string(), z.boolean()])).implement(async (name, withHash) => {
+  // check if the stack name exists and if so return the next version number => ex: 0.0.1:<hash?>
+  const stacks = await db.query.stacks.findMany({
+    where: (stacks, operations) =>
+      operations.and(operations.eq(stacks.name, name), operations.eq(stacks.deletedAt, isNull(stacks.deletedAt))),
+  });
+  const latestStack = stacks[0];
+  if (!latestStack) return "0.0.1";
+
+  const versions = stacks.map((s) => s.version);
+  const latestVersion = versions.sort().reverse()[0];
+  const [major, minor, patch] = latestVersion.split(".");
+  let patches = patch.split(":");
+  // if the latest version has a hash, then increment the patch number, and remove the hash
+  if (patches.length > 1) {
+    patches = patches.slice(0, patches.length - 1);
+  }
+
+  return `${major}.${minor}.${parseInt(patches[0]) + 1}${
+    withHash ? `:${Math.random().toString(36).substring(7)}` : ""
+  }`;
+});
+
+export type Frontend = NonNullable<Awaited<ReturnType<typeof findById>>>;
 
 export type Stack = StackSelect;

@@ -167,6 +167,12 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the checkFile stacks function",
         },
       },
+      "GET /stacks/calculate-version": {
+        function: {
+          handler: "packages/functions/src/stacks.calculateVersion",
+          description: "This is the calculateVersion stacks function",
+        },
+      },
       "GET /technologies/all": {
         function: {
           handler: "packages/functions/src/technologies.all",

@@ -235,6 +235,6 @@ export const allUserStacks = z.function(z.tuple([z.string().uuid()])).implement(
 //   return u.templates;
 // });
 
-export type Frontend = Awaited<ReturnType<typeof findById>>;
+export type Frontend = NonNullable<Awaited<ReturnType<typeof findById>>>;
 
 export type Profile = ProfileSelect;

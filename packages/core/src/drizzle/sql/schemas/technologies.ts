@@ -5,6 +5,7 @@ import { stackUsedByTechnologies } from "./stackUsedByTechnologies";
 
 export const technologies = sqliteTable("technologies", {
   ...Entity.defaults,
+  version: text("version").notNull(),
   name: text("name").notNull(),
   template: text("template").notNull(),
   description: text("description"),

@@ -1,4 +1,4 @@
-import { ApiHandler, useFormData } from "sst/node/api";
+import { ApiHandler, useFormData, useQueryParam } from "sst/node/api";
 import { getUser } from "./utils";
 import { Stack } from "../../core/src/entities/stacks";
 import fetch from "node-fetch";
@@ -28,14 +28,14 @@ export const checkUrl = ApiHandler(async (evt) => {
   const stackToml = await fetch(url).then((r) => r.text());
   // check if the stack is valid
   if (!stackToml) throw new Error("No stack");
-  const isValid = await Stack.isValid(stackToml);
+  const collection = await Stack.isValid(stackToml);
 
   return {
     statusCode: 200,
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(isValid),
+    body: JSON.stringify(collection),
   };
 });
 
@@ -46,9 +46,9 @@ export const checkFile = ApiHandler(async (evt) => {
   if (!form) throw new Error("No form data");
   const file = form.get("file");
   if (!file) throw new Error("No file");
-  let isValid: any = {};
+  let collection: Awaited<ReturnType<typeof Stack.isValid>> | undefined = undefined;
   try {
-    isValid = await Stack.isValid(file);
+    collection = await Stack.isValid(file);
   } catch (e) {
     if (e instanceof Error) {
       console.log({ error: e.message });
@@ -73,6 +73,21 @@ export const checkFile = ApiHandler(async (evt) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(isValid),
+    body: JSON.stringify(collection),
+  };
+});
+
+export const calculateVersion = ApiHandler(async (evt) => {
+  const user = await getUser();
+  if (!user) throw new Error("User not found");
+  const name = useQueryParam("name");
+  if (!name) throw new Error("No name");
+  const version = await Stack.calculateVersion(name, true); // with Hash
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(version),
   };
 });
