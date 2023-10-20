@@ -18,7 +18,7 @@ CREATE TABLE `projects` (
 	`protected` text NOT NULL,
 	`visibility` text NOT NULL,
 	`remote` text NOT NULL,
-	`stack_id` text NOT NULL,
+	`stack_id` text,
 	FOREIGN KEY (`owner_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`stack_id`) REFERENCES `stacks`(`id`) ON UPDATE no action ON DELETE no action
 );
@@ -74,6 +74,7 @@ CREATE TABLE `stacks` (
 	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
 	`updated_at` integer,
 	`deleted_at` integer,
+	`version` text NOT NULL,
 	`name` text NOT NULL,
 	`description` text,
 	`hidden` integer DEFAULT false NOT NULL,
@@ -107,6 +108,7 @@ CREATE TABLE `technologies` (
 	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
 	`updated_at` integer,
 	`deleted_at` integer,
+	`version` text NOT NULL,
 	`name` text NOT NULL,
 	`template` text NOT NULL,
 	`description` text,

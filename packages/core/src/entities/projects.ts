@@ -6,11 +6,13 @@ import { ProjectSelect, projects } from "../drizzle/sql/schema";
 import { Octokit } from "@octokit/rest";
 import { User } from "./users";
 import { organizations } from "../../../app/src/utils/api/queries";
+import { GitHub } from "../github";
 
 export * as Project from "./projects";
 
 export const CreateProjectZod = createInsertSchema(projects)
   .omit({
+    stackId: true,
     ownerId: true,
     deletedAt: true,
     id: true,
@@ -29,13 +31,8 @@ export const create = z
   .function(z.tuple([z.string().uuid(), CreateProjectZod]))
   .implement(async (userId, projectInput) => {
     const freshAccessToken = await User.getFreshAccessToken(userId);
-    const octo = new Octokit({
-      auth: `bearer ${freshAccessToken}`,
-    });
-    // create repo on organization
-    const repo = await octo.repos.createInOrg({
+    const repo = await GitHub.createRepository(freshAccessToken, projectInput.org, {
       name: projectInput.name,
-      org: projectInput.org,
       private: projectInput.visibility === "private",
       description: projectInput.description ?? "",
     });
@@ -44,18 +41,31 @@ export const create = z
       .insert(projects)
       .values({
         ...projectInput,
-        name: `${projectInput.org}/${repo.data.name}`,
-        description: repo.data.description,
-        visibility: repo.data.private ? "private" : "public",
+        name: `${projectInput.org}/${repo.name}`,
+        description: repo.description,
+        visibility: repo.private ? "private" : "public",
         ownerId: userId,
         createdAt: new Date(),
         deletedAt: null,
-        remote: repo.data.url,
+        remote: repo.html_url,
       })
       .returning();
-    return {
-      ...x,
-    };
+    return x;
+  });
+
+export const remove = z
+  .function(z.tuple([z.string().uuid(), z.string().uuid()]))
+  .implement(async (userId, projectId) => {
+    const freshAccessToken = await User.getFreshAccessToken(userId);
+    const project = await db.query.projects.findFirst({
+      where: (projects, operations) => operations.eq(projects.id, projectId),
+    });
+    if (!project) throw new Error("Project not found");
+    const repo = await GitHub.removeRepository(freshAccessToken, project.name);
+    if (!repo) throw new Error("Could not remove repository");
+
+    const [x] = await db.delete(projects).where(eq(projects.id, projectId)).returning();
+    return x;
   });
 
 export const countAll = z.function(z.tuple([])).implement(async () => {

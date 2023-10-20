@@ -30,6 +30,16 @@ export const createProject = z
     }).then((r) => r.json() as Promise<Project.Frontend>)
   );
 
+export const removeProject = z.function(z.tuple([z.string(), z.string()])).implement(async (token, id) =>
+  fetch(`${API_BASE}/user/projects/remove`, {
+    method: "POST",
+    body: new URLSearchParams({ id }),
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json() as Promise<Project.Frontend>)
+);
+
 export const syncProjects = z.function(z.tuple([z.string()])).implement(async (token) =>
   fetch(`${API_BASE}/user/projects/sync`, {
     method: "POST",

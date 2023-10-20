@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "164a7370-6ca3-4887-9580-a0db387aa516",
+  "id": "fcb2738c-8f37-4efc-a5f5-c02ed7229d4d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "allowed_users": {
@@ -134,7 +134,7 @@
           "name": "stack_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },
@@ -509,6 +509,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "version": {
+          "name": "version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "name": {
           "name": "name",
           "type": "text",
@@ -732,6 +739,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
+          "autoincrement": false
+        },
+        "version": {
+          "name": "version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
           "autoincrement": false
         },
         "name": {

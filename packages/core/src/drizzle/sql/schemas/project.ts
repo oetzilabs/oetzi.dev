@@ -20,9 +20,7 @@ export const projects = sqliteTable("projects", {
     .notNull()
     .$defaultFn(() => "public"),
   remote: text("remote").notNull(),
-  stackId: text("stack_id")
-    .notNull()
-    .references(() => stacks.id),
+  stackId: text("stack_id").references(() => stacks.id),
 });
 
 export type ProjectSelect = typeof projects.$inferSelect;

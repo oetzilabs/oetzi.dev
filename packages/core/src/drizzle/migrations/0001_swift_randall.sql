@@ -1,1 +1,0 @@
-ALTER TABLE stacks ADD `version` text NOT NULL;

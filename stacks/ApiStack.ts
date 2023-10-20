@@ -113,6 +113,12 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the create project function",
         },
       },
+      "POST /user/projects/remove": {
+        function: {
+          handler: "packages/functions/src/projects.remove",
+          description: "This is the remove project function",
+        },
+      },
       "GET /user/projects/is-available": {
         function: {
           handler: "packages/functions/src/user.projectIsAvailable",

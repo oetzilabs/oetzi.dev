@@ -489,12 +489,7 @@ export const CreateStack = (props: CreateStackProps) => {
                                   <span class="text-teal-500">
                                     {tech.name} ({tech.version})
                                   </span>
-                                  <Highlight
-                                    class="!bg-transparent !p-0"
-                                    autoDetect={false}
-                                    language="typescript"
-                                    ignoreIllegals
-                                  >
+                                  <Highlight class="!bg-transparent !p-0" autoDetect={false} language="typescript">
                                     {tech.template}
                                   </Highlight>
                                 </div>

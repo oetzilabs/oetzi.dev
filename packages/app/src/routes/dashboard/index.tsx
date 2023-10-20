@@ -1,4 +1,4 @@
-import { createMutation, createQuery } from "@tanstack/solid-query";
+import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
 import { useAuth } from "../../components/Auth";
 import NewProject from "../../components/NewProject";
@@ -10,6 +10,7 @@ export default function DashboardPage() {
   const [user] = useAuth();
   const [timer, setTimer] = createSignal(false);
   const [timerInterval, setTimerInterval] = createSignal(5);
+  const queryClient = useQueryClient();
 
   const syncProjects = createMutation(
     async () => {
@@ -72,6 +73,37 @@ export default function DashboardPage() {
       },
       refetchInterval: 60_000,
       refetchOnWindowFocus: false,
+    }
+  );
+
+  const deleteProject = createMutation(
+    async (id: string) => {
+      const u = user();
+      const token = u.token;
+      if (!token) return Promise.reject("You are not logged in.");
+      return Mutations.removeProject(token, id);
+    },
+    {
+      onSuccess: () => {
+        setTimer(false);
+        setTimerInterval(5);
+        setTimeout(() => {
+          syncProjects.reset();
+        }, 3000);
+      },
+      onError: () => {
+        setTimer(true);
+        setTimerInterval(5);
+        const interval = setInterval(() => {
+          setTimerInterval((prev) => prev - 1);
+        }, 1000);
+
+        setTimeout(() => {
+          setTimer(false);
+          clearInterval(interval);
+          syncProjects.reset();
+        }, 5500);
+      },
     }
   );
 
@@ -262,6 +294,15 @@ export default function DashboardPage() {
                 >
                   {(project) => (
                     <div class="bg-white dark:bg-black text-black dark:text-white p-2 rounded-md shadow-md">
+                      <button
+                        class="bg-red-50 dark:bg-red-950 rounded-md text-red-900 dark:text-red-50 hover:bg-red-50 dark:hover:bg-red-900 active:bg-red-50 dark:active:bg-red-800 px-2 py-1 font-bold"
+                        onClick={async () => {
+                          await deleteProject.mutateAsync(project.id);
+                          await queryClient.invalidateQueries(["projects"]);
+                        }}
+                      >
+                        DELETE
+                      </button>
                       <h3 class="text-xl font-bold">{project.name}</h3>
                       <p class="text-lg font-medium">{project.description}</p>
                     </div>
