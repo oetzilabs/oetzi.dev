@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { db } from "../drizzle/sql";
@@ -83,12 +83,42 @@ export const findById = z.function(z.tuple([z.string()])).implement(async (input
     with: {
       user: true,
       participants: true,
+      stack: {
+        with: {
+          usedByProjects: {
+            with: { user: true, participants: true },
+          },
+          usedByTechnologies: {
+            with: { technology: true },
+          },
+        },
+      },
     },
   });
 });
 
 export const all = z.function(z.tuple([])).implement(async () => {
   return db.query.projects.findMany({
+    with: {
+      user: true,
+      participants: true,
+    },
+  });
+});
+
+export const AllWithFilterZod = z.object({
+  visibility: z.union([z.literal("public"), z.literal("private")]).default("public"),
+  deleted: z.boolean().default(false),
+});
+
+export const allWithFilter = z.function(z.tuple([AllWithFilterZod.optional()])).implement(async (filter) => {
+  return db.query.projects.findMany({
+    where: (projects, operations) =>
+      operations.and(
+        operations.eq(projects.deletedAt, filter?.deleted ? isNotNull(projects.deletedAt) : isNull(projects.deletedAt)),
+        operations.not(isNull(projects.syncedAt)),
+        operations.eq(projects.visibility, filter?.visibility ?? "public")
+      ),
     with: {
       user: true,
       participants: true,

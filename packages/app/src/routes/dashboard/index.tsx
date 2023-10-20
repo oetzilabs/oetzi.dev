@@ -1,10 +1,39 @@
 import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
-import { For, Match, Show, Switch, createSignal } from "solid-js";
+import { For, Match, Show, Switch, createEffect, createSignal } from "solid-js";
+import { toast } from "solid-toast";
 import { useAuth } from "../../components/Auth";
 import NewProject from "../../components/NewProject";
 import { Mutations } from "../../utils/api/mutations";
 import { Queries } from "../../utils/api/queries";
 import { cn } from "../../utils/cn";
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import { Project } from "../../components/Project";
+dayjs.extend(advancedFormat);
+
+function FakeProgressBar(props: { time: number }) {
+  const [progress, setProgress] = createSignal(0);
+  createEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((p) => p + 1);
+    }, props.time / 100);
+    return () => clearInterval(interval);
+  });
+  createEffect(() => {
+    // if progress is 100, dismiss toast
+    if (progress() === 100) toast.dismiss();
+  });
+  return (
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-black/10 dark:bg-white/10">
+      <div
+        class="h-full bg-black dark:bg-white/50"
+        style={{
+          width: `${progress()}%`,
+        }}
+      ></div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const [user] = useAuth();
@@ -64,7 +93,7 @@ export default function DashboardPage() {
   const projects = createQuery(
     () => ["projects"],
     () => {
-      return Queries.projects();
+      return Queries.projectsWithFilter();
     },
     {
       get enabled() {
@@ -106,6 +135,42 @@ export default function DashboardPage() {
       },
     }
   );
+
+  const confirmRemoveProject = async (id: string) => {
+    // use toast
+    toast.custom(
+      <div class="flex flex-col gap-2.5 relative p-4 bg-neutral-100 dark:bg-neutral-900 rounded-md shadow-md overflow-clip">
+        <div class="flex flex-col gap-1.5 text-neutral-900 dark:text-neutral-100">
+          <h3 class="text-md font-bold">Are you sure?</h3>
+          <p class="text-sm font-medium">This action is irreversible.</p>
+        </div>
+        <div class="flex flex-row items-center justify-end gap-2.5">
+          <button
+            class="bg-black dark:bg-white rounded-md text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 active:bg-black/90 dark:active:bg-white/90 px-2 py-1 font-bold"
+            aria-label="Cancel"
+            onClick={() => toast.dismiss()}
+          >
+            Cancel!
+          </button>
+          <button
+            class="bg-red-50 dark:bg-red-950 rounded-md text-red-900 dark:text-red-50 hover:bg-red-50 dark:hover:bg-red-900 active:bg-red-50 dark:active:bg-red-800 px-2 py-1 font-bold"
+            onClick={async () => {
+              await deleteProject.mutateAsync(id);
+              if (queryClient) await queryClient.invalidateQueries(["user_projects"]);
+            }}
+            aria-label="Delete Project"
+          >
+            Yes, delete!
+          </button>
+        </div>
+        <FakeProgressBar time={5000} />
+      </div>,
+      {
+        duration: 5000,
+        position: "bottom-right",
+      }
+    );
+  };
 
   return (
     <div class="container mx-auto flex flex-col gap-8 py-10">
@@ -241,12 +306,7 @@ export default function DashboardPage() {
                     </div>
                   }
                 >
-                  {(project) => (
-                    <div class=" bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-sm text-black dark:text-white p-2 rounded-md">
-                      <h3 class="text-xl font-bold">{project.name}</h3>
-                      <p class="text-lg font-medium">{project.description}</p>
-                    </div>
-                  )}
+                  {(project) => <Project project={project} confirmRemoveProject={confirmRemoveProject} />}
                 </For>
               </Match>
               <Match when={!projects.isSuccess && projects.isError}>
@@ -292,21 +352,7 @@ export default function DashboardPage() {
                     </div>
                   }
                 >
-                  {(project) => (
-                    <div class="bg-white dark:bg-black text-black dark:text-white p-2 rounded-md shadow-md">
-                      <button
-                        class="bg-red-50 dark:bg-red-950 rounded-md text-red-900 dark:text-red-50 hover:bg-red-50 dark:hover:bg-red-900 active:bg-red-50 dark:active:bg-red-800 px-2 py-1 font-bold"
-                        onClick={async () => {
-                          await deleteProject.mutateAsync(project.id);
-                          await queryClient.invalidateQueries(["projects"]);
-                        }}
-                      >
-                        DELETE
-                      </button>
-                      <h3 class="text-xl font-bold">{project.name}</h3>
-                      <p class="text-lg font-medium">{project.description}</p>
-                    </div>
-                  )}
+                  {(project) => <Project project={project} confirmRemoveProject={confirmRemoveProject} withMenu />}
                 </For>
               </Match>
               <Match when={!userProjects.isSuccess && userProjects.isError}>

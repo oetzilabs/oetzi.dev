@@ -27,7 +27,6 @@ export const removeRepository = z.function(z.tuple([z.string(), z.string()])).im
   const octokit = new Octokit({
     auth,
   });
-  console.log("Removing repo", repo);
   const { status } = await octokit.repos.delete({
     owner: repo.split("/")[0],
     repo: repo.split("/")[1],

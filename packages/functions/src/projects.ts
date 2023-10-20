@@ -1,5 +1,5 @@
-import { ApiHandler, useFormData } from "sst/node/api";
-import { Project } from "../../core/src/entities/projects";
+import { ApiHandler, useFormData, useQueryParams } from "sst/node/api";
+import { AllWithFilterZod, Project } from "../../core/src/entities/projects";
 import { getUser } from "./utils";
 
 export const create = ApiHandler(async (_evt) => {
@@ -36,12 +36,34 @@ export const remove = ApiHandler(async (_evt) => {
 });
 
 export const all = ApiHandler(async (_evt) => {
-  const result = await Project.all();
+  const p = useQueryParams();
+  if (!p) {
+    const result = await Project.all();
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(result),
+    };
+  }
+  const filterSP = AllWithFilterZod.safeParse(p);
+  if (filterSP.success) {
+    const result = await Project.allWithFilter(filterSP.data);
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(result),
+    };
+  }
+
   return {
     statusCode: 200,
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(result),
+    body: JSON.stringify([]),
   };
 });

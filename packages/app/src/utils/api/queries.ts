@@ -23,6 +23,13 @@ export const projects = z
     fetch(`${API_BASE}/projects/all`).then((res) => res.json() as Promise<NonNullable<Project.Frontend>[]>)
   );
 
+export const projectsWithFilter = z.function(z.tuple([])).implement(async () =>
+  fetch(
+    `${API_BASE}/projects/all?${new URLSearchParams({
+      visibility: "public",
+    }).toString()}`
+  ).then((res) => res.json() as Promise<NonNullable<Project.Frontend>[]>)
+);
 export const userProjects = z.function(z.tuple([z.string()])).implement(async (token) =>
   fetch(`${API_BASE}/user/projects/all`, {
     headers: {

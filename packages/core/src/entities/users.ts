@@ -51,7 +51,18 @@ export const findById = z.function(z.tuple([z.string()])).implement(async (input
     where: (users, operations) => operations.eq(users.id, input),
     with: {
       profile: true,
-      projects: true,
+      projects: {
+        with: {
+          stack: {
+            with: {
+              usedByTechnologies: {
+                with: { technology: true },
+              },
+            },
+          },
+          participants: true,
+        },
+      },
       project_participants: {
         with: {
           project: true,
