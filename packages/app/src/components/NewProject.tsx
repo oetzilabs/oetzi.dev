@@ -68,7 +68,7 @@ export default function NewProject() {
     return !repos.includes(name);
   };
 
-  type TabStep = "project" | "template" | "notifications" | "ci-cd" | "overview";
+  type TabStep = "project" | "stack" | "notifications" | "ci-cd" | "overview";
 
   const [currentTab, setCurrentTab] = createSignal<TabStep>("project");
   const tabSteps: {
@@ -76,16 +76,16 @@ export default function NewProject() {
     backward: Record<TabStep, TabStep | null>;
   } = {
     forward: {
-      project: "template",
-      template: "notifications",
+      project: "stack",
+      stack: "notifications",
       notifications: "ci-cd",
       "ci-cd": "overview",
       overview: null,
     },
     backward: {
       project: null,
-      template: "project",
-      notifications: "template",
+      stack: "project",
+      notifications: "stack",
       "ci-cd": "notifications",
       overview: "ci-cd",
     },
@@ -468,7 +468,23 @@ export default function NewProject() {
                     setModalOpen(false);
                   }}
                 >
-                  <span class="font-bold select-none">Create</span>
+                  <Show when={createProject.isLoading} fallback={<span class="font-bold select-none">Create</span>}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="animate-spin"
+                    >
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                    </svg>
+                    <span class="font-bold select-none">Creating</span>
+                  </Show>
                 </button>
               </div>
             </div>

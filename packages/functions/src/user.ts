@@ -78,7 +78,6 @@ export const allOrganizations = ApiHandler(async (_evt) => {
       })),
     };
   }
-
   return {
     statusCode: 200,
     headers: {
@@ -134,6 +133,7 @@ export const createStack = ApiHandler(async (evt) => {
   if (!protected_) throw new Error("No protected");
 
   const result = await Stack.create(user.id, {
+    version: "0.0.1",
     name,
     description,
     hidden: false,
@@ -153,6 +153,22 @@ export const createStack = ApiHandler(async (evt) => {
 export const allUserStacks = ApiHandler(async (_evt) => {
   const user = await getUser();
   const result = await User.allUserStacks(user.id);
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(result),
+  };
+});
+
+export const getProject = ApiHandler(async (_evt) => {
+  const user = await getUser();
+  const id = useQueryParam("id");
+  if (!id) throw new Error("No id");
+  const result = await Project.findById(id);
+  if (!result) throw new Error("No project found");
+  if (result.ownerId !== user.id) throw new Error("Not authorized");
   return {
     statusCode: 200,
     headers: {

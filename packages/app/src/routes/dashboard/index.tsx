@@ -273,7 +273,7 @@ export default function DashboardPage() {
           </Show>
         </div>
       </div>
-      <div class="grid grid-cols-4 w-full">
+      <div class="grid grid-cols-4 w-full gap-4">
         <Switch
           fallback={
             <Switch
@@ -352,7 +352,14 @@ export default function DashboardPage() {
                     </div>
                   }
                 >
-                  {(project) => <Project project={project} confirmRemoveProject={confirmRemoveProject} withMenu />}
+                  {(project) => (
+                    <Project
+                      project={project}
+                      confirmRemoveProject={confirmRemoveProject}
+                      isDeleting={deleteProject.isLoading}
+                      withMenu
+                    />
+                  )}
                 </For>
               </Match>
               <Match when={!userProjects.isSuccess && userProjects.isError}>

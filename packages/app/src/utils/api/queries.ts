@@ -105,3 +105,11 @@ export const calculateStackVersion = z.function(z.tuple([z.string(), z.string()]
     },
   }).then((r) => r.json() as Promise<string>)
 );
+
+export const project = z.function(z.tuple([z.string(), z.string()])).implement(async (token, id) =>
+  fetch(`${API_BASE}/user/projects/get?id=${encodeURIComponent(id)}`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((res) => res.json() as Promise<NonNullable<Project.Frontend>>)
+);

@@ -14,13 +14,13 @@
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
     "solid-start-node": "^0.3.7",
-    "solid-start-sst": "^2.30.4",
+    "solid-start-sst": "^2.31.0",
     "tailwindcss": "^3.3.3",
     "typescript": "^4.9.5",
     "vite": "^4.5.0"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.431.0",
+    "@aws-sdk/client-s3": "^3.433.0",
     "@internationalized/date": "^3.5.0",
     "@kobalte/core": "^0.11.1",
     "@kobalte/tailwindcss": "^0.8.0",
