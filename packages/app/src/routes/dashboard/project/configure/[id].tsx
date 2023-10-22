@@ -10,4 +10,5 @@ const ConfigureProjectPage = () => {
     </div>
   );
 };
+
 export default ConfigureProjectPage;

@@ -49,6 +49,15 @@ export const syncProjects = z.function(z.tuple([z.string()])).implement(async (t
   }).then((r) => r.json() as Promise<NonNullable<Project.Frontend>[]>)
 );
 
+export const syncProject = z.function(z.tuple([z.string(), z.string()])).implement(async (token, id) =>
+  fetch(`${API_BASE}/user/project/sync?id=${encodeURIComponent(id)}`, {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json() as Promise<NonNullable<any>>)
+);
+
 export const createStack = z
   .function(
     z.tuple([

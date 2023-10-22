@@ -33,3 +33,62 @@ export const removeRepository = z.function(z.tuple([z.string(), z.string()])).im
   });
   return status;
 });
+
+export const getRepository = z.function(z.tuple([z.string(), z.string()])).implement(async (auth, repo) => {
+  const octokit = new Octokit({
+    auth,
+  });
+  const { data } = await octokit.repos.get({
+    owner: repo.split("/")[0],
+    repo: repo.split("/")[1],
+  });
+  return data;
+});
+
+export const getFiles = z
+  .function(z.tuple([z.string(), z.string(), z.array(z.string())]))
+  .implement(async (auth, repo, paths) => {
+    const octokit = new Octokit({
+      auth,
+    });
+    let files = [];
+    for await (const path of paths) {
+      const { data } = await octokit.repos.getContent({
+        owner: repo.split("/")[0],
+        repo: repo.split("/")[1],
+        path,
+      });
+      if (Array.isArray(data)) {
+        files.push(...data);
+      } else {
+        files.push(data);
+      }
+    }
+
+    return files;
+  });
+
+export const readFileContent = z
+  .function(z.tuple([z.string(), z.string(), z.string()]))
+  .implement(async (auth, repo, path) => {
+    const octokit = new Octokit({
+      auth,
+    });
+    const { data } = await octokit.repos.getContent({
+      owner: repo.split("/")[0],
+      repo: repo.split("/")[1],
+      path,
+    });
+    if (!Array.isArray(data) && data.type === "file")
+      return [Buffer.from(data.content, data.encoding as BufferEncoding).toString()];
+    else if (Array.isArray(data)) {
+      return (
+        data.filter((d) => d.type === "file").filter((d) => d.content !== undefined) as unknown as Array<{
+          content: string;
+          encoding: BufferEncoding;
+        }>
+      ).map((d) => Buffer.from(d.content, d.encoding as BufferEncoding).toString());
+    } else {
+      return [];
+    }
+  });

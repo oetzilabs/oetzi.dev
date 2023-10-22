@@ -113,3 +113,13 @@ export const project = z.function(z.tuple([z.string(), z.string()])).implement(a
     },
   }).then((res) => res.json() as Promise<NonNullable<Project.Frontend>>)
 );
+
+export const analyzeProject = z.function(z.tuple([z.string(), z.string()])).implement(async (token, id) =>
+  fetch(`${API_BASE}/user/projects/analyze?id=${encodeURIComponent(id)}`, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  }).then((res) => res.json() as Promise<NonNullable<Array<string>>>)
+);

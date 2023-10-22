@@ -7,6 +7,7 @@ import { Octokit } from "@octokit/rest";
 import { User } from "./users";
 import { organizations } from "../../../app/src/utils/api/queries";
 import { GitHub } from "../github";
+import { type Node } from "typescript";
 
 export * as Project from "./projects";
 
@@ -168,6 +169,44 @@ export const updateName = z
   .function(z.tuple([z.object({ id: z.string().uuid(), name: z.string() })]))
   .implement(async (input) => {
     return update({ id: input.id, name: input.name });
+  });
+
+export const analyze = z
+  .function(z.tuple([z.array(z.string()), z.array(z.string())]))
+  .implement(async (fileContents: Array<string>, exclude: Array<string>) => {
+    const imports = fileContents
+      .map((fc) =>
+        fc
+          .split("\n")
+          .filter((x) => x.startsWith("import"))
+          .map((x) => (x.endsWith(";") ? x.slice(0, -1) : x))
+      )
+      .flat();
+    //find similar to `sst/constructs` and `sst/construct/*`
+
+    const constructs: Array<string> = [];
+    for (let j = 0; j < imports.length; j++) {
+      const imp = imports[j];
+      const [parts, pkg] = imp.split('from "');
+      if (pkg) {
+        const [pkgName] = pkg.split("/");
+        if (pkgName === "sst") {
+          const [, x] = parts.split("import {");
+          const [y] = x.split("}");
+          const module = y.split(",").map((c) => c.replaceAll(" ", ""));
+          for (let i = 0; i < module.length; i++) {
+            if (module[i][0] === module[i][0].toUpperCase()) constructs.push(module[i]);
+          }
+        }
+      }
+    }
+    return constructs.filter((x) => !exclude.includes(x));
+  });
+
+export const updateStack = z
+  .function(z.tuple([z.object({ id: z.string().uuid(), stackId: z.string().uuid() })]))
+  .implement(async (input) => {
+    return update({ id: input.id, stackId: input.stackId });
   });
 
 export const parse = CreateProjectZod.parse;

@@ -176,6 +176,22 @@ export const calculateVersion = z.function(z.tuple([z.string(), z.boolean()])).i
   }`;
 });
 
+export const findFromConstructs = z.function(z.tuple([z.array(z.string())])).implement(async (constructs) => {
+  // check if the constructs (technologies) exist in the database and if so return the stack that uses them
+  const _constructs = await db.query.technologies.findMany({
+    where: (technologies, operations) => operations.inArray(technologies.name, constructs),
+    with: {
+      stacks: {
+        with: { stack: true },
+      },
+    },
+  });
+  const stacks = _constructs.map((c) => c.stacks.map((s) => s.stack));
+  const stackSet = new Set(stacks.flat());
+  const stackArray = Array.from(stackSet);
+  return stackArray;
+});
+
 export type Frontend = NonNullable<Awaited<ReturnType<typeof findById>>>;
 
 export type Stack = StackSelect;

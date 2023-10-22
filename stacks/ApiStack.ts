@@ -113,6 +113,12 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the get user project function",
         },
       },
+      "GET /user/projects/analyze": {
+        function: {
+          handler: "packages/functions/src/projects.analyze",
+          description: "This is the analyze project function",
+        },
+      },
       "POST /user/projects/create": {
         function: {
           handler: "packages/functions/src/projects.create",
@@ -135,6 +141,12 @@ export function ApiStack({ stack }: StackContext) {
         function: {
           handler: "packages/functions/src/user.syncProjects",
           description: "This is the sync projects function",
+        },
+      },
+      "POST /user/project/sync": {
+        function: {
+          handler: "packages/functions/src/projects.syncById",
+          description: "This is the sync project function",
         },
       },
       "GET /user/projects/participated": {
