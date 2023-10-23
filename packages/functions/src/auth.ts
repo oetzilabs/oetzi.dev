@@ -9,6 +9,7 @@ export const sessions = createSessionBuilder<{
   user: {
     id: string;
     email: string;
+    expiresAt: Date | null;
   };
 }>();
 
@@ -80,6 +81,7 @@ export const handler = AuthHandler({
             properties: {
               id: userRecord.id,
               email: userRecord.email,
+              expiresAt: expires_at ? dayjs.unix(expires_at).toDate() : null,
             },
           });
         }

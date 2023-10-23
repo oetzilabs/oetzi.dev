@@ -5,6 +5,7 @@ type UseAuth = {
   isLoading: boolean;
   isAuthenticated: boolean;
   token: string | null;
+  expiresAt: Date | null;
   user: User.Frontend | null;
 };
 
@@ -13,6 +14,7 @@ export const AuthContext = createContext<[Accessor<UseAuth>, Setter<UseAuth>]>([
     isLoading: true,
     isAuthenticated: false,
     token: null,
+    expiresAt: null,
     user: null,
   })) as Accessor<UseAuth>,
   (() => {}) as Setter<UseAuth>,
@@ -23,6 +25,7 @@ export const AuthP = (props: { children: any }) => {
     isLoading: true,
     isAuthenticated: false,
     token: null,
+    expiresAt: null,
     user: null,
   });
   return <AuthContext.Provider value={[AuthStore, setAuthStore]}>{props.children}</AuthContext.Provider>;

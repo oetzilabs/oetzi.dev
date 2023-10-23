@@ -6,9 +6,10 @@ import { User, getFreshAccessToken } from "../../core/src/entities/users";
 import { getUser } from "./utils";
 import { Stack } from "@oetzidev/core/entities/stacks";
 import { StatusCodes } from "http-status-codes";
+import { GitHub } from "@oetzidev/core/github";
 
 export const allProjects = ApiHandler(async (_evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   const result = await Project.allByUser(user.id);
   return {
     statusCode: 200,
@@ -20,7 +21,7 @@ export const allProjects = ApiHandler(async (_evt) => {
 });
 
 export const participatedProjects = ApiHandler(async (_evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   const result = await Project.allByUser(user.id);
   return {
     statusCode: 200,
@@ -32,7 +33,7 @@ export const participatedProjects = ApiHandler(async (_evt) => {
 });
 
 export const syncProjects = ApiHandler(async (_evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   const result = await Project.allByUser(user.id);
   return {
     statusCode: 200,
@@ -44,7 +45,7 @@ export const syncProjects = ApiHandler(async (_evt) => {
 });
 
 export const allOrganizations = ApiHandler(async (_evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   const freshAccessToken = await getFreshAccessToken(user.id);
 
   const okto = new Octokit({
@@ -92,7 +93,7 @@ export const projectIsAvailable = ApiHandler(async (_evt) => {
   const org = useQueryParam("organization");
   if (!name) throw new Error("No name");
   if (!org) throw new Error("No organization");
-  const user = await getUser();
+  const [user] = await getUser();
   const hasAccessTokens = user.sessions.find((s) => s.access_token);
   if (!hasAccessTokens) throw new Error("No access tokens found");
   const access_token = hasAccessTokens.access_token;
@@ -118,7 +119,7 @@ export const projectIsAvailable = ApiHandler(async (_evt) => {
 });
 
 export const createStack = ApiHandler(async (evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   if (!user) throw new Error("User not found");
   const form = useFormData();
   if (!form) throw new Error("No form data");
@@ -151,7 +152,7 @@ export const createStack = ApiHandler(async (evt) => {
 });
 
 export const allUserStacks = ApiHandler(async (_evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   const result = await User.allUserStacks(user.id);
   return {
     statusCode: 200,
@@ -163,12 +164,60 @@ export const allUserStacks = ApiHandler(async (_evt) => {
 });
 
 export const getProject = ApiHandler(async (_evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   const id = useQueryParam("id");
   if (!id) throw new Error("No id");
   const result = await Project.findById(id);
   if (!result) throw new Error("No project found");
   if (result.ownerId !== user.id) throw new Error("Not authorized");
+  const userToken = await User.getFreshAccessToken(user.id);
+  const constructTypes = {
+    Auth: "auth",
+    SolidStartSite: "solidstartsite",
+    Api: "api",
+    Config: "config",
+  } as const;
+  const constructHrefs = {
+    Auth: "/api/link/constructs?type=auth",
+    SolidStartSite: "/api/link/constructs?type=solidstartsite",
+    Api: "/api/link/constructs?type=api",
+    Config: "/api/link/constructs?type=config",
+  } as const;
+  type ConstructKeys = keyof typeof constructTypes;
+  let result_: typeof result & {
+    constructs?: Array<{
+      id: (typeof constructTypes)[ConstructKeys];
+      type: (typeof constructTypes)[ConstructKeys];
+      name: string;
+    }>;
+  } = result;
+  const isEmpty = await GitHub.isEmptyRepository(userToken, result_.name);
+  if (!isEmpty) {
+    const files = await GitHub.getFiles(userToken, result_.name, ["stacks"]);
+    const fileContents: Array<string> = [];
+
+    for await (const file of files) {
+      const _file = await GitHub.readFileContent(userToken, result_.name, file.path);
+      fileContents.push(..._file);
+    }
+
+    const constructs = await Project.analyze(fileContents, ["StackContext", "use"]);
+    const s = Array.from(constructs).sort();
+    const result = s.map((s) => ({
+      id: constructTypes[s as keyof typeof constructTypes],
+      type: constructTypes[s as keyof typeof constructTypes],
+      href: constructHrefs[s as keyof typeof constructTypes],
+      name: s,
+    }));
+    result_.constructs = result;
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(result_),
+    };
+  }
   return {
     statusCode: 200,
     headers: {

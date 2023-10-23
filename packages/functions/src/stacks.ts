@@ -9,7 +9,7 @@ import { User } from "@oetzidev/core/entities/users";
 import { Project } from "@oetzidev/core/entities/projects";
 
 export const all = ApiHandler(async (_evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   if (!user) throw new Error("User not found");
   const stacks = await Stack.all();
   return {
@@ -22,7 +22,7 @@ export const all = ApiHandler(async (_evt) => {
 });
 
 export const checkUrl = ApiHandler(async (evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   if (!user) throw new Error("User not found");
   const form = useFormData();
   if (!form) throw new Error("No form data");
@@ -44,7 +44,7 @@ export const checkUrl = ApiHandler(async (evt) => {
 });
 
 export const checkFile = ApiHandler(async (evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   if (!user) throw new Error("User not found");
   const form = useFormData();
   if (!form) throw new Error("No form data");
@@ -82,7 +82,7 @@ export const checkFile = ApiHandler(async (evt) => {
 });
 
 export const calculateVersion = ApiHandler(async (evt) => {
-  const user = await getUser();
+  const [user] = await getUser();
   if (!user) throw new Error("User not found");
   const name = useQueryParam("name");
   if (!name) throw new Error("No name");

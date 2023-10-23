@@ -7,6 +7,7 @@ export type SessionResult =
   | {
       success: true;
       user: Awaited<ReturnType<typeof User.findById>>;
+      expiresAt: Date | null;
     }
   | {
       success: false;
@@ -14,7 +15,7 @@ export type SessionResult =
     };
 
 export const handler = ApiHandler(async (x) => {
-  const user = await getUser(x);
+  const [user, expiresAt] = await getUser();
   if (user instanceof Error) {
     return {
       headers: {
@@ -44,7 +45,7 @@ export const handler = ApiHandler(async (x) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ success: true, user: user_ } as SessionResult),
+    body: JSON.stringify({ success: true, user: user_, expiresAt } as SessionResult),
     statusCode: StatusCodes.OK,
   };
 });

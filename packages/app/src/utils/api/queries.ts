@@ -4,6 +4,7 @@ import { Stack } from "@oetzidev/core/entities/stacks";
 import { Technology } from "@oetzidev/core/entities/technologies";
 import { z } from "zod";
 import { SessionResult } from "../../../../functions/src/session";
+import { ConstructIcons } from "../../components/ConstructsIcons";
 
 export * as Queries from "./queries";
 
@@ -111,7 +112,21 @@ export const project = z.function(z.tuple([z.string(), z.string()])).implement(a
     headers: {
       authorization: `Bearer ${token}`,
     },
-  }).then((res) => res.json() as Promise<NonNullable<Project.Frontend>>)
+  }).then(
+    (res) =>
+      res.json() as Promise<
+        NonNullable<
+          Project.Frontend & {
+            constructs?: Array<{
+              id: string;
+              type: keyof typeof ConstructIcons;
+              href: string;
+              name: string;
+            }>;
+          }
+        >
+      >
+  )
 );
 
 export const analyzeProject = z.function(z.tuple([z.string(), z.string()])).implement(async (token, id) =>
@@ -121,5 +136,16 @@ export const analyzeProject = z.function(z.tuple([z.string(), z.string()])).impl
       authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-  }).then((res) => res.json() as Promise<NonNullable<Array<string>>>)
+  }).then(
+    (res) =>
+      res.json() as Promise<
+        NonNullable<
+          Array<{
+            id: string;
+            type: keyof typeof ConstructIcons;
+            name: string;
+          }>
+        >
+      >
+  )
 );

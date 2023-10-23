@@ -11,5 +11,5 @@ export const getUser = async () => {
   if (!user) {
     throw new Error("User not found");
   }
-  return user;
+  return [user, s.properties.expiresAt] as const;
 };

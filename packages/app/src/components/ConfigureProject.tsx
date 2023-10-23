@@ -4,6 +4,8 @@ import { Queries } from "../utils/api/queries";
 import { useAuth } from "./Auth";
 import { cn } from "../utils/cn";
 import { Mutations } from "../utils/api/mutations";
+import { ConstructIcons } from "./ConstructsIcons";
+import { A } from "@solidjs/router";
 
 type ConfigureProjectProps = {
   projectId: string;
@@ -26,26 +28,7 @@ export const ConfigureProject = (props: ConfigureProjectProps) => {
         // const token = u.token;
         return !u.isLoading && u.isAuthenticated;
       },
-      refetchInterval: 5_000,
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  const analysis = createQuery(
-    () => ["analysis", props.projectId],
-    () => {
-      const u = user();
-      const token = u.token;
-      if (!token) return Promise.reject("You are not logged in.");
-      return Queries.analyzeProject(token, props.projectId);
-    },
-    {
-      get enabled() {
-        const u = user();
-        // const token = u.token;
-        return !u.isLoading && u.isAuthenticated && project.isSuccess;
-      },
-      refetchInterval: 5_000,
+      refetchInterval: 0,
       refetchOnWindowFocus: false,
     }
   );
@@ -154,11 +137,36 @@ export const ConfigureProject = (props: ConfigureProjectProps) => {
               <div class="w-full flex flex-col gap-2.5">
                 <span>{(data().description ?? "").length > 0 ? data().description : "No description"}</span>
               </div>
-              <Switch fallback={<div class="w-full flex flex-col gap-2.5"></div>}>
-                <Match when={!analysis.isLoading && analysis.isSuccess && analysis.data}>
-                  {(data) => (
-                    <div class="w-full flex flex-col gap-2.5">
-                      <For each={data()}>{(stack) => <div class="w-full flex flex-col gap-2.5">{stack}</div>}</For>
+              <Switch
+                fallback={
+                  <div class="w-full flex flex-col gap-2.5">
+                    <div class="w-full flex flex-row items-center justify-center p-10 bg-black dark:bg-white text-white dark:text-black rounded-md font-semibold text-sm">
+                      There are no constructs in this project.
+                    </div>
+                  </div>
+                }
+              >
+                <Match when={(project.data?.constructs ?? []).length > 0 && (project.data?.constructs ?? [])}>
+                  {(constructs) => (
+                    <div class="w-full grid grid-cols-4 gap-2.5">
+                      <For each={constructs()}>
+                        {(construct) => (
+                          <A
+                            href={`constructs/${construct.id}`}
+                            class="bg-black dark:bg-white p-4 text-white dark:text-black font-bold w-full flex flex-col gap-2.5 rounded-md hover:bg-neutral-900 dark:hover:bg-neutral-100 active:bg-neutral-800 dark:active:bg-neutral-200"
+                          >
+                            <div class="text-xs font-normal">{ConstructIcons[construct.type]}</div>
+                            <span>{construct.name}</span>
+                            <A
+                              target="_blank"
+                              href={construct.href}
+                              class="bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-200 dark:active:bg-neutral-800 px-2.5 py-1 items-center flex flex-row gap-2.5 text-black dark:text-white w-max"
+                            >
+                              <span>More Info</span>
+                            </A>
+                          </A>
+                        )}
+                      </For>
                     </div>
                   )}
                 </Match>

@@ -6,6 +6,7 @@ import { parseCookie } from "solid-start";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
 import { useAuth } from "./Auth";
+import dayjs from "dayjs";
 
 export const UserMenu = () => {
   const [isEnabled, setIsEnabled] = createSignal(true);
@@ -30,7 +31,14 @@ export const UserMenu = () => {
         const _as = AuthStore();
         return _as.token !== null;
       },
-      refetchInterval: 1000 * 60 * 5,
+      refetchInterval: (data, query) => {
+        let interval = 5_000;
+        if (data && data.success) {
+          if (data.expiresAt) interval = 60_000 * 15; // 15 minutes
+        }
+        return interval;
+      },
+      refetchOnWindowFocus: false,
     }
   );
 
@@ -38,10 +46,13 @@ export const UserMenu = () => {
     const isLoading = sessionQuery.isLoading;
     const isAuthenticated = sessionQuery.data?.success && sessionQuery.data?.user ? true : false ?? false;
     let user = null;
+    let expiresAt = null;
     switch (sessionQuery.data?.success ?? false) {
       case true:
         // @ts-ignore
         user = sessionQuery.data?.user;
+        // @ts-ignore
+        expiresAt = sessionQuery.data?.expiresAt;
         break;
       case false:
         user = null;
@@ -54,6 +65,7 @@ export const UserMenu = () => {
     const sessionToken = cookie["session"];
 
     setAuthStore({
+      expiresAt,
       isLoading,
       isAuthenticated,
       token: sessionToken,
@@ -67,6 +79,7 @@ export const UserMenu = () => {
     setAuthStore({
       isLoading: false,
       isAuthenticated: false,
+      expiresAt: null,
       token: null,
       user: null,
     });

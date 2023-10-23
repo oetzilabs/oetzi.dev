@@ -92,3 +92,15 @@ export const readFileContent = z
       return [];
     }
   });
+
+export const isEmptyRepository = z.function(z.tuple([z.string(), z.string()])).implement(async (auth, repo) => {
+  const octokit = new Octokit({
+    auth,
+  });
+  const { data } = await octokit.repos.getContent({ path: "", owner: repo.split("/")[0], repo: repo.split("/")[1] });
+  let x = false;
+  if (Array.isArray(data)) {
+    x = data.length === 0;
+  }
+  return x;
+});
