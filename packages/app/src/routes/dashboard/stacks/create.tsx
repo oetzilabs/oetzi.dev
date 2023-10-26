@@ -1,5 +1,5 @@
 import { createQuery } from "@tanstack/solid-query";
-import { useAuth } from "../../../components/Auth";
+import { useAuth } from "../../../components/providers/OfflineFirst";
 import { CreateStack } from "../../../components/CreateStack";
 import { Queries } from "../../../utils/api/queries";
 

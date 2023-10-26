@@ -1,5 +1,5 @@
 import { JSX, Setter, createContext, createSignal, useContext, Accessor, createEffect } from "solid-js";
-import { cn } from "../utils/cn";
+import { cn } from "../../utils/cn";
 
 export const HeaderContext = createContext({
   visible: () => true,

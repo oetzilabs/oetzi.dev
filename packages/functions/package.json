@@ -20,9 +20,9 @@
   "devDependencies": {
     "@libsql/linux-x64-gnu": "0.1.29",
     "@types/aws-lambda": "^8.10.125",
-    "@types/node": "^20.8.7",
+    "@types/node": "^20.8.9",
     "@types/uuid": "9.0.5",
-    "sst": "^2.31.0",
+    "sst": "^2.32.1",
     "vitest": "^0.34.6"
   }
 }

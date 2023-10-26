@@ -1,7 +1,7 @@
 import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
 import { For, Match, Show, Switch, createEffect, createSignal } from "solid-js";
 import { toast } from "solid-toast";
-import { useAuth } from "../../components/Auth";
+import { useAuth } from "../../components/providers/OfflineFirst";
 import NewProject from "../../components/NewProject";
 import { Mutations } from "../../utils/api/mutations";
 import { Queries } from "../../utils/api/queries";
@@ -9,6 +9,7 @@ import { cn } from "../../utils/cn";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import { Project } from "../../components/Project";
+import { useOfflineFirst } from "../../components/providers/OfflineFirst";
 dayjs.extend(advancedFormat);
 
 function FakeProgressBar(props: { time: number }) {
@@ -37,6 +38,7 @@ function FakeProgressBar(props: { time: number }) {
 
 export default function DashboardPage() {
   const [user] = useAuth();
+  const offlineFirst = useOfflineFirst();
   const [timer, setTimer] = createSignal(false);
   const [timerInterval, setTimerInterval] = createSignal(5);
   const queryClient = useQueryClient();
@@ -69,24 +71,6 @@ export default function DashboardPage() {
           syncProjects.reset();
         }, 5500);
       },
-    }
-  );
-
-  const userProjects = createQuery(
-    () => ["user_projects"],
-    () => {
-      const u = user();
-      const token = u.token;
-      if (!token) return Promise.reject("You are not logged in.");
-      return Queries.userProjects(token);
-    },
-    {
-      get enabled() {
-        const u = user();
-        return !u.isLoading && u.isAuthenticated && u.token !== null;
-      },
-      refetchInterval: 60_000,
-      refetchOnWindowFocus: false,
     }
   );
 
@@ -173,14 +157,14 @@ export default function DashboardPage() {
   };
 
   return (
-    <div class="container mx-auto flex flex-col gap-8 py-10">
-      <div class="flex flex-row items-center justify-between">
-        <h1 class="text-3xl font-bold">Dashboard</h1>
-      </div>
-      <div class="flex flex-row items-center justify-between">
-        <h2 class="text-2xl font-bold">Projects</h2>
-        <div>
-          <Show when={user().isAuthenticated}>
+    <Show when={user().isAuthenticated}>
+      <div class="container mx-auto flex flex-col gap-8 py-10">
+        <div class="flex flex-row items-center justify-between">
+          <h1 class="text-3xl font-bold">Dashboard</h1>
+        </div>
+        <div class="flex flex-row items-center justify-between">
+          <h2 class="text-2xl font-bold">Projects</h2>
+          <div>
             <button
               class={cn(
                 "flex flex-row items-center justify-center gap-3 px-2.5 py-1",
@@ -270,110 +254,30 @@ export default function DashboardPage() {
                 </Match>
               </Switch>
             </button>
-          </Show>
+          </div>
+        </div>
+        <div class="grid grid-cols-4 w-full gap-4">
+          <For
+            each={offlineFirst.userProjects()}
+            fallback={
+              <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.01] gap-6 rounded-md backdrop-blur-sm border border-black/5 dark:border-white/5">
+                <h3 class="text-xl font-bold">No Projects</h3>
+                <p class="text-lg font-medium">You have no projects.</p>
+                <NewProject />
+              </div>
+            }
+          >
+            {(project) => (
+              <Project
+                project={project}
+                confirmRemoveProject={confirmRemoveProject}
+                isDeleting={deleteProject.isLoading}
+                withMenu
+              />
+            )}
+          </For>
         </div>
       </div>
-      <div class="grid grid-cols-4 w-full gap-4">
-        <Switch
-          fallback={
-            <Switch
-              fallback={
-                <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.02] gap-6 rounded-md backdrop-blur-sm text-neutral-500">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="animate-spin"
-                  >
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                  </svg>
-                </div>
-              }
-            >
-              <Match when={projects.isSuccess}>
-                <For
-                  each={projects.data}
-                  fallback={
-                    <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.02] gap-6 rounded-md backdrop-blur-sm border border-black/5 dark:border-white/5">
-                      <h3 class="text-xl font-medium">There are currently no projects listed</h3>
-                      <p class="text-md">Please check in on a later time!</p>
-                    </div>
-                  }
-                >
-                  {(project) => <Project project={project} confirmRemoveProject={confirmRemoveProject} />}
-                </For>
-              </Match>
-              <Match when={!projects.isSuccess && projects.isError}>
-                <div class="col-span-4 w-full p-10 flex flex-col items-center justify-center bg-red-50 dark:bg-red-950 rounded-md">
-                  <div class="bg-white dark:bg-black text-black dark:text-white p-2 rounded-md shadow-md">
-                    <h3 class="text-xl font-bold">Error</h3>
-                    <p class="text-lg font-medium">{JSON.stringify(projects.error)}</p>
-                  </div>
-                </div>
-              </Match>
-            </Switch>
-          }
-        >
-          <Match when={user().isAuthenticated}>
-            <Switch
-              fallback={
-                <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.02] gap-6 rounded-md backdrop-blur-sm text-neutral-500">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="animate-spin"
-                  >
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                  </svg>
-                </div>
-              }
-            >
-              <Match when={userProjects.isSuccess}>
-                <For
-                  each={userProjects.data}
-                  fallback={
-                    <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.01] gap-6 rounded-md backdrop-blur-sm border border-black/5 dark:border-white/5">
-                      <h3 class="text-xl font-bold">No Projects</h3>
-                      <p class="text-lg font-medium">You have no projects.</p>
-                      <NewProject />
-                    </div>
-                  }
-                >
-                  {(project) => (
-                    <Project
-                      project={project}
-                      confirmRemoveProject={confirmRemoveProject}
-                      isDeleting={deleteProject.isLoading}
-                      withMenu
-                    />
-                  )}
-                </For>
-              </Match>
-              <Match when={!userProjects.isSuccess && userProjects.isError}>
-                <div class="col-span-4 w-full p-10 flex flex-col items-center justify-center">
-                  <div class="bg-white dark:bg-black text-black dark:text-white p-2 rounded-md shadow-md">
-                    <h3 class="text-xl font-bold">Error</h3>
-                    <p class="text-lg font-medium">{JSON.stringify(userProjects.error)}</p>
-                  </div>
-                </div>
-              </Match>
-            </Switch>
-          </Match>
-        </Switch>
-      </div>
-    </div>
+    </Show>
   );
 }

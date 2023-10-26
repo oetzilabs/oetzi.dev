@@ -5,7 +5,7 @@ import { Match, Show, Suspense, Switch, createEffect, createSignal } from "solid
 import { parseCookie } from "solid-start";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
-import { useAuth } from "./Auth";
+import { useAuth } from "./providers/OfflineFirst";
 import dayjs from "dayjs";
 
 export const UserMenu = () => {

@@ -8,11 +8,11 @@ import { z } from "zod";
 import { Mutations } from "../utils/api/mutations";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
-import { useAuth } from "./Auth";
+import { useAuth } from "./providers/OfflineFirst";
 import Highlight from "./CodePreview";
 import "highlight.js/styles/obsidian.min.css";
 
-const DefaultTemplate: Parameters<typeof Mutations.createStack>[1] = {
+const DefaultTemplate: Parameters<typeof Mutations.Stacks.create>[1] = {
   name: "",
   version: "",
   s3Key: "",
@@ -117,17 +117,17 @@ export const CreateStack = (props: CreateStackProps) => {
     preview: null,
   });
 
-  const [stack, setStack] = createSignal<Parameters<typeof Mutations.createStack>[1]>(DefaultTemplate);
+  const [stack, setStack] = createSignal<Parameters<typeof Mutations.Stacks.create>[1]>(DefaultTemplate);
 
   const setName = debounce(setStack, 500);
 
-  const createTemplate = createMutation((template: Parameters<typeof Mutations.createStack>[1]) => {
+  const createTemplate = createMutation((template: Parameters<typeof Mutations.Stacks.create>[1]) => {
     const u = user();
     if (!u.isAuthenticated) return Promise.reject("You are not logged in.");
     const token = u.token;
     if (!token) return Promise.reject("You are not logged in.");
 
-    return Mutations.createStack(token, template);
+    return Mutations.Stacks.create(token, template);
   });
 
   const stackVersion = createQuery(
@@ -184,7 +184,7 @@ export const CreateStack = (props: CreateStackProps) => {
     const token = u.token;
     if (!token) return Promise.reject("You are not logged in.");
 
-    return Mutations.checkStackFromUrl(token, url);
+    return Mutations.Stacks.checkFromUrl(token, url);
   });
 
   const checkStackFromFile = createMutation((file: string) => {
@@ -193,7 +193,7 @@ export const CreateStack = (props: CreateStackProps) => {
     const token = u.token;
     if (!token) return Promise.reject("You are not logged in.");
 
-    return Mutations.checkStackFromFile(token, file);
+    return Mutations.Stacks.checkFromFile(token, file);
   });
 
   return (

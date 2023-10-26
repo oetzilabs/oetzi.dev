@@ -1,6 +1,6 @@
 import { JSX } from "solid-js";
 import { FileRoutes, Routes } from "solid-start";
-import { useHeader } from "./Header";
+import { useHeader } from "./providers/Header";
 import { cn } from "../utils/cn";
 import Background from "./Background";
 

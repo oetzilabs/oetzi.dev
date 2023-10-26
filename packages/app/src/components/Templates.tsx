@@ -1,6 +1,6 @@
 import { createQuery } from "@tanstack/solid-query";
 import { Queries } from "../utils/api/queries";
-import { useAuth } from "./Auth";
+import { useAuth } from "./providers/OfflineFirst";
 import { Switch, Match, For } from "solid-js";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";

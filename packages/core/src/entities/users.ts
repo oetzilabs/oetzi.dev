@@ -61,11 +61,16 @@ export const findById = z.function(z.tuple([z.string()])).implement(async (input
             },
           },
           participants: true,
+          user: true,
         },
       },
       project_participants: {
         with: {
-          project: true,
+          project: {
+            with: {
+              user: true,
+            },
+          },
         },
       },
       sessions: true,

@@ -4,7 +4,7 @@ import { For, Match, Show, Switch, createEffect, createSignal } from "solid-js";
 import { Mutations } from "../utils/api/mutations";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
-import { useAuth } from "./Auth";
+import { useAuth } from "./providers/OfflineFirst";
 import { Modal } from "./Modal";
 
 const DefaultProject = {
@@ -13,19 +13,19 @@ const DefaultProject = {
   protected: "",
   visibility: "private",
   org: "",
-} as Parameters<typeof Mutations.createProject>[1];
+} as Parameters<typeof Mutations.Projects.create>[1];
 
 export default function NewProject() {
   const [user] = useAuth();
   const queryClient = useQueryClient();
   const createProject = createMutation(
-    async (input: Parameters<typeof Mutations.createProject>[1]) => {
+    async (input: Parameters<typeof Mutations.Projects.create>[1]) => {
       let u = user();
       if (!u) return;
       if (!u.isAuthenticated) return;
       if (!u.token) return;
 
-      return Mutations.createProject(u.token, input);
+      return Mutations.Projects.create(u.token, input);
     },
     {
       onSuccess: async () => {
@@ -36,7 +36,7 @@ export default function NewProject() {
   );
 
   const [modalOpen, setModalOpen] = createSignal(false);
-  const [project, setProject] = createSignal<Parameters<typeof Mutations.createProject>[1]>(DefaultProject);
+  const [project, setProject] = createSignal<Parameters<typeof Mutations.Projects.create>[1]>(DefaultProject);
 
   const organizations = createQuery(
     () => ["organizations"],
@@ -337,7 +337,7 @@ export default function NewProject() {
                 </Show>
               </TextField.Root>
               <Select.Root
-                defaultValue={"private" as Parameters<typeof Mutations.createProject>[1]["visibility"]}
+                defaultValue={"private" as Parameters<typeof Mutations.Projects.create>[1]["visibility"]}
                 value={project().visibility}
                 disabled={organizations.isLoading || project().org.length === 0}
                 placeholder="Select a visibility"
@@ -347,7 +347,7 @@ export default function NewProject() {
                 name="repositoy-visiblity"
                 placement="bottom-start"
                 required
-                options={["private", "public"] as Parameters<typeof Mutations.createProject>[1]["visibility"][]}
+                options={["private", "public"] as Parameters<typeof Mutations.Projects.create>[1]["visibility"][]}
                 itemComponent={(props) => (
                   <Select.Item
                     item={props.item}
@@ -377,7 +377,7 @@ export default function NewProject() {
                   <Select.Trigger>
                     <div class="p-2 py-1 w-full bg-neutral-50 dark:bg-neutral-950 rounded-md border border-neutral-200 dark:border-neutral-800 flex flex-row gap-2 items-center justify-center">
                       <Select.Value<
-                        Parameters<typeof Mutations.createProject>[1]["visibility"]
+                        Parameters<typeof Mutations.Projects.create>[1]["visibility"]
                       > class="font-bold select-none capitalize">
                         {(state) => state.selectedOption()}
                       </Select.Value>

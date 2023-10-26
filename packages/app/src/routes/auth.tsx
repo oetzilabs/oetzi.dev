@@ -1,6 +1,7 @@
 import { createMutation } from "@tanstack/solid-query";
-import { createEffect } from "solid-js";
+import { createEffect, onMount } from "solid-js";
 import { useSearchParams } from "solid-start";
+import { useOfflineFirst } from "../components/providers/OfflineFirst";
 
 const AuthPage = () => {
   const [sp] = useSearchParams<{ code: string; redirect: string }>();
@@ -17,10 +18,16 @@ const AuthPage = () => {
     }).then((r) => r.json() as Promise<{ access_token: string }>);
   });
 
+  const offlineFirst = useOfflineFirst();
+
   createEffect(async () => {
     const token = sp.code;
+    if (!token) return;
     const session_set = await x.mutateAsync(token);
     if (session_set) {
+      // save token to indexeddb -> offlineFirst
+      await offlineFirst.saveUser(session_set.access_token);
+
       document.cookie = `session=${session_set.access_token}; path=/`;
       window.location.href = sp.redirect ?? "/";
     }

@@ -1,12 +1,9 @@
 // @refresh reload
-import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
+import { QueryClient } from "@tanstack/solid-query";
 import { Suspense, createEffect, createSignal, onCleanup } from "solid-js";
 import { Body, ErrorBoundary, Head, Html, Meta, Scripts, Title } from "solid-start";
-import { Toaster } from "solid-toast";
-import { AuthP } from "./components/Auth";
 import Content from "./components/Content";
-import { Header } from "./components/Header";
-import { UserMenu } from "./components/UserMenu";
+import { Providers } from "./components/providers";
 import "./root.css";
 
 const queryClient = new QueryClient();
@@ -53,26 +50,9 @@ export default function Root() {
       <Body class="bg-white dark:bg-black text-black dark:text-white">
         <Suspense>
           <ErrorBoundary>
-            <QueryClientProvider client={queryClient}>
-              <AuthP>
-                <Header
-                  header={
-                    <div class="flex items-center justify-between flex-wrap  container mx-auto py-2">
-                      <UserMenu />
-                    </div>
-                  }
-                >
-                  <Content />
-                </Header>
-                <Toaster
-                  position="bottom-right"
-                  gutter={8}
-                  toastOptions={{
-                    duration: 2000,
-                  }}
-                />
-              </AuthP>
-            </QueryClientProvider>
+            <Providers>
+              <Content />
+            </Providers>
           </ErrorBoundary>
         </Suspense>
         <Scripts />

@@ -1,7 +1,7 @@
 import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
 import { For, Match, Switch } from "solid-js";
 import { Queries } from "../utils/api/queries";
-import { useAuth } from "./Auth";
+import { useAuth } from "./providers/OfflineFirst";
 import { cn } from "../utils/cn";
 import { Mutations } from "../utils/api/mutations";
 import { ConstructIcons } from "./ConstructsIcons";

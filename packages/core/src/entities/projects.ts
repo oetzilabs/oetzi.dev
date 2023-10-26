@@ -3,12 +3,9 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { db } from "../drizzle/sql";
 import { ProjectSelect, projects } from "../drizzle/sql/schema";
-import { Octokit } from "@octokit/rest";
-import { User } from "./users";
-import { organizations } from "../../../app/src/utils/api/queries";
 import { GitHub } from "../github";
-import { type Node } from "typescript";
 import { GitHubUtils } from "../github/utils";
+import { User } from "./users";
 
 export * as Project from "./projects";
 
@@ -132,10 +129,18 @@ export const allByUser = z.function(z.tuple([z.string().uuid()])).implement(asyn
   let u = await db.query.users.findFirst({
     where: (users, operations) => operations.eq(users.id, input),
     with: {
-      projects: true,
+      projects: {
+        with: {
+          user: true,
+        },
+      },
       project_participants: {
         with: {
-          project: true,
+          project: {
+            with: {
+              user: true,
+            },
+          },
         },
       },
     },

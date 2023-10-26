@@ -4,7 +4,7 @@ import { For, JSX, Match, Show, Switch, createEffect, createSignal } from "solid
 import { Mutations } from "../utils/api/mutations";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
-import { useAuth } from "./Auth";
+import { useAuth } from "./providers/OfflineFirst";
 import { Modal } from "./Modal";
 
 const DefaultProject = {
