@@ -68,7 +68,7 @@ export class MyBus<
   getResults = () => {
     return this.hub.queue.value().filter((item) => item.status === "success");
   };
-  public static getInstance<
+  public static instanciate<
     TObj extends {
       [key: string]: {
         register: (props: any) => Promise<any>;

@@ -10,7 +10,7 @@ import {
 } from "solid-js";
 import { MyBus } from "../components/event/bus";
 import { useAuth } from "../components/providers/OfflineFirst";
-const bus = MyBus.getInstance<{
+const bus = MyBus.instanciate<{
   "test/test": {
     register: (props: any) => Promise<{ halloRegister: string }>;
     queue: (token: string, props: { xD: string }) => Promise<{ halloQueue: string }>;
