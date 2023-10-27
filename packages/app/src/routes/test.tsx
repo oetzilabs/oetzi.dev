@@ -53,13 +53,7 @@ export default function TestPage() {
       </For>
       <button
         onClick={async () => {
-          if (!bus) {
-            console.log("no bus()");
-            return;
-          }
-          const xd = { xD: "xD" };
-          console.log(xd);
-          await bus.queue("test/test", xd);
+          await bus.queue("test/test", { xD: "xD" });
         }}
       >
         Test
