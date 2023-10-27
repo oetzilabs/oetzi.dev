@@ -42,17 +42,11 @@ export default function TestPage() {
 
   return (
     <div class="container mx-auto flex flex-col py-10">
-      <For each={bus.getResults()}>
-        {(result) => (
-          <Switch>
-            <Match when={result.status === "success" && result.result}>
-              {(r) => (
-                <div class="bg-white dark:bg-black/[0.01] border border-black/[0.05] dark:border-white/[0.02] rounded-md p-4 mb-4">
-                  {JSON.stringify(r())}
-                </div>
-              )}
-            </Match>
-          </Switch>
+      <For each={results()}>
+        {(r) => (
+          <div class="bg-white dark:bg-black/[0.01] border border-black/[0.05] dark:border-white/[0.02] rounded-md p-4 mb-4">
+            {JSON.stringify(r)}
+          </div>
         )}
       </For>
       <button
