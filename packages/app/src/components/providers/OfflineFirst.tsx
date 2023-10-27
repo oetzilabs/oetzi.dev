@@ -9,7 +9,7 @@ import Dexie from "dexie";
 import { IDB } from "./IndexedDB";
 
 const DB_NAME = "oetzi.dev";
-type UseAuth = {
+export type UseAuth = {
   isLoading: boolean;
   isAuthenticated: boolean;
   token: string | null;

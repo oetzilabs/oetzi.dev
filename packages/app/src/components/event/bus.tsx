@@ -1,152 +1,144 @@
-import { User } from "@oetzidev/core/entities/users";
 import { createEventHub, createEventStack } from "@solid-primitives/event-bus";
-import { createEffect, createSignal } from "solid-js";
-import { Mutations } from "../../utils/api/mutations";
+import { createEffect, onCleanup } from "solid-js";
+import { UseAuth } from "../providers/OfflineFirst";
 
-type RegisterFn = (token: string, props: any) => any;
-
-const [queueProcessors, setQueueProcessors] = createSignal<Record<string, RegisterFn>>({});
-
-type Queue =
+type Queue<
+  T extends {
+    [key: string]: {
+      register: (props: any) => Promise<any>;
+      queue: (token: string, props: any) => Promise<any>;
+    };
+  }
+> =
   | {
       status: "pending";
-      type: string;
+      type: keyof T;
       id: string;
-      payload: any;
+      payload: Parameters<T[keyof T]["queue"]>[1];
     }
   | {
       status: "success";
-      type: string;
+      type: keyof T;
       id: string;
-      result: any;
+      result: Awaited<ReturnType<T[keyof T]["register"]>>;
     }
   | {
       status: "error";
-      type: string;
+      type: keyof T;
       id: string;
       error: any;
     };
+class Singleton {
+  private static instances: Map<string, any> = new Map();
 
-type UseAuth = {
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  token: string | null;
-  expiresAt: Date | null;
-  user: User.Frontend | null;
-};
-
-export const hub = createEventHub((bus) => ({
-  user: bus<UseAuth>(),
-  queue: createEventStack<Queue>(),
-}));
-
-export const login = (token: string) => {
-  hub.user.emit({
-    isLoading: false,
-    isAuthenticated: true,
-    token,
-    expiresAt: null,
-    user: null,
-  });
-};
-
-export const logout = () => {
-  hub.user.emit({
-    isLoading: false,
-    isAuthenticated: false,
-    token: null,
-    expiresAt: null,
-    user: null,
-  });
-};
-
-export const registerProcessor = <T extends string, K>(type: T, payloadFn: RegisterFn) => {
-  const oldProcessors = queueProcessors();
-  if (!oldProcessors[type]) {
-    const newProcessors = { ...oldProcessors, [type]: payloadFn };
-    setQueueProcessors(newProcessors);
-  } else {
-    console.warn(`Processor for ${type} already registered`);
+  public static getInstance<T>(key: string, createInstance: () => T): T {
+    if (!Singleton.instances.has(key)) {
+      Singleton.instances.set(key, createInstance());
+    }
+    return Singleton.instances.get(key) as T;
   }
-};
-
-export const listenToSuccess = (type: string, fn: (item: any) => void) => {
-  const unsubscribe = hub.queue.listen((item) => {
-    if (!item) return;
-    if (item.event.status !== "success") return;
-    if (item.event.type !== type) return;
-    fn(item);
-  });
-  return unsubscribe;
-};
-
-export const processQueue = (token: string) => {
-  const queue = hub.queue.listen(async (item) => {
-    if (!item) return;
-    const processors = queueProcessors();
-    const processor = processors[item.event.type];
-    if (!processor) return;
-    const status = item.event.status;
-    if (status === "success") return;
-    if (status === "error") return;
-    const result = await processor(token, item.event.payload);
-    if (!result) return;
-    hub.queue.emit({
-      status: "success",
-      type: item.event.type,
-      id: item.event.id,
-      result,
-    });
-  });
-  createEffect(() => {
-    // interval cleanup of success events
-    const interval = setInterval(() => {
-      hub.queue.setValue((q) => {
-        const oldQ = q;
-        const newQ = [];
-        for (const item of oldQ) {
-          if (item.status === "pending") continue; // skip pending
-          newQ.push(item);
-        }
-        return newQ;
-      });
-    }, 5000);
-    return () => {
-      clearInterval(interval);
+}
+export class MyBus<
+  T extends {
+    [key: string]: {
+      register: (props: any) => Promise<any>;
+      queue: (token: string, props: any) => Promise<any>;
     };
-  });
-  return queue;
-};
+  }
+> {
+  private processors: T = {} as T;
+  private token: string | null = null;
+  private hub = createEventHub((bus) => ({
+    user: bus<UseAuth>(),
+    queue: createEventStack<Queue<T>>(),
+  }));
+  private intv: NodeJS.Timeout | null = null;
 
-export const BASE_QUEUE_PROCESSORS = () => {
-  registerProcessor("project/create", (token: string, props: Parameters<typeof Mutations.Projects.create>[1]) => {
-    return Mutations.Projects.create(token, props);
-  });
-  registerProcessor("project/sync", (token: string, props: Parameters<typeof Mutations.Projects.syncOne>[1]) => {
-    return Mutations.Projects.syncOne(token, props);
-  });
-  registerProcessor("project/delete", (token: string, props: Parameters<typeof Mutations.Projects.remove>[1]) => {
-    return Mutations.Projects.remove(token, props);
-  });
-  registerProcessor("project/update", (token: string, props: Parameters<typeof Mutations.Projects.update>[1]) => {
-    return Mutations.Projects.update(token, props);
-  });
-};
-
-export const addProject = (project: Parameters<typeof Mutations.Projects.create>[1]) => {
-  hub.queue.emit({
-    type: "project/create",
-    status: "pending",
-    id: Math.random().toString(36).substring(7),
-    payload: project,
-  });
-};
-
-export const testTrigger = () => {
-  hub.queue.emit({
-    type: "test/test",
-    status: "pending",
-    id: Math.random().toString(36).substring(7),
-    payload: { haha: "hehe" },
-  });
-};
+  private constructor() {}
+  registerProcessor = <K extends keyof T>(type: K, fn: T[K]["register"]) => {
+    this.processors[type].register = fn;
+  };
+  setToken = (token: string) => {
+    this.token = token;
+    return this;
+  };
+  getProcessors = () => {
+    return this.processors;
+  };
+  getResults = () => {
+    return this.hub.queue.value().filter((item) => item.status === "success");
+  };
+  public static getInstance<
+    TObj extends {
+      [key: string]: {
+        register: (props: any) => Promise<any>;
+        queue: (token: string, props: any) => Promise<any>;
+      };
+    }
+  >(): MyBus<TObj> {
+    return Singleton.getInstance("MyBus", () => new MyBus<TObj>());
+  }
+  processQueue = () => {
+    const token = this.token;
+    const queue = this.hub.queue.listen(async (item) => {
+      if (!item) return;
+      const processors = this.getProcessors();
+      const processor = processors[item.event.type];
+      if (!processor) return;
+      const status = item.event.status;
+      if (status === "success") return;
+      if (status === "error") return;
+      if (!token) throw new Error("no token");
+      const result = await processor.queue(token, item.event.payload);
+      if (!result) return;
+      this.hub.queue.emit({
+        status: "success",
+        type: item.event.type,
+        id: item.event.id,
+        result,
+      });
+    });
+    createEffect(() => {
+      const oldInterv = this.intv;
+      if (oldInterv) return;
+      const interval = setInterval(() => {
+        this.hub.queue.setValue((q) => {
+          const oldQ = q;
+          const newQ = [];
+          for (const item of oldQ) {
+            if (item.status === "pending") continue; // skip pending
+            newQ.push(item);
+          }
+          return newQ;
+        });
+      }, 5000);
+      this.intv = interval;
+      onCleanup(() => {
+        clearInterval(interval);
+      });
+    });
+    return queue;
+  };
+  listen = (type: keyof T, fn: (item: Awaited<ReturnType<T[keyof T]["queue"]>>) => Promise<void>) => {
+    const unsubscribe = this.hub.queue.listen(async (item) => {
+      if (!item) return;
+      if (item.event.status !== "success") return;
+      if (item.event.type !== type) return;
+      await fn(item.event.result);
+    });
+    return unsubscribe;
+  };
+  queue = (type: keyof T, payload: Parameters<T[keyof T]["queue"]>[1]) => {
+    this.hub.queue.emit({
+      id: Math.random().toString(36).substring(7),
+      type,
+      status: "pending",
+      payload,
+    });
+    return this;
+  };
+  addProcessor = (type: keyof T, processor: T[keyof T]) => {
+    this.processors[type] = processor;
+    return this;
+  };
+}

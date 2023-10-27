@@ -1,4 +1,4 @@
-import { JSX, Setter, createContext, createSignal, useContext, Accessor, createEffect } from "solid-js";
+import { Accessor, JSX, Setter, createContext, createSignal, useContext } from "solid-js";
 import { cn } from "../../utils/cn";
 
 export const HeaderContext = createContext({

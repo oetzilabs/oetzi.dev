@@ -1,35 +1,78 @@
-import { createEffect } from "solid-js";
-import { listenToSuccess, processQueue, registerProcessor, testTrigger } from "../components/event/bus";
+import {
+  For,
+  Match,
+  Switch,
+  createComputed,
+  createEffect,
+  createRenderEffect,
+  createSignal,
+  onCleanup,
+} from "solid-js";
+import { MyBus } from "../components/event/bus";
 import { useAuth } from "../components/providers/OfflineFirst";
-
+const bus = MyBus.getInstance<{
+  "test/test": {
+    register: (props: any) => Promise<{ halloRegister: string }>;
+    queue: (token: string, props: { xD: string }) => Promise<{ halloQueue: string }>;
+  };
+}>().addProcessor("test/test", {
+  queue: (token, props) => {
+    console.log("queue", token, props);
+    return Promise.resolve({ halloQueue: "ballo" });
+  },
+  register: (props) => {
+    console.log("register", props);
+    return Promise.resolve({ halloRegister: "ballo" });
+  },
+});
 export default function TestPage() {
   const [user] = useAuth();
+  const [results, setResults] = createSignal<{ halloQueue: string }[]>([]);
 
   createEffect(() => {
     const u = user();
     if (!u.isAuthenticated) return;
     const token = u.token;
     if (!token) return;
-    console.log("registering processor");
-    registerProcessor("test/test", (token: string, props: { haha: "hehe" }) => {
-      return Promise.resolve({ haha: "hehe" });
+    bus.setToken(token);
+    console.log("activating processing");
+    console.log("activating listener");
+    const unsubProcessing = bus.processQueue();
+    const unsubListener = bus.listen("test/test", async (item) => {
+      if (!item) return;
+      setResults((r) => [...r, item]);
     });
-    const unsubscribe = processQueue(token);
-    const unsub2 = listenToSuccess("test/test", (item: any) => {
-      console.log("success", item);
-    });
-    return () => {
+    onCleanup(() => {
       console.log("unsubscribing");
-      unsubscribe();
-      unsub2();
-    };
+      unsubProcessing();
+      unsubListener();
+    });
   });
 
   return (
     <div class="container mx-auto flex flex-col py-10">
+      <For each={bus.getResults()}>
+        {(result) => (
+          <Switch>
+            <Match when={result.status === "success" && result.result}>
+              {(r) => (
+                <div class="bg-white dark:bg-black/[0.01] border border-black/[0.05] dark:border-white/[0.02] rounded-md p-4 mb-4">
+                  {JSON.stringify(r())}
+                </div>
+              )}
+            </Match>
+          </Switch>
+        )}
+      </For>
       <button
-        onClick={() => {
-          testTrigger();
+        onClick={async () => {
+          if (!bus) {
+            console.log("no bus()");
+            return;
+          }
+          const xd = { xD: "xD" };
+          console.log(xd);
+          await bus.queue("test/test", xd);
         }}
       >
         Test
