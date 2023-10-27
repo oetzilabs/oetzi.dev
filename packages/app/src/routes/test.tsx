@@ -1,6 +1,7 @@
 import { For, Match, Switch, createEffect, createSignal, onCleanup } from "solid-js";
 import { MyBus } from "../components/event/bus";
 import { useAuth } from "../components/providers/OfflineFirst";
+
 const bus = MyBus.instanciate<{
   "test/test": {
     register: (props: any) => Promise<{ halloRegister: string }>;
@@ -16,6 +17,7 @@ const bus = MyBus.instanciate<{
     return Promise.resolve({ halloRegister: "ballo" });
   },
 });
+
 export default function TestPage() {
   const [user] = useAuth();
   const [results, setResults] = createSignal<{ halloQueue: string }[]>([]);
