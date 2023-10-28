@@ -203,6 +203,36 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the all technologies function",
         },
       },
+      "GET /links/all": {
+        function: {
+          handler: "packages/functions/src/links.all",
+          description: "This is the all link handler function",
+        },
+      },
+      "POST /links/create": {
+        function: {
+          handler: "packages/functions/src/links.create",
+          description: "This is the create link handler function",
+        },
+      },
+      "PUT /links/update": {
+        function: {
+          handler: "packages/functions/src/links.update",
+          description: "This is the update link handler function",
+        },
+      },
+      "DELETE /links/remove": {
+        function: {
+          handler: "packages/functions/src/links.remove",
+          description: "This is the remove link handler function",
+        },
+      },
+      "GET /link/{element}": {
+        function: {
+          handler: "packages/functions/src/links.handler",
+          description: "This is the link handler function",
+        },
+      },
     },
     cors: {
       allowOrigins: ["*", "http://localhost:3000"],
@@ -229,5 +259,7 @@ export function ApiStack({ stack }: StackContext) {
     GITHUB_CLIENT_SECRET: secrets.GITHUB_CLIENT_SECRET,
     GITHUB_APP_CLIENT_ID: secrets.GITHUB_APP_CLIENT_ID,
     GITHUB_APP_CLIENT_SECRET: secrets.GITHUB_APP_CLIENT_SECRET,
+    DATABASE_URL: secrets.DATABASE_URL,
+    DATABASE_AUTH_TOKEN: secrets.DATABASE_AUTH_TOKEN,
   };
 }

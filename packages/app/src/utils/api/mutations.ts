@@ -163,3 +163,58 @@ export const Projects = {
     }).then((r) => r.json() as Promise<NonNullable<any>>)
   ),
 } as const;
+
+export const Links = {
+  create: z
+    .function(
+      z.tuple([
+        z.string(),
+        z.object({
+          group: z.string(),
+          type: z.string(),
+          url: z.string().url(),
+          protected: z.string().optional().default(""),
+        }),
+      ])
+    )
+    .implement(async (token, input) =>
+      fetch(`${API_BASE}/links/create`, {
+        method: "POST",
+        body: new URLSearchParams(input),
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }).then((r) => r.json() as Promise<NonNullable<any>>)
+    ),
+  remove: z.function(z.tuple([z.string(), z.string()])).implement(async (token, id) =>
+    fetch(`${API_BASE}/links/remove`, {
+      method: "DELETE",
+      body: new URLSearchParams({ id }),
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }).then((r) => r.json() as Promise<NonNullable<any>>)
+  ),
+  update: z
+    .function(
+      z.tuple([
+        z.string(),
+        z.object({
+          id: z.string(),
+          group: z.string(),
+          type: z.string(),
+          url: z.string().url(),
+          description: z.string().optional(),
+        }),
+      ])
+    )
+    .implement(async (token, input) =>
+      fetch(`${API_BASE}/links/update`, {
+        method: "PUT",
+        body: new URLSearchParams(input),
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }).then((r) => r.json() as Promise<NonNullable<any>>)
+    ),
+} as const;

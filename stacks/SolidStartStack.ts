@@ -6,13 +6,31 @@ import { DNSStack } from "./DNSStack";
 
 export function SolidStartStack({ stack, app }: StackContext) {
   const dns = use(DNSStack);
-  const { api, auth, GITHUB_CLIENT_ID, GITHUB_APP_CLIENT_ID, GITHUB_APP_CLIENT_SECRET, GITHUB_CLIENT_SECRET } =
-    use(ApiStack);
+  const {
+    api,
+    auth,
+    GITHUB_CLIENT_ID,
+    GITHUB_APP_CLIENT_ID,
+    GITHUB_APP_CLIENT_SECRET,
+    GITHUB_CLIENT_SECRET,
+    DATABASE_AUTH_TOKEN,
+    DATABASE_URL,
+  } = use(ApiStack);
   // const { db } = use(DatabaseStack);
   const { bucket } = use(StorageStack);
 
   const solidStartApp = new SolidStartSite(stack, `${app.name}-app`, {
-    bind: [bucket, api, auth, GITHUB_CLIENT_ID, GITHUB_APP_CLIENT_ID, GITHUB_APP_CLIENT_SECRET, GITHUB_CLIENT_SECRET],
+    bind: [
+      bucket,
+      api,
+      auth,
+      GITHUB_CLIENT_ID,
+      GITHUB_APP_CLIENT_ID,
+      GITHUB_APP_CLIENT_SECRET,
+      GITHUB_CLIENT_SECRET,
+      DATABASE_AUTH_TOKEN,
+      DATABASE_URL,
+    ],
     path: "packages/app",
     buildCommand: "pnpm build",
     environment: {

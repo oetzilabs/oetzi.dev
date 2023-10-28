@@ -13,7 +13,7 @@ const DefaultProject = {
   protected: "",
   visibility: "private",
   org: "",
-} as Parameters<typeof Mutations.createProject>[1];
+} as Parameters<typeof Mutations.Projects.create>[1];
 
 type DuplicateProjectProps = {
   projectId: string;
@@ -22,7 +22,7 @@ type DuplicateProjectProps = {
 export default function DuplicateProject(props: DuplicateProjectProps) {
   const [user] = useAuth();
   const queryClient = useQueryClient();
-  const [project, setProject] = createSignal<Parameters<typeof Mutations.createProject>[1]>(DefaultProject);
+  const [project, setProject] = createSignal<Parameters<typeof Mutations.Projects.create>[1]>(DefaultProject);
 
   const organizations = createQuery(
     () => ["organizations"],
@@ -111,13 +111,13 @@ export default function DuplicateProject(props: DuplicateProjectProps) {
   });
 
   const createProject = createMutation(
-    async (input: Parameters<typeof Mutations.createProject>[1]) => {
+    async (input: Parameters<typeof Mutations.Projects.create>[1]) => {
       let u = user();
       if (!u) return;
       if (!u.isAuthenticated) return;
       if (!u.token) return;
 
-      return Mutations.createProject(u.token, input);
+      return Mutations.Projects.create(u.token, input);
     },
     {
       onSuccess: async () => {
@@ -322,7 +322,7 @@ export default function DuplicateProject(props: DuplicateProjectProps) {
               </Show>
             </TextField.Root>
             <Select.Root
-              defaultValue={"private" as Parameters<typeof Mutations.createProject>[1]["visibility"]}
+              defaultValue={"private" as Parameters<typeof Mutations.Projects.create>[1]["visibility"]}
               value={project().visibility}
               disabled={organizations.isLoading || project().org.length === 0}
               placeholder="Select a visibility"
@@ -332,7 +332,7 @@ export default function DuplicateProject(props: DuplicateProjectProps) {
               name="repositoy-visiblity"
               placement="bottom-start"
               required
-              options={["private", "public"] as Parameters<typeof Mutations.createProject>[1]["visibility"][]}
+              options={["private", "public"] as Parameters<typeof Mutations.Projects.create>[1]["visibility"][]}
               itemComponent={(props) => (
                 <Select.Item
                   item={props.item}
@@ -362,7 +362,7 @@ export default function DuplicateProject(props: DuplicateProjectProps) {
                 <Select.Trigger>
                   <div class="p-2 py-1 w-full bg-neutral-50 dark:bg-neutral-950 rounded-md border border-neutral-200 dark:border-neutral-800 flex flex-row gap-2 items-center justify-center">
                     <Select.Value<
-                      Parameters<typeof Mutations.createProject>[1]["visibility"]
+                      Parameters<typeof Mutations.Projects.create>[1]["visibility"]
                     > class="font-bold select-none capitalize">
                       {(state) => state.selectedOption()}
                     </Select.Value>

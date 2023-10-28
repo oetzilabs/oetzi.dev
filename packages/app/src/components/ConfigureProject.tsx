@@ -38,7 +38,7 @@ export const ConfigureProject = (props: ConfigureProjectProps) => {
       const u = user();
       const token = u.token;
       if (!token) return Promise.reject("You are not logged in.");
-      return Mutations.syncProject(token, props.projectId);
+      return Mutations.Projects.syncOne(token, props.projectId);
     },
     {
       async onSuccess() {

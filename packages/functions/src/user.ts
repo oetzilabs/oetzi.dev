@@ -7,6 +7,7 @@ import { getUser } from "./utils";
 import { Stack } from "@oetzidev/core/entities/stacks";
 import { StatusCodes } from "http-status-codes";
 import { GitHub } from "@oetzidev/core/github";
+import { Link } from "@oetzidev/core/entities/links";
 
 export const allProjects = ApiHandler(async (_evt) => {
   const [user] = await getUser();
@@ -171,23 +172,13 @@ export const getProject = ApiHandler(async (_evt) => {
   if (!result) throw new Error("No project found");
   if (result.ownerId !== user.id) throw new Error("Not authorized");
   const userToken = await User.getFreshAccessToken(user.id);
-  const constructTypes = {
-    Auth: "auth",
-    SolidStartSite: "solidstartsite",
-    Api: "api",
-    Config: "config",
-  } as const;
-  const constructHrefs = {
-    Auth: "/api/link/constructs?type=auth",
-    SolidStartSite: "/api/link/constructs?type=solidstartsite",
-    Api: "/api/link/constructs?type=api",
-    Config: "/api/link/constructs?type=config",
-  } as const;
-  type ConstructKeys = keyof typeof constructTypes;
+
+  const constructHrefs = await Link.listBy("constructs");
   let result_: typeof result & {
     constructs?: Array<{
-      id: (typeof constructTypes)[ConstructKeys];
-      type: (typeof constructTypes)[ConstructKeys];
+      id: string;
+      type: string;
+      href: string;
       name: string;
     }>;
   } = result;
@@ -203,12 +194,24 @@ export const getProject = ApiHandler(async (_evt) => {
 
     const constructs = await Project.analyze(fileContents, ["StackContext", "use"]);
     const s = Array.from(constructs).sort();
-    const result = s.map((s) => ({
-      id: constructTypes[s as keyof typeof constructTypes],
-      type: constructTypes[s as keyof typeof constructTypes],
-      href: constructHrefs[s as keyof typeof constructTypes],
-      name: s,
-    }));
+    let result: Array<{
+      id: string;
+      type: string;
+      href: string;
+      name: string;
+    }> = [];
+    for (let i = 0; i < s.length; i++) {
+      const theLink = constructHrefs.find((c) => c.group === s[i]);
+      if (theLink) {
+        result.push({
+          id: theLink.id,
+          type: "constructs",
+          href: theLink.url,
+          name: theLink.group,
+        });
+      }
+    }
+
     result_.constructs = result;
     return {
       statusCode: 200,

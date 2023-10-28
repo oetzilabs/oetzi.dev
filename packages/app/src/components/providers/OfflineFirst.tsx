@@ -1,7 +1,7 @@
 import { Project } from "@oetzidev/core/entities/projects";
 import { User } from "@oetzidev/core/entities/users";
-import { createMutation, useQueryClient } from "@tanstack/solid-query";
-import { Accessor, Setter, createContext, createEffect, createSignal, onMount, useContext } from "solid-js";
+import { createMutation, createQueries, createQuery, useQueryClient } from "@tanstack/solid-query";
+import { Accessor, Setter, createContext, createEffect, createSignal, onCleanup, onMount, useContext } from "solid-js";
 import { z } from "zod";
 import { Mutations } from "../../utils/api/mutations";
 import { Queries, userProjects, session } from "../../utils/api/queries";
@@ -24,6 +24,7 @@ export const OffineFirstContext = createContext<{
   getProject: (id: string) => Promise<NonNullable<User.Frontend>["projects"][number] | null>;
   userProjects: Accessor<NonNullable<User.Frontend>["projects"]>;
   syncDb: () => Promise<NonNullable<User.Frontend>["projects"]>;
+  syncProjects: () => Promise<NonNullable<User.Frontend>["projects"]>;
   auth: [Accessor<UseAuth>, Setter<UseAuth>];
   saveUser: (token: string) => Promise<boolean>;
 }>({
@@ -33,6 +34,7 @@ export const OffineFirstContext = createContext<{
   getProject: (id: string) => Promise.reject("Not implemented yet"),
   userProjects: () => [],
   syncDb: () => Promise.reject("Not implemented yet"),
+  syncProjects: () => Promise.reject("Not implemented yet"),
   auth: [
     (() => ({
       isLoading: true,
@@ -98,16 +100,6 @@ export const OfflineFirst = (props: { children: any }) => {
     return _p;
   };
 
-  const [userProjects, setUserProjects] = createSignal([] as NonNullable<User.Frontend>["projects"]);
-
-  createEffect(async () => {
-    const _user = AuthStore();
-    const token = _user?.token;
-    if (!token) return [] as NonNullable<User.Frontend>["projects"];
-    const _userProjects = await db.projects.toArray().catch(() => [] as NonNullable<User.Frontend>["projects"]);
-    setUserProjects(_userProjects);
-  });
-
   const syncDb = async () => {
     const _user = AuthStore();
     const token = _user?.token;
@@ -129,22 +121,60 @@ export const OfflineFirst = (props: { children: any }) => {
     };
     window.addEventListener("online", handler);
     window.addEventListener("offline", handler);
-    return () => {
+    onCleanup(() => {
       window.removeEventListener("online", handler);
       window.removeEventListener("offline", handler);
-    };
+    });
   });
 
+  const [offlineUserProjects, setOfflineUserProjects] = createSignal<NonNullable<User.Frontend>["projects"]>([]);
+
+  const uP = createQuery(
+    () => ["user_projects"],
+    async () => {
+      const _user = AuthStore();
+      const token = _user?.token;
+      if (!token) return [] as NonNullable<User.Frontend>["projects"];
+      const ups = await Queries.userProjects(token);
+      await db.projects.clear();
+      await db.projects.bulkAdd(ups);
+      return ups;
+    },
+    {
+      get enabled() {
+        const _user = AuthStore();
+        if (!_user) return false;
+        return !_user.isLoading && _user.isAuthenticated;
+      },
+      refetchOnWindowFocus: false,
+    }
+  );
+
   createEffect(async () => {
+    // update offlineUserProjects and load from db
+    const uPs = await db.projects.toArray();
+    setOfflineUserProjects(uPs);
+  });
+
+  const userProjects = () => {
+    if (isOnline()) {
+      if (uP.isLoading) return offlineUserProjects();
+      if (!uP.isSuccess) return offlineUserProjects();
+      return uP.data;
+    }
+    return offlineUserProjects();
+  };
+
+  const projectsSync = createMutation(async () => {
     const _user = AuthStore();
     const token = _user?.token;
-    if (!token) return;
-    const userProjects = await Queries.userProjects(token);
-    if (!userProjects) return;
+    if (!token) return Promise.reject("Not logged in");
+    const syncedProjects = await Mutations.Projects.sync(token);
+    if (!syncedProjects) return Promise.reject("Something went wrong.");
     await db.projects.clear();
-    await db.projects.bulkAdd(userProjects);
+    await db.projects.bulkAdd(syncedProjects);
     await db.createProjects.clear();
-    // setUserProjects(userProjects);
+    return syncedProjects;
   });
 
   return (
@@ -181,6 +211,7 @@ export const OfflineFirst = (props: { children: any }) => {
         getProject,
         auth: [AuthStore, setAuthStore],
         syncDb,
+        syncProjects: projectsSync.mutateAsync,
       }}
     >
       {props.children}

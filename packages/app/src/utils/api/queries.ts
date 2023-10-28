@@ -2,6 +2,7 @@ import { Project } from "@oetzidev/core/entities/projects";
 import { User } from "@oetzidev/core/entities/users";
 import { Stack } from "@oetzidev/core/entities/stacks";
 import { Technology } from "@oetzidev/core/entities/technologies";
+import { Link } from "@oetzidev/core/entities/links";
 import { z } from "zod";
 import { SessionResult } from "../../../../functions/src/session";
 import { ConstructIcons } from "../../components/ConstructsIcons";
@@ -149,3 +150,12 @@ export const analyzeProject = z.function(z.tuple([z.string(), z.string()])).impl
       >
   )
 );
+
+export const links = z.function(z.tuple([z.string()])).implement(async (token) => {
+  const res = await fetch(`${API_BASE}/links/all`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  });
+  return res.json() as Promise<Link.Frontend[]>;
+});

@@ -1,0 +1,1 @@
+ALTER TABLE links ADD `meta` blob NOT NULL;
