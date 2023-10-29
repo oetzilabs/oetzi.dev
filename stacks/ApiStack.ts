@@ -1,7 +1,8 @@
-import { Api, Config, StackContext, use } from "sst/constructs";
+import { Api, Config, SolidStartSite, StackContext, use } from "sst/constructs";
 import { Auth } from "sst/constructs/future";
 import { StorageStack } from "./StorageStack";
 import { DNSStack } from "./DNSStack";
+import { SolidStartStack } from "./SolidStartStack";
 
 export function ApiStack({ stack }: StackContext) {
   const dns = use(DNSStack);
@@ -207,6 +208,12 @@ export function ApiStack({ stack }: StackContext) {
         function: {
           handler: "packages/functions/src/links.all",
           description: "This is the all link handler function",
+        },
+      },
+      "GET /link/get": {
+        function: {
+          handler: "packages/functions/src/links.get",
+          description: "This is the get link handler function",
         },
       },
       "POST /links/create": {

@@ -3,7 +3,6 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { db } from "../drizzle/sql";
 import { links } from "../drizzle/sql/schema";
-import fetch from "node-fetch";
 
 export * as Link from "./links";
 
@@ -20,10 +19,14 @@ export const CreateLinkZod = createInsertSchema(links)
 
 export type CreateLinkInput = z.infer<typeof CreateLinkZod>;
 
+export const UpdateLinkZod = CreateLinkZod.partial().extend({ id: z.string().uuid() });
+
 export const safeParse = CreateLinkZod.safeParse;
 export const safeParseForCreate = CreateLinkZod.omit({
   meta: true,
 }).safeParse;
+
+export const safeParseForUpdate = UpdateLinkZod.safeParse;
 
 export const create = z.function(z.tuple([CreateLinkZod])).implement(async (linkInput) => {
   const [x] = await db
@@ -48,7 +51,7 @@ export const remove = z.function(z.tuple([z.string().uuid()])).implement(async (
   return deleted;
 });
 
-export const update = z.function(z.tuple([z.string().uuid(), CreateLinkZod])).implement(async (linkId, linkInput) => {
+export const update = z.function(z.tuple([z.string().uuid(), UpdateLinkZod])).implement(async (linkId, linkInput) => {
   const exists = await db.query.links.findFirst({
     where: (links, operations) => operations.eq(links.id, linkId),
   });
@@ -101,6 +104,13 @@ export const listBy = z.function(z.tuple([z.string()])).implement(async (group) 
         operations.eq(links.group, group),
         operations.and(isNotNull(links.active), isNull(links.deletedAt))
       ),
+  })
+);
+
+export const findById = z.function(z.tuple([z.string().uuid()])).implement(async (id) =>
+  db.query.links.findFirst({
+    where: (links, operations) =>
+      operations.and(operations.eq(links.id, id), operations.and(isNotNull(links.active), isNull(links.deletedAt))),
   })
 );
 

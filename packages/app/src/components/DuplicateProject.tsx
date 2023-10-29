@@ -1,11 +1,10 @@
 import { Select, Tabs, TextField } from "@kobalte/core";
-import { createMutation, createQuery, QueryClient, useQueryClient } from "@tanstack/solid-query";
-import { For, JSX, Match, Show, Switch, createEffect, createSignal } from "solid-js";
+import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
+import { For, Match, Show, Switch, createEffect, createSignal } from "solid-js";
 import { Mutations } from "../utils/api/mutations";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
 import { useAuth } from "./providers/OfflineFirst";
-import { Modal } from "./Modal";
 
 const DefaultProject = {
   name: "",

@@ -5,7 +5,7 @@ type ModalProps = {
   children: JSX.Element;
   description?: string;
   title?: string;
-  trigger?: JSX.Element;
+  trigger: JSX.Element;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
@@ -13,9 +13,7 @@ type ModalProps = {
 export function Modal(props: ModalProps) {
   return (
     <Dialog.Root open={props.open} onOpenChange={props.onOpenChange ? props.onOpenChange : (open) => {}}>
-      <Show when={props.trigger && props.trigger}>
-        <Dialog.Trigger class="">{props.trigger}</Dialog.Trigger>
-      </Show>
+      <Dialog.Trigger class="">{props.trigger}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay class="fixed inset-0 bg-black/[0.02] backdrop-blur-sm z-50" />
         <div class="flex flex-col">

@@ -151,11 +151,19 @@ export const analyzeProject = z.function(z.tuple([z.string(), z.string()])).impl
   )
 );
 
-export const links = z.function(z.tuple([z.string()])).implement(async (token) => {
-  const res = await fetch(`${API_BASE}/links/all`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  });
-  return res.json() as Promise<Link.Frontend[]>;
-});
+export const Links = {
+  all: z.function(z.tuple([z.string()])).implement(async (token) =>
+    fetch(`${API_BASE}/links/all`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json() as Promise<Link.Frontend[]>)
+  ),
+  get: z.function(z.tuple([z.string(), z.string().uuid()])).implement(async (token, id) =>
+    fetch(`${API_BASE}/link/get?id=${encodeURIComponent(id)}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json() as Promise<Link.Frontend>)
+  ),
+};

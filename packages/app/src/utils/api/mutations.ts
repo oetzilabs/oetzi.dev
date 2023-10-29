@@ -2,6 +2,7 @@ import * as Project from "@oetzidev/core/entities/projects";
 import { Stack } from "@oetzidev/core/entities/stacks";
 import { Technology } from "@oetzidev/core/entities/technologies";
 import { z } from "zod";
+import { Link } from "../../../../core/src/entities/links";
 
 export * as Mutations from "./mutations";
 
@@ -184,7 +185,7 @@ export const Links = {
         headers: {
           authorization: `Bearer ${token}`,
         },
-      }).then((r) => r.json() as Promise<NonNullable<any>>)
+      }).then((r) => r.json() as Promise<NonNullable<Link.Frontend>>)
     ),
   remove: z.function(z.tuple([z.string(), z.string()])).implement(async (token, id) =>
     fetch(`${API_BASE}/links/remove`, {
@@ -193,28 +194,31 @@ export const Links = {
       headers: {
         authorization: `Bearer ${token}`,
       },
-    }).then((r) => r.json() as Promise<NonNullable<any>>)
+    }).then((r) => r.json() as Promise<NonNullable<Link.Frontend>>)
   ),
   update: z
     .function(
       z.tuple([
         z.string(),
-        z.object({
-          id: z.string(),
-          group: z.string(),
-          type: z.string(),
-          url: z.string().url(),
-          description: z.string().optional(),
-        }),
+        z
+          .object({
+            id: z.string(),
+            group: z.string(),
+            type: z.string(),
+            url: z.string().url(),
+            active: z.boolean(),
+            protected: z.string().optional().default(""),
+          })
+          .partial(),
       ])
     )
     .implement(async (token, input) =>
       fetch(`${API_BASE}/links/update`, {
         method: "PUT",
-        body: new URLSearchParams(input),
+        body: new URLSearchParams({ ...input, active: input.active ? "true" : "false" }),
         headers: {
           authorization: `Bearer ${token}`,
         },
-      }).then((r) => r.json() as Promise<NonNullable<any>>)
+      }).then((r) => r.json() as Promise<NonNullable<Link.Frontend>>)
     ),
 } as const;
