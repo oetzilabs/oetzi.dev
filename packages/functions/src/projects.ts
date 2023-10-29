@@ -35,13 +35,24 @@ export const syncById = ApiHandler(async (_evt) => {
   const isEmpty = await GitHub.isEmptyRepository(userToken, result.name);
   if (!isEmpty) {
     const files = await GitHub.getFiles(userToken, result.name, ["stacks"]);
-    const fileContents: Array<string> = [];
+    const fileContents: Array<{
+      path: string;
+      content: string;
+    }> = [];
     for await (const file of files) {
       const _file = await GitHub.readFileContent(userToken, result.name, file.path);
       fileContents.push(..._file);
     }
-    const constructs = await Project.analyze(fileContents, ["StackContext", "use"]);
-    const stacks = await Stack.findFromConstructs(Array.from(constructs));
+    const projectAnalysis = await Project.analyze(fileContents, {
+      exclude: {
+        constructs: ["StackContext", "use"],
+      },
+    });
+    const stacks = await Stack.findFromConstructs(
+      Object.entries(projectAnalysis.constructs)
+        .filter(([_, v]) => v)
+        .map(([k]) => k)
+    );
     return {
       statusCode: 200,
       headers: {
@@ -120,33 +131,30 @@ export const analyze = ApiHandler(async (evt) => {
   const isEmptyReposity = await GitHub.isEmptyRepository(userToken, project.name);
   if (!isEmptyReposity) {
     const files = await GitHub.getFiles(userToken, project.name, ["stacks"]);
-    const fileContents: Array<string> = [];
+    const fileContents: Array<{
+      path: string;
+      content: string;
+    }> = [];
 
     for await (const file of files) {
       const _file = await GitHub.readFileContent(userToken, project.name, file.path);
       fileContents.push(..._file);
     }
 
-    const constructs = await Project.analyze(fileContents, ["StackContext", "use"]);
-    const constructTypes = {
-      Auth: "auth",
-      SolidStartSite: "solidstartsite",
-      Api: "api",
-      Config: "config",
-    } as const;
-    const s = Array.from(constructs).sort();
-    const result = s.map((s) => ({
-      id: constructTypes[s as keyof typeof constructTypes],
-      type: constructTypes[s as keyof typeof constructTypes],
-      name: s,
-    }));
+    const projectAnalysis = await Project.analyze(fileContents, {
+      exclude: {
+        constructs: ["StackContext", "use"],
+      },
+    });
+
+    console.log(projectAnalysis);
 
     return {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(result),
+      body: JSON.stringify(projectAnalysis),
     };
   }
   return {

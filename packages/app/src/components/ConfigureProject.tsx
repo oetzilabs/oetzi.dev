@@ -146,30 +146,35 @@ export const ConfigureProject = (props: ConfigureProjectProps) => {
                   </div>
                 }
               >
-                <Match when={(project.data?.constructs ?? []).length > 0 && (project.data?.constructs ?? [])}>
-                  {(constructs) => (
-                    <div class="w-full grid grid-cols-4 gap-2.5">
-                      <For each={constructs()}>
-                        {(construct) => (
-                          <A
-                            href={`constructs/${construct.id}`}
-                            class="bg-black dark:bg-white p-4 text-white dark:text-black font-bold w-full flex flex-col gap-2.5 rounded-md hover:bg-neutral-900 dark:hover:bg-neutral-100 active:bg-neutral-800 dark:active:bg-neutral-200"
-                          >
-                            <div class="text-xs font-normal">{ConstructIcons[construct.type]}</div>
-                            <span>{construct.name}</span>
+                <div class="w-full grid grid-cols-4 gap-2.5">
+                  <For each={Object.entries(project.data?.analysis.constructs ?? {})}>
+                    {([name, construct]) => (
+                      <Switch>
+                        {/* <Match when={typeof construct === "boolean"}>
+                          <div class="flex flex-row items-center"></div>
+                        </Match> */}
+                        <Match when={typeof construct === "object" && construct}>
+                          {(c) => (
                             <A
-                              target="_blank"
-                              href={construct.href}
-                              class="bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-200 dark:active:bg-neutral-800 px-2.5 py-1 items-center flex flex-row gap-2.5 text-black dark:text-white w-max"
+                              href={`constructs/${c().id}`}
+                              class="bg-black dark:bg-white p-4 text-white dark:text-black font-bold w-full flex flex-col gap-2.5 rounded-md hover:bg-neutral-900 dark:hover:bg-neutral-100 active:bg-neutral-800 dark:active:bg-neutral-200"
                             >
-                              <span>More Info</span>
+                              <div class="text-xs font-normal">{ConstructIcons[c().type]}</div>
+                              <span>{name}</span>
+                              <A
+                                target="_blank"
+                                href={c().href}
+                                class="bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-200 dark:active:bg-neutral-800 px-2.5 py-1 items-center flex flex-row gap-2.5 text-black dark:text-white w-max"
+                              >
+                                <span>More Info</span>
+                              </A>
                             </A>
-                          </A>
-                        )}
-                      </For>
-                    </div>
-                  )}
-                </Match>
+                          )}
+                        </Match>
+                      </Switch>
+                    )}
+                  </For>
+                </div>
               </Switch>
             </div>
           )}

@@ -6,6 +6,7 @@ import { ProjectSelect, projects } from "../drizzle/sql/schema";
 import { GitHub } from "../github";
 import { GitHubUtils } from "../github/utils";
 import { User } from "./users";
+import { Link } from "./links";
 
 export * as Project from "./projects";
 
@@ -177,18 +178,109 @@ export const updateName = z
     return update({ id: input.id, name: input.name });
   });
 
+const sstConstructs = async () => {
+  const sstConstructs = [
+    "Api",
+    "ApiGatewayV1Api",
+    "App",
+    "AppSyncApi",
+    "AstroSite",
+    "Auth",
+    "Bucket",
+    "Cognito",
+    "Config",
+    "Cron",
+    "EventBus",
+    "Function",
+    "Job",
+    "KinesisStream",
+    "Metadata",
+    "NextjsSite",
+    "Queue",
+    "RDS",
+    "RemixSite",
+    "Script",
+    "Service",
+    "SolidStartSite",
+    "Stack",
+    "StaticSite",
+    "SvelteKitSite",
+    "Table",
+    "Topic",
+    "WebSocketApi",
+  ];
+
+  // convert to object Record<string, boolean>
+  return sstConstructs.reduce((acc, x) => ({ ...acc, [x]: false }), {}) as Partial<
+    Record<
+      string,
+      | {
+          id: string;
+          type: string;
+          href: string;
+          name: string;
+          meta: {
+            line: number;
+            file: string;
+            code: string;
+          };
+        }
+      | false
+    >
+  >;
+};
+
 export const analyze = z
-  .function(z.tuple([z.array(z.string()), z.array(z.string())]))
-  .implement(async (fileContents: Array<string>, exclude: Array<string>) => {
-    let imports = new Set<string>();
+  .function(
+    z.tuple([
+      z.array(
+        z.object({
+          content: z.string(),
+          path: z.string(),
+        })
+      ),
+      z.object({
+        exclude: z
+          .object({
+            constructs: z.array(z.string()).default([]),
+          })
+          .optional(),
+      }),
+    ])
+  )
+  .implement(async (fileContents, options) => {
+    let imports: Awaited<ReturnType<typeof GitHubUtils.extractImports>> = {};
     for (let i = 0; i < fileContents.length; i++) {
       const fc = fileContents[i];
       const imp = await GitHubUtils.extractImports(fc);
-      for (const x of imp) {
-        imports.add(x);
+      imports = { ...imports, ...imp };
+    }
+    const exludeConstructs = options?.exclude?.constructs ?? [];
+    const imps = Array.from(Object.keys(imports)).filter((x) => !exludeConstructs.includes(x));
+    const availableConstructs = await sstConstructs();
+    let result = {
+      constructs: availableConstructs,
+    };
+    let constructNames = Object.keys(availableConstructs);
+    // check if the imports are in the result.constructs object and turn them to true
+    for (let i = 0; i < imps.length; i++) {
+      const imp = imps[i];
+      if (constructNames.includes(imp)) {
+        const cLink = await Link.findByGroupAndType("constructs", imp.toLowerCase());
+        if (cLink) {
+          result.constructs[imp] = {
+            id: imp,
+            type: imp,
+            href: `${cLink.url}?ref=oetzi.dev`,
+            name: imp,
+            meta: imports[imp],
+          };
+        } else {
+          result.constructs[imp] = false;
+        }
       }
     }
-    return Array.from(imports).filter((x) => !exclude.includes(x));
+    return result;
   });
 
 export const updateStack = z

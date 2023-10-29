@@ -80,14 +80,20 @@ export const readFileContent = z
       path,
     });
     if (!Array.isArray(data) && data.type === "file")
-      return [Buffer.from(data.content, data.encoding as BufferEncoding).toString()];
+      return [
+        {
+          content: Buffer.from(data.content, data.encoding as BufferEncoding).toString(),
+          path: data.path,
+        },
+      ];
     else if (Array.isArray(data)) {
       return (
         data.filter((d) => d.type === "file").filter((d) => d.content !== undefined) as unknown as Array<{
           content: string;
           encoding: BufferEncoding;
+          path: string;
         }>
-      ).map((d) => Buffer.from(d.content, d.encoding as BufferEncoding).toString());
+      ).map((d) => ({ content: Buffer.from(d.content, d.encoding as BufferEncoding).toString(), path: d.path }));
     } else {
       return [];
     }

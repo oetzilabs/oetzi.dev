@@ -118,12 +118,23 @@ export const project = z.function(z.tuple([z.string(), z.string()])).implement(a
       res.json() as Promise<
         NonNullable<
           Project.Frontend & {
-            constructs?: Array<{
-              id: string;
-              type: keyof typeof ConstructIcons;
-              href: string;
-              name: string;
-            }>;
+            analysis: {
+              constructs?: Record<
+                string,
+                | {
+                    id: string;
+                    type: keyof typeof ConstructIcons;
+                    href: string;
+                    name: string;
+                    meta: {
+                      line: number;
+                      code: string;
+                      file: string;
+                    };
+                  }
+                | false
+              >;
+            };
           }
         >
       >

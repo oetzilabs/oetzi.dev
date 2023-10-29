@@ -175,44 +175,39 @@ export const getProject = ApiHandler(async (_evt) => {
 
   const constructHrefs = await Link.listBy("constructs");
   let result_: typeof result & {
-    constructs?: Array<{
-      id: string;
-      type: string;
-      href: string;
-      name: string;
-    }>;
+    analysis?: Awaited<ReturnType<typeof Project.analyze>>;
   } = result;
   const isEmpty = await GitHub.isEmptyRepository(userToken, result_.name);
   if (!isEmpty) {
     const files = await GitHub.getFiles(userToken, result_.name, ["stacks"]);
-    const fileContents: Array<string> = [];
+    const fileContents: Array<{
+      content: string;
+      path: string;
+    }> = [];
 
     for await (const file of files) {
       const _file = await GitHub.readFileContent(userToken, result_.name, file.path);
       fileContents.push(..._file);
     }
 
-    const constructs = await Project.analyze(fileContents, ["StackContext", "use"]);
-    const s = Array.from(constructs).sort();
-    let result: Array<{
-      id: string;
-      type: string;
-      href: string;
-      name: string;
-    }> = [];
-    for (let i = 0; i < s.length; i++) {
-      const theLink = constructHrefs.find((c) => c.group === s[i]);
-      if (theLink) {
-        result.push({
-          id: theLink.id,
-          type: "constructs",
-          href: theLink.url,
-          name: theLink.group,
-        });
-      }
-    }
+    const projectAnalysis = await Project.analyze(fileContents, {
+      exclude: {
+        constructs: ["StackContext", "use"],
+      },
+    });
 
-    result_.constructs = result;
+    const s = Array.from(
+      new Set(
+        Object.entries(projectAnalysis.constructs)
+          .filter(([_, v]) => v)
+          .map(([k]) => k)
+      )
+    ).sort();
+    if (!result_.analysis)
+      result_.analysis = {
+        constructs: {},
+      };
+    result_.analysis.constructs = projectAnalysis.constructs;
     return {
       statusCode: 200,
       headers: {

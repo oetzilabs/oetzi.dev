@@ -1,5 +1,5 @@
 export const ConstructIcons = {
-  auth: (
+  Auth: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"
@@ -22,7 +22,7 @@ export const ConstructIcons = {
       <path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2" />
     </svg>
   ),
-  solidstartsite: (
+  SolidStartSite: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"
@@ -38,7 +38,7 @@ export const ConstructIcons = {
       <line x1="3" x2="21" y1="9" y2="9" />
     </svg>
   ),
-  api: (
+  Api: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"
@@ -59,7 +59,7 @@ export const ConstructIcons = {
       <circle cx="12" cy="19.5" r="2.5" />
     </svg>
   ),
-  config: (
+  Config: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"

@@ -1,5 +1,6 @@
 import HighlightJS from "highlight.js";
 import { Component, createMemo, mergeProps } from "solid-js";
+import "highlight.js/styles/tomorrow-night-bright.min.css";
 
 function escapeHtml(value: string): string {
   return value
@@ -42,11 +43,7 @@ const Highlight: Component<Props> = (_props) => {
     }
   });
 
-  return (
-    <pre>
-      <code class={`${className} ${props.class || ""}`} innerHTML={getHighlightedCode()} />
-    </pre>
-  );
+  return <code class={`${className} ${props.class || ""}`} innerHTML={getHighlightedCode()} />;
 };
 
 export default Highlight;
