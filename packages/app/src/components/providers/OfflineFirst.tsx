@@ -27,6 +27,9 @@ export const OffineFirstContext = createContext<{
   syncProjects: () => Promise<NonNullable<User.Frontend>["projects"]>;
   auth: [Accessor<UseAuth>, Setter<UseAuth>];
   saveUser: (token: string) => Promise<boolean>;
+  isSyncing: Accessor<boolean>;
+  filterProjects: Setter<{ [key: string]: string }>;
+  projectsFilter: Accessor<{ [key: string]: string }>;
 }>({
   isOnline: () => false,
   setIsOnline: () => {},
@@ -46,6 +49,9 @@ export const OffineFirstContext = createContext<{
     (() => {}) as Setter<UseAuth>,
   ],
   saveUser: () => Promise.reject("Not implemented yet"),
+  isSyncing: () => false,
+  filterProjects: () => {},
+  projectsFilter: () => ({}),
 });
 
 export const useAuth = () => {
@@ -156,13 +162,42 @@ export const OfflineFirst = (props: { children: any }) => {
     setOfflineUserProjects(uPs);
   });
 
-  const userProjects = () => {
-    if (isOnline()) {
-      if (uP.isLoading) return offlineUserProjects();
-      if (!uP.isSuccess) return offlineUserProjects();
-      return uP.data;
+  const [projectsFilter, setProjectsFilter] = createSignal<{
+    [key: string]: string;
+  }>({
+    search: "",
+  });
+
+  const filterProjects = (projects: NonNullable<User.Frontend>["projects"]) => {
+    const _projects: NonNullable<User.Frontend>["projects"] = [];
+    const filter = projectsFilter();
+    if (!filter) return projects;
+    const search = filter.search;
+    if (!search) return projects;
+    // old school search via normal for loop
+    for (let i = 0; i < projects.length; i++) {
+      const p = projects[i];
+      // check on all values if they match
+      const values = Object.values(p);
+      for (let j = 0; j < values.length; j++) {
+        const v = values[j];
+        if (String(v).includes(search.toLowerCase())) {
+          _projects.push(p);
+          break;
+        }
+      }
     }
-    return offlineUserProjects();
+    return _projects;
+  };
+
+  const userProjects = () => {
+    let result = filterProjects(offlineUserProjects());
+    if (isOnline()) {
+      if (uP.isLoading) return result;
+      if (!uP.isSuccess) return result;
+      return filterProjects(uP.data);
+    }
+    return result;
   };
 
   const projectsSync = createMutation(async () => {
@@ -176,6 +211,8 @@ export const OfflineFirst = (props: { children: any }) => {
     await db.createProjects.clear();
     return syncedProjects;
   });
+
+  const isSyncing = () => projectsSync.isLoading;
 
   return (
     <OffineFirstContext.Provider
@@ -212,6 +249,9 @@ export const OfflineFirst = (props: { children: any }) => {
         auth: [AuthStore, setAuthStore],
         syncDb,
         syncProjects: projectsSync.mutateAsync,
+        isSyncing,
+        filterProjects: setProjectsFilter,
+        projectsFilter,
       }}
     >
       {props.children}

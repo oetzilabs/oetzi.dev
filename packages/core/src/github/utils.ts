@@ -12,7 +12,8 @@ let traverseCache: Record<
       {
         line: number;
         file: string;
-        code: string;
+        code: string[];
+        import: string;
       }
     >;
     code: string;
@@ -26,9 +27,10 @@ export const extractImports = z
         content: z.string(),
         path: z.string(),
       }),
+      z.array(z.string()),
     ])
   )
-  .implement(async (fileContent) => {
+  .implement(async (fileContent, exclude) => {
     if (traverseCache[fileContent.path]) {
       return traverseCache[fileContent.path].imports;
     }
@@ -48,7 +50,8 @@ export const extractImports = z
       {
         line: number;
         file: string;
-        code: string;
+        code: string[];
+        import: string;
       }
     > = {};
 
@@ -60,13 +63,30 @@ export const extractImports = z
             if (t.isImportSpecifier(specifier)) {
               const importedIdentifier = specifier.imported;
               if (importedIdentifier.type === "Identifier")
-                imports[importedIdentifier.name] = {
-                  line: node.loc.start.line,
-                  file: fileContent.path,
-                  code: fileContent.content.split("\n")[node.loc.start.line - 1].trim(),
-                };
+                if (!exclude.includes(importedIdentifier.name))
+                  imports[importedIdentifier.name] = {
+                    line: node.loc.start.line,
+                    file: fileContent.path,
+                    import: fileContent.content.split("\n")[node.loc.start.line - 1].trim(),
+                    code: [],
+                  };
             }
           });
+        }
+      },
+      Identifier(path: any) {
+        const identifierName = path.node.name;
+        if (imports[identifierName]) {
+          const statement = path.findParent((path: any) => path.isStatement());
+          if (statement) {
+            const startLine = statement.node.loc.start.line;
+            const endLine = statement.node.loc.end.line;
+            const codeBlock = fileContent.content
+              .split("\n")
+              .slice(startLine - 1, endLine)
+              .join("\n");
+            if (imports[identifierName].import !== codeBlock.trim()) imports[identifierName].code.push(codeBlock);
+          }
         }
       },
     });

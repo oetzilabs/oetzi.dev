@@ -1,5 +1,5 @@
 import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
-import { For, Match, Show, Switch, createEffect, createSignal } from "solid-js";
+import { For, Match, Show, Switch, createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import { toast } from "solid-toast";
 import { useAuth } from "../../components/providers/OfflineFirst";
 import NewProject from "../../components/NewProject";
@@ -117,6 +117,29 @@ export default function DashboardPage() {
       }
     );
   };
+  let searchRef: HTMLInputElement;
+
+  onMount(() => {
+    //keybind for CTRL + F or F3 or `/`
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "f" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        searchRef.focus();
+      }
+      if (e.key === "/" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        searchRef.focus();
+      }
+      if (e.key === "F3") {
+        e.preventDefault();
+        searchRef.focus();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    onCleanup(() => {
+      window.removeEventListener("keydown", handler);
+    });
+  });
 
   return (
     <div class="container mx-auto flex flex-col gap-8 py-10">
@@ -125,7 +148,18 @@ export default function DashboardPage() {
       </div>
       <div class="flex flex-row items-center justify-between">
         <h2 class="text-2xl font-bold">Projects</h2>
-        <div>
+        <div class="flex flex-row gap-2.5">
+          <input
+            ref={searchRef!}
+            type="text"
+            class="px-2 py-1 rounded-md border border-black/10 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 bg-white dark:bg-black"
+            placeholder="Search"
+            onInput={(e) => {
+              offlineFirst.filterProjects({
+                search: e.target.value,
+              });
+            }}
+          />
           <button
             class={cn(
               "flex flex-row items-center justify-center gap-3 px-2.5 py-1",
@@ -142,12 +176,8 @@ export default function DashboardPage() {
                   syncProjects.isError,
               }
             )}
-            disabled={syncProjects.isLoading || timer() || user().isLoading}
+            disabled={offlineFirst.isSyncing() || syncProjects.isLoading || timer() || user().isLoading}
             onClick={async () => {
-              // if (timer() || syncProjects.isLoading || user().isLoading) return;
-              // const syncedProjects = await syncProjects.mutateAsync();
-              // if (!syncedProjects) return;
-              // store to db.projects
               await offlineFirst.syncProjects();
             }}
           >
@@ -165,7 +195,7 @@ export default function DashboardPage() {
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     class={cn("animate-none", {
-                      "animate-spin": syncProjects.isLoading,
+                      "animate-spin": offlineFirst.isSyncing() || syncProjects.isLoading,
                     })}
                   >
                     <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
@@ -231,11 +261,28 @@ export default function DashboardPage() {
                   <p class="text-lg font-medium">Oetzi has no projects to view.</p>
                 </div>
               </Match>
-              <Match when={user().isAuthenticated}>
+              <Match when={user().isAuthenticated && offlineFirst.projectsFilter().search?.length === 0}>
                 <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.01] gap-6 rounded-md backdrop-blur-sm border border-black/5 dark:border-white/5">
                   <h3 class="text-xl font-bold">No Projects</h3>
                   <p class="text-lg font-medium">You have no projects.</p>
                   <NewProject />
+                </div>
+              </Match>
+              <Match when={user().isAuthenticated && offlineFirst.projectsFilter().search?.length > 0}>
+                <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.01] gap-6 rounded-md backdrop-blur-sm border border-black/5 dark:border-white/5">
+                  <h3 class="text-xl font-bold">No Projects for '{offlineFirst.projectsFilter().search}'</h3>
+                  <p class="text-lg font-medium">There are no projects with your search parameter.</p>
+                  <button
+                    class="px-2 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-bold hover:bg-black/90 dark:hover:bg-white/90 active:bg-black/90 dark:active:bg-white/90"
+                    onClick={() => {
+                      searchRef.value = "";
+                      offlineFirst.filterProjects({
+                        search: "",
+                      });
+                    }}
+                  >
+                    <span class="font-bold select-none">Clear Search</span>
+                  </button>
                 </div>
               </Match>
             </Switch>

@@ -128,8 +128,9 @@ export const project = z.function(z.tuple([z.string(), z.string()])).implement(a
                     name: string;
                     meta: {
                       line: number;
-                      code: string;
+                      code: string[];
                       file: string;
+                      import: string;
                     };
                   }
                 | false

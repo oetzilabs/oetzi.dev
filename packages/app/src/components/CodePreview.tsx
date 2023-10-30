@@ -1,6 +1,6 @@
 import HighlightJS from "highlight.js";
 import { Component, createMemo, mergeProps } from "solid-js";
-import "highlight.js/styles/tomorrow-night-bright.min.css";
+import "highlight.js/styles/dark.min.css";
 
 function escapeHtml(value: string): string {
   return value

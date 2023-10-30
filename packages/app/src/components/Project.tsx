@@ -1,11 +1,12 @@
-import { Switch, Match, For, Show } from "solid-js";
+import { DropdownMenu } from "@kobalte/core";
+import { A } from "@solidjs/router";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { For, Match, Show, Switch } from "solid-js";
+import { useNavigate } from "solid-start";
 import * as Projects from "../../../core/src/entities/projects";
 import * as Users from "../../../core/src/entities/users";
-import { cn } from "../utils/cn";
-import { DropdownMenu } from "@kobalte/core";
-import DuplicateProject from "./DuplicateProject";
-import { useNavigate } from "solid-start";
-import { A } from "@solidjs/router";
+dayjs.extend(relativeTime);
 
 type ProjectProps = {
   project: Projects.Frontend | Users.Frontend["projects"][number];
@@ -19,17 +20,49 @@ export const Project = (props: ProjectProps) => {
   const isDeleting = props.isDeleting ?? false;
   const navigator = useNavigate();
   return (
-    <div class="flex flex-col  text-black dark:text-white rounded-md border border-neutral-200 dark:border-neutral-800 overflow-clip">
-      <div
-        class={cn("flex w-full text-xs p-1 items-center justify-center", {
-          "bg-teal-100 dark:bg-teal-950 text-teal-500": props.project.visibility === "public",
-          "bg-rose-100 dark:bg-rose-950 text-rose-500": props.project.visibility === "private",
-        })}
-      >
-        {props.project.visibility}
-      </div>
+    <div class="flex flex-col text-black dark:text-white border border-neutral-300 dark:border-neutral-800 overflow-clip">
       <div class="flex flex-row items-center justify-between p-4 pb-2">
-        <h3 class="text-xl font-bold">{props.project.name}</h3>
+        <div class="flex flex-row items-center gap-2.5" title={props.project.visibility}>
+          <Show
+            when={props.project.visibility === "public"}
+            fallback={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-rose-500"
+              >
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+                <line x1="2" x2="22" y1="2" y2="22" />
+              </svg>
+            }
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="text-teal-500"
+            >
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </Show>
+          <h3 class="text-xl font-bold select-none">{props.project.name}</h3>
+        </div>
         <div class="flex flex-row items-center gap-2.5">
           <Show when={withMenu}>
             <DropdownMenu.Root placement="right-start">
@@ -52,7 +85,7 @@ export const Project = (props: ProjectProps) => {
                 </svg>
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal>
-                <DropdownMenu.Content class="z-50 ml-1 self-end w-fit bg-white dark:bg-black rounded-md border border-neutral-200 dark:border-neutral-800 shadow-md overflow-clip">
+                <DropdownMenu.Content class="z-50 ml-1 self-end w-fit bg-white dark:bg-black rounded-md border border-neutral-300 dark:border-neutral-800 shadow-md overflow-clip">
                   <DropdownMenu.Item class="flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 font-medium items-center justify-start select-none min-w-[150px]">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -70,6 +103,30 @@ export const Project = (props: ProjectProps) => {
                       <path d="m15 5 4 4" />
                     </svg>
                     <span>Edit</span>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    class="flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 font-medium items-center justify-start select-none min-w-[150px]"
+                    onSelect={() => {
+                      navigator(`/dashboard/project/configure/${props.project.id}/constructs`);
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="m7.5 4.27 9 5.15" />
+                      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+                      <path d="m3.3 7 8.7 5 8.7-5" />
+                      <path d="M12 22V12" />
+                    </svg>
+                    <span>Constructs</span>
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
                     class="flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 font-medium items-center justify-start select-none min-w-[150px]"
@@ -96,7 +153,7 @@ export const Project = (props: ProjectProps) => {
                     </svg>
                     <span>Duplicate</span>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Separator class="border-neutral-200 dark:border-neutral-800" />
+                  <DropdownMenu.Separator class="border-neutral-300 dark:border-neutral-800" />
                   <DropdownMenu.Item
                     class="flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900 active:bg-red-100 dark:active:bg-red-800 font-medium items-center justify-start select-none min-w-[150px] text-red-500 dark:text-red-400 dark:hover:text-white dark:active:text-white"
                     disabled={isDeleting}
@@ -148,8 +205,10 @@ export const Project = (props: ProjectProps) => {
           </Show>
         </div>
       </div>
-      <p class="text-md p-4 pt-2 border-b border-neutral-200 dark:border-neutral-800">{props.project.description}</p>
-      <div class="flex flex-col gap-2 p-4 border-b border-neutral-200 dark:border-neutral-800">
+      <p class="text-md p-4 pt-2 border-b border-neutral-300 dark:border-neutral-800 select-none">
+        {props.project.description}
+      </p>
+      <div class="flex flex-col gap-2 p-4 border-b border-neutral-300 dark:border-neutral-800">
         <Switch>
           <Match when={props.project.stack && props.project.stack}>
             {(stack) => (
@@ -172,8 +231,8 @@ export const Project = (props: ProjectProps) => {
             )}
           </Match>
           <Match when={!props.project.stack}>
-            <div class="w-full flex flex-col gap-6 bg-neutral-100 dark:bg-neutral-900 p-8 rounded-md items-center justify-center border border-neutral-200 dark:border-neutral-800">
-              <span>This Project is not configured yet.</span>
+            <div class="w-full flex flex-col gap-6 bg-neutral-100 dark:bg-neutral-900 p-8 rounded-md items-center justify-center border border-neutral-300 dark:border-neutral-800">
+              <span>This Project is unconfigured.</span>
               <div class="flex flex-row items-center justify-center gap-2.5">
                 <A
                   href={`/dashboard/project/configure/${props.project.id}`}
@@ -215,7 +274,7 @@ export const Project = (props: ProjectProps) => {
       </div>
       <div class="flex flex-col gap-1 p-4">
         <div class="flex flex-row items-center justify-between gap-2.5">
-          <span class="text-md font-medium">Online</span>
+          <span class="text-md font-medium select-none">Online since {dayjs().subtract(2, "days").fromNow()}</span>
           <div class="w-3 h-3 rounded-full bg-teal-500"></div>
         </div>
       </div>

@@ -222,7 +222,8 @@ const sstConstructs = async () => {
           meta: {
             line: number;
             file: string;
-            code: string;
+            import: string;
+            code: string[];
           };
         }
       | false
@@ -252,7 +253,7 @@ export const analyze = z
     let imports: Awaited<ReturnType<typeof GitHubUtils.extractImports>> = {};
     for (let i = 0; i < fileContents.length; i++) {
       const fc = fileContents[i];
-      const imp = await GitHubUtils.extractImports(fc);
+      const imp = await GitHubUtils.extractImports(fc, ["StackContext", "use"]);
       imports = Object.assign(imports, imp);
     }
     const exludeConstructs = options?.exclude?.constructs ?? [];
