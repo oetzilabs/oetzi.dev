@@ -114,12 +114,12 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the get user project function",
         },
       },
-      "GET /user/projects/analyze": {
-        function: {
-          handler: "packages/functions/src/projects.analyze",
-          description: "This is the analyze project function",
-        },
-      },
+      // "GET /user/projects/analyze": {
+      //   function: {
+      //     handler: "packages/functions/src/projects.analyze",
+      //     description: "This is the analyze project function",
+      //   },
+      // },
       "POST /user/projects/create": {
         function: {
           handler: "packages/functions/src/projects.create",

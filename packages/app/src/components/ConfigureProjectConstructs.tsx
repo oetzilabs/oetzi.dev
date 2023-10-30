@@ -59,12 +59,25 @@ export const ConfigureProjectConstructs = (props: ConfigureProjectConstructsProp
               <div class="w-full flex flex-row items-center justify-between">
                 <div class="w-[200px] h-8 rounded-md bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
                 <div class="flex flex-row items-center gap-2.5">
-                  <div class="w-[80px] h-4 rounded-md bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
+                  <div class="w-[80px] h-8 rounded-md bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
                 </div>
               </div>
-              <div class="w-full flex flex-col items-center gap-2">
-                <For each={[...Array(10).keys()]}>
-                  {() => <div class="w-full h-10 rounded-sm bg-neutral-100 dark:bg-neutral-800 animate-pulse" />}
+              <div class="w-full flex flex-col items-center">
+                <For each={[...Array(5).keys()]}>
+                  {() => (
+                    <div class="w-full p-5 rounded-sm border border-neutral-100 dark:border-neutral-800 animate-pulse border-b-0 last:border-b first:rounded-t-md last:rounded-b-md">
+                      <div class="w-full flex flex-row items-center justify-between gap-2.5">
+                        <div class="flex flex-row items-center gap-2.5">
+                          <div class="w-4 h-4 rounded-md bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
+                          <div class="w-[150px] h-4 rounded-md bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
+                        </div>
+                        <div class="flex flex-row items-center gap-2.5">
+                          <div class="w-[80px] h-7 rounded-md bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
+                          <div class="w-[80px] h-7 rounded-md bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </For>
               </div>
             </div>
@@ -111,138 +124,140 @@ export const ConfigureProjectConstructs = (props: ConfigureProjectConstructsProp
                   </div>
                 </div>
               </div>
-              <div class="w-full flex flex-col font-bold rounded-md overflow-clip text-sm">
-                <TransitionGroup>
-                  <For each={Object.entries(project.data?.analysis.constructs ?? {})}>
-                    {([name, construct]) => (
-                      <div
-                        class={cn(
-                          "p-3 w-full flex flex-col gap-2.5 border border-neutral-200 dark:border-neutral-800 items-center justify-between border-b-0 last:border-b first:rounded-t-md last:rounded-b-md",
-                          {
-                            "text-teal-500": typeof construct !== "boolean",
-                          }
-                        )}
-                      >
-                        <Switch>
-                          <Match when={typeof construct === "boolean"}>
-                            <div class="w-full flex flex-row items-center justify-between">
-                              <div class="flex flex-row items-center gap-2.5">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                >
-                                  <path d="M5 12h14" />
-                                  <path d="M12 5v14" />
-                                </svg>
-                                {name}
-                              </div>
-                              <button
-                                disabled
-                                class="bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-200 dark:active:bg-neutral-800 px-2.5 py-1 items-center flex flex-row gap-2.5 text-black dark:text-white w-max disabled:opacity-20 disabled:cursor-not-allowed"
-                              >
-                                <span>Link Coming soon</span>
-                              </button>
-                            </div>
-                          </Match>
-                          <Match when={typeof construct === "object" && construct}>
-                            {(c) => (
-                              <>
-                                <div class="w-full flex flex-col justify-between gap-2.5">
-                                  <div class="w-full items-center flex flex-row gap-2.5 justify-between">
-                                    <div class="flex flex-row gap-2.5 items-center">
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                      >
-                                        <polyline points="20 6 9 17 4 12" />
-                                      </svg>
-                                      <span>{name}</span>
-                                    </div>
-                                    <div class="flex flex-row gap-2.5 items-center">
-                                      <button
-                                        class="rounded-md bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-200 dark:active:bg-neutral-800 flex flex-row items-center justify-center px-2.5 py-1 text-black dark:text-white w-max border border-neutral-200 dark:border-neutral-800"
-                                        onClick={(e) => {
-                                          if (typeof construct === "object" && construct) {
-                                            const id = construct.id;
-                                            if (expandedConstructs().includes(id)) {
-                                              setExpandedConstructs((prev) => prev.filter((i) => i !== id));
-                                            } else {
-                                              setExpandedConstructs((prev) => [...prev, id]);
-                                            }
-                                          }
-                                        }}
-                                      >
-                                        <Switch
-                                          fallback={
-                                            <div class="flex flex-row gap-2.5 items-center">
-                                              <span>Expand</span>
-                                            </div>
-                                          }
-                                        >
-                                          <Match when={expandedConstructs().includes(c().id)}>
-                                            <div class="flex flex-row gap-2.5 items-center">
-                                              <span>Close</span>
-                                            </div>
-                                          </Match>
-                                        </Switch>
-                                      </button>
-                                      <A
-                                        target="_blank"
-                                        href={c().href}
-                                        class="bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-200 dark:active:bg-neutral-800 px-2.5 py-1 items-center flex flex-row gap-2.5 text-black dark:text-white w-max"
-                                      >
-                                        <span>More Info</span>
-                                      </A>
-                                    </div>
-                                  </div>
-                                  <Show when={expandedConstructs().includes(c().id)}>
-                                    <div class="w-full flex flex-col gap-2.5">
-                                      <div class="w-full flex flex-row items-center gap-2.5">
-                                        <span class="font-bold">Type:</span>
-                                        <span>{c().type}</span>
-                                      </div>
-                                      <div class="w-full flex flex-row items-center gap-2.5">
-                                        <span class="font-bold">Href:</span>
-                                        <span>{c().href}</span>
-                                      </div>
-                                      <div class="w-full flex flex-row items-center gap-2.5">
-                                        <span class="font-bold">Source:</span>
-                                        <span>
-                                          {c().meta.file} - line: {c().meta.line}
-                                        </span>
-                                      </div>
-                                      <div class="w-full flex flex-row items-center gap-2.5">
-                                        <pre>
-                                          <Highlight class="w-full p-4" language="typescript">
-                                            {c().meta.code}
-                                          </Highlight>
-                                        </pre>
-                                      </div>
-                                    </div>
-                                  </Show>
+              <div class="w-full flex flex-col gap-4">
+                <div class="w-full flex flex-col font-bold rounded-md overflow-clip text-sm">
+                  <TransitionGroup>
+                    <For each={Object.entries(project.data?.analysis.constructs ?? {})}>
+                      {([name, construct]) => (
+                        <div
+                          class={cn(
+                            "p-3 w-full flex flex-col gap-2.5 border border-neutral-200 dark:border-neutral-800 items-center justify-between border-b-0 last:border-b first:rounded-t-md last:rounded-b-md",
+                            {
+                              "text-teal-500": typeof construct !== "boolean",
+                            }
+                          )}
+                        >
+                          <Switch>
+                            <Match when={typeof construct === "boolean"}>
+                              <div class="w-full flex flex-row items-center justify-between">
+                                <div class="flex flex-row items-center gap-2.5">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  >
+                                    <path d="M5 12h14" />
+                                    <path d="M12 5v14" />
+                                  </svg>
+                                  {name}
                                 </div>
-                              </>
-                            )}
-                          </Match>
-                        </Switch>
-                      </div>
-                    )}
-                  </For>
-                </TransitionGroup>
+                                <button
+                                  disabled
+                                  class="bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-200 dark:active:bg-neutral-800 px-2.5 py-1 items-center flex flex-row gap-2.5 text-black dark:text-white w-max disabled:opacity-20 disabled:cursor-not-allowed"
+                                >
+                                  <span>Link Coming soon</span>
+                                </button>
+                              </div>
+                            </Match>
+                            <Match when={typeof construct === "object" && construct}>
+                              {(c) => (
+                                <>
+                                  <div class="w-full flex flex-col justify-between gap-2.5">
+                                    <div class="w-full items-center flex flex-row gap-2.5 justify-between">
+                                      <div class="flex flex-row gap-2.5 items-center">
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="16"
+                                          height="16"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="2"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                        >
+                                          <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                        <span>{name}</span>
+                                      </div>
+                                      <div class="flex flex-row gap-2.5 items-center">
+                                        <button
+                                          class="rounded-md bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-200 dark:active:bg-neutral-800 flex flex-row items-center justify-center px-2.5 py-1 text-black dark:text-white w-max border border-neutral-200 dark:border-neutral-800"
+                                          onClick={(e) => {
+                                            if (typeof construct === "object" && construct) {
+                                              const id = construct.id;
+                                              if (expandedConstructs().includes(id)) {
+                                                setExpandedConstructs((prev) => prev.filter((i) => i !== id));
+                                              } else {
+                                                setExpandedConstructs((prev) => [...prev, id]);
+                                              }
+                                            }
+                                          }}
+                                        >
+                                          <Switch
+                                            fallback={
+                                              <div class="flex flex-row gap-2.5 items-center">
+                                                <span>Expand</span>
+                                              </div>
+                                            }
+                                          >
+                                            <Match when={expandedConstructs().includes(c().id)}>
+                                              <div class="flex flex-row gap-2.5 items-center">
+                                                <span>Close</span>
+                                              </div>
+                                            </Match>
+                                          </Switch>
+                                        </button>
+                                        <A
+                                          target="_blank"
+                                          href={c().href}
+                                          class="bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-200 dark:active:bg-neutral-800 px-2.5 py-1 items-center flex flex-row gap-2.5 text-black dark:text-white w-max"
+                                        >
+                                          <span>More Info</span>
+                                        </A>
+                                      </div>
+                                    </div>
+                                    <Show when={expandedConstructs().includes(c().id)}>
+                                      <div class="w-full flex flex-col gap-2.5">
+                                        <div class="w-full flex flex-row items-center gap-2.5">
+                                          <span class="font-bold">Type:</span>
+                                          <span>{c().type}</span>
+                                        </div>
+                                        <div class="w-full flex flex-row items-center gap-2.5">
+                                          <span class="font-bold">Href:</span>
+                                          <span>{c().href}</span>
+                                        </div>
+                                        <div class="w-full flex flex-row items-center gap-2.5">
+                                          <span class="font-bold">Source:</span>
+                                          <span>
+                                            {c().meta.file} - line: {c().meta.line}
+                                          </span>
+                                        </div>
+                                        <div class="w-full flex flex-row items-center gap-2.5">
+                                          <pre>
+                                            <Highlight class="w-full p-4" language="typescript">
+                                              {c().meta.code}
+                                            </Highlight>
+                                          </pre>
+                                        </div>
+                                      </div>
+                                    </Show>
+                                  </div>
+                                </>
+                              )}
+                            </Match>
+                          </Switch>
+                        </div>
+                      )}
+                    </For>
+                  </TransitionGroup>
+                </div>
               </div>
             </div>
           )}

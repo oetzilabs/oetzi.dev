@@ -1,10 +1,24 @@
-import * as parser from "@babel/parser";
-import * as t from "@babel/types";
 import { z } from "zod";
+
+export * as GitHubUtils from "./utils";
 
 let traverse: any;
 
-export * as GitHubUtils from "./utils";
+let traverseCache: Record<
+  string,
+  {
+    imports: Record<
+      string,
+      {
+        line: number;
+        file: string;
+        code: string;
+      }
+    >;
+    code: string;
+  }
+> = {};
+
 export const extractImports = z
   .function(
     z.tuple([
@@ -15,6 +29,11 @@ export const extractImports = z
     ])
   )
   .implement(async (fileContent) => {
+    if (traverseCache[fileContent.path]) {
+      return traverseCache[fileContent.path].imports;
+    }
+    const parser = (await import("@babel/parser")).default;
+    const t = (await import("@babel/types")).default;
     const ast = parser.parse(fileContent.content, {
       sourceType: "module",
       plugins: ["typescript"],
@@ -51,6 +70,8 @@ export const extractImports = z
         }
       },
     });
+
+    traverseCache[fileContent.path] = { imports, code: fileContent.content };
 
     return imports;
   });

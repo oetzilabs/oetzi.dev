@@ -141,26 +141,26 @@ export const project = z.function(z.tuple([z.string(), z.string()])).implement(a
   )
 );
 
-export const analyzeProject = z.function(z.tuple([z.string(), z.string()])).implement(async (token, id) =>
-  fetch(`${API_BASE}/user/projects/analyze?id=${encodeURIComponent(id)}`, {
-    method: "GET",
-    headers: {
-      authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  }).then(
-    (res) =>
-      res.json() as Promise<
-        NonNullable<
-          Array<{
-            id: string;
-            type: keyof typeof ConstructIcons;
-            name: string;
-          }>
-        >
-      >
-  )
-);
+// export const analyzeProject = z.function(z.tuple([z.string(), z.string()])).implement(async (token, id) =>
+//   fetch(`${API_BASE}/user/projects/analyze?id=${encodeURIComponent(id)}`, {
+//     method: "GET",
+//     headers: {
+//       authorization: `Bearer ${token}`,
+//       "Content-Type": "application/json",
+//     },
+//   }).then(
+//     (res) =>
+//       res.json() as Promise<
+//         NonNullable<
+//           Array<{
+//             id: string;
+//             type: keyof typeof ConstructIcons;
+//             name: string;
+//           }>
+//         >
+//       >
+//   )
+// );
 
 export const Links = {
   all: z.function(z.tuple([z.string()])).implement(async (token) =>

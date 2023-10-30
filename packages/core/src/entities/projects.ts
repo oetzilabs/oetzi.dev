@@ -253,7 +253,7 @@ export const analyze = z
     for (let i = 0; i < fileContents.length; i++) {
       const fc = fileContents[i];
       const imp = await GitHubUtils.extractImports(fc);
-      imports = { ...imports, ...imp };
+      imports = Object.assign(imports, imp);
     }
     const exludeConstructs = options?.exclude?.constructs ?? [];
     const imps = Array.from(Object.keys(imports)).filter((x) => !exludeConstructs.includes(x));

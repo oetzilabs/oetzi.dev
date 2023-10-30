@@ -1,13 +1,20 @@
 import { Octokit } from "@octokit/rest";
 import { Project } from "@oetzidev/core/entities/projects";
+import { Stack } from "@oetzidev/core/entities/stacks";
+import { GitHub } from "@oetzidev/core/github";
+import { StatusCodes } from "http-status-codes";
 import fetch from "node-fetch";
 import { ApiHandler, useFormData, useQueryParam } from "sst/node/api";
 import { User, getFreshAccessToken } from "../../core/src/entities/users";
 import { getUser } from "./utils";
-import { Stack } from "@oetzidev/core/entities/stacks";
-import { StatusCodes } from "http-status-codes";
-import { GitHub } from "@oetzidev/core/github";
-import { Link } from "@oetzidev/core/entities/links";
+
+let gitHubFilesCache: Record<
+  string,
+  {
+    content: string;
+    path: string;
+  }[]
+> = {};
 
 export const allProjects = ApiHandler(async (_evt) => {
   const [user] = await getUser();
@@ -173,36 +180,30 @@ export const getProject = ApiHandler(async (_evt) => {
   if (result.ownerId !== user.id) throw new Error("Not authorized");
   const userToken = await User.getFreshAccessToken(user.id);
 
-  const constructHrefs = await Link.listBy("constructs");
   let result_: typeof result & {
     analysis?: Awaited<ReturnType<typeof Project.analyze>>;
   } = result;
   const isEmpty = await GitHub.isEmptyRepository(userToken, result_.name);
   if (!isEmpty) {
-    const files = await GitHub.getFiles(userToken, result_.name, ["stacks"]);
-    const fileContents: Array<{
-      content: string;
-      path: string;
-    }> = [];
-
-    for await (const file of files) {
-      const _file = await GitHub.readFileContent(userToken, result_.name, file.path);
-      fileContents.push(..._file);
+    // console.time("GitHub.getFiles");
+    let _files = gitHubFilesCache[result_.name];
+    if (!_files) {
+      const files = await GitHub.getFiles(userToken, result_.name, ["stacks"]);
+      const fileContents: Array<{
+        content: string;
+        path: string;
+      }> = (await Promise.all(files.map((file) => GitHub.readFileContent(userToken, result_.name, file.path)))).flat();
+      gitHubFilesCache[result_.name] = fileContents;
+      _files = fileContents;
     }
-
-    const projectAnalysis = await Project.analyze(fileContents, {
+    // console.timeEnd("GitHub.getFiles");
+    // console.time("Project.analyze");
+    const projectAnalysis = await Project.analyze(_files, {
       exclude: {
         constructs: ["StackContext", "use"],
       },
     });
-
-    const s = Array.from(
-      new Set(
-        Object.entries(projectAnalysis.constructs)
-          .filter(([_, v]) => v)
-          .map(([k]) => k)
-      )
-    ).sort();
+    // console.timeEnd("Project.analyze");
     if (!result_.analysis)
       result_.analysis = {
         constructs: {},

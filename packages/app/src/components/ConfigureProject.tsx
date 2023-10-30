@@ -137,45 +137,44 @@ export const ConfigureProject = (props: ConfigureProjectProps) => {
               <div class="w-full flex flex-col gap-2.5">
                 <span>{(data().description ?? "").length > 0 ? data().description : "No description"}</span>
               </div>
-              <Switch
-                fallback={
-                  <div class="w-full flex flex-col gap-2.5">
-                    <div class="w-full flex flex-row items-center justify-center p-10 bg-black dark:bg-white text-white dark:text-black rounded-md font-semibold text-sm">
-                      There are no constructs in this project.
+              <div class="w-full grid grid-cols-4 gap-2.5">
+                <For
+                  each={Object.entries(project.data?.analysis.constructs ?? {})}
+                  fallback={
+                    <div class="w-full ">
+                      <div class="w-full flex flex-row items-center justify-center p-10 bg-black dark:bg-white text-white dark:text-black rounded-md font-semibold text-sm">
+                        There are no constructs in this project.
+                      </div>
                     </div>
-                  </div>
-                }
-              >
-                <div class="w-full grid grid-cols-4 gap-2.5">
-                  <For each={Object.entries(project.data?.analysis.constructs ?? {})}>
-                    {([name, construct]) => (
-                      <Switch>
-                        {/* <Match when={typeof construct === "boolean"}>
+                  }
+                >
+                  {([name, construct]) => (
+                    <Switch>
+                      {/* <Match when={typeof construct === "boolean"}>
                           <div class="flex flex-row items-center"></div>
                         </Match> */}
-                        <Match when={typeof construct === "object" && construct}>
-                          {(c) => (
+                      <Match when={typeof construct === "object" && construct}>
+                        {(c) => (
+                          <A
+                            href={`constructs/${c().id}`}
+                            class="bg-black dark:bg-white p-4 text-white dark:text-black font-bold w-full flex flex-col gap-2.5 rounded-md hover:bg-neutral-900 dark:hover:bg-neutral-100 active:bg-neutral-800 dark:active:bg-neutral-200"
+                          >
+                            <div class="text-xs font-normal">{ConstructIcons[c().type]}</div>
+                            <span>{name}</span>
                             <A
-                              href={`constructs/${c().id}`}
-                              class="bg-black dark:bg-white p-4 text-white dark:text-black font-bold w-full flex flex-col gap-2.5 rounded-md hover:bg-neutral-900 dark:hover:bg-neutral-100 active:bg-neutral-800 dark:active:bg-neutral-200"
+                              target="_blank"
+                              href={c().href}
+                              class="bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-200 dark:active:bg-neutral-800 px-2.5 py-1 items-center flex flex-row gap-2.5 text-black dark:text-white w-max"
                             >
-                              <div class="text-xs font-normal">{ConstructIcons[c().type]}</div>
-                              <span>{name}</span>
-                              <A
-                                target="_blank"
-                                href={c().href}
-                                class="bg-white dark:bg-black hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md active:bg-neutral-200 dark:active:bg-neutral-800 px-2.5 py-1 items-center flex flex-row gap-2.5 text-black dark:text-white w-max"
-                              >
-                                <span>More Info</span>
-                              </A>
+                              <span>More Info</span>
                             </A>
-                          )}
-                        </Match>
-                      </Switch>
-                    )}
-                  </For>
-                </div>
-              </Switch>
+                          </A>
+                        )}
+                      </Match>
+                    </Switch>
+                  )}
+                </For>
+              </div>
             </div>
           )}
         </Match>
