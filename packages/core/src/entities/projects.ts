@@ -107,8 +107,14 @@ export const all = z.function(z.tuple([])).implement(async () => {
 });
 
 export const AllWithFilterZod = z.object({
-  visibility: z.union([z.literal("public"), z.literal("private")]).default("public"),
-  deleted: z.boolean().default(false),
+  visibility: z
+    .union([z.literal("public"), z.literal("private")])
+    .default("public")
+    .optional(),
+  deleted: z
+    .boolean()
+    .or(z.string().transform((v) => (v === "true" ? true : false)))
+    .optional(),
 });
 
 export const allWithFilter = z.function(z.tuple([AllWithFilterZod.optional()])).implement(async (filter) => {
@@ -116,7 +122,6 @@ export const allWithFilter = z.function(z.tuple([AllWithFilterZod.optional()])).
     where: (projects, operations) =>
       operations.and(
         operations.eq(projects.deletedAt, filter?.deleted ? isNotNull(projects.deletedAt) : isNull(projects.deletedAt)),
-        operations.not(isNull(projects.syncedAt)),
         operations.eq(projects.visibility, filter?.visibility ?? "public")
       ),
     with: {

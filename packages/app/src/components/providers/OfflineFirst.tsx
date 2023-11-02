@@ -230,16 +230,7 @@ export const OfflineFirst = (props: { children: any }) => {
             expiresAt: user.expiresAt,
             user: userData,
           });
-          const ses = await db.sessions
-            .put({ token, user: JSON.stringify(userData) }, 1)
-            .then(() => true)
-            .catch((e) => {
-              console.error("Something went wrong.", e);
-              return false;
-            });
-          if (!ses) return Promise.reject("Something went wrong.");
-
-          return ses;
+          return true;
         },
         isOnline,
         setIsOnline,

@@ -89,6 +89,7 @@ export const remove = ApiHandler(async (_evt) => {
 export const all = ApiHandler(async (_evt) => {
   const p = useQueryParams();
   if (!p) {
+    console.log("no params");
     const result = await Project.all();
     return {
       statusCode: 200,
@@ -98,6 +99,7 @@ export const all = ApiHandler(async (_evt) => {
       body: JSON.stringify(result),
     };
   }
+  console.log("proceeding with params");
   const filterSP = AllWithFilterZod.safeParse(p);
   if (filterSP.success) {
     const result = await Project.allWithFilter(filterSP.data);

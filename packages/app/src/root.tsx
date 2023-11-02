@@ -1,12 +1,9 @@
 // @refresh reload
-import { QueryClient } from "@tanstack/solid-query";
 import { Suspense, createEffect, createSignal, onCleanup } from "solid-js";
 import { Body, ErrorBoundary, Head, Html, Meta, Scripts, Title } from "solid-start";
 import Content from "./components/Content";
 import { Providers } from "./components/providers";
 import "./root.css";
-
-const queryClient = new QueryClient();
 
 export default function Root() {
   // colormode

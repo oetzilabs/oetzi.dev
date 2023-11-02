@@ -11,6 +11,7 @@ import advancedFormat from "dayjs/plugin/advancedFormat";
 import { Project } from "../../components/Project";
 import { useOfflineFirst } from "../../components/providers/OfflineFirst";
 import { FakeProgressBar } from "../../components/FakeProgressbar";
+import { A } from "@solidjs/router";
 dayjs.extend(advancedFormat);
 
 export default function DashboardPage() {
@@ -265,7 +266,26 @@ export default function DashboardPage() {
                 <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.01] gap-6 rounded-md backdrop-blur-sm border border-black/5 dark:border-white/5">
                   <h3 class="text-xl font-bold">No Projects</h3>
                   <p class="text-lg font-medium">You have no projects.</p>
-                  <NewProject />
+                  <A
+                    href={`/dashboard/project/create`}
+                    class="p-2 py-1 flex items-center justify-center bg-black dark:bg-white gap-2.5 hover:bg-neutral-950 rounded-md active:bg-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-200 text-white dark:text-black"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="M12 5v14" />
+                    </svg>
+                    <span class="font-bold select-none">Create Project</span>
+                  </A>
                 </div>
               </Match>
               <Match when={user().isAuthenticated && offlineFirst.projectsFilter().search?.length > 0}>
@@ -297,6 +317,30 @@ export default function DashboardPage() {
             />
           )}
         </For>
+        <Show when={user().isAuthenticated && offlineFirst.userProjects().length > 0}>
+          <A
+            href={`/dashboard/project/create`}
+            class="flex flex-col text-black dark:text-white border border-neutral-300 dark:border-neutral-800 overflow-clip items-center justify-center hover:bg-neutral-50 dark:hover:bg-neutral-950 cursor-pointer"
+          >
+            <div class="flex flex-row gap-4 items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+              </svg>
+              <span class="text-md font-bold select-none">Add Project</span>
+            </div>
+          </A>
+        </Show>
       </div>
     </div>
   );
