@@ -14,7 +14,7 @@ permissions:
 jobs:
   DeployApp:
     runs-on: ubuntu-latest
-    env:
+    #env:
     #Define your envs needed for static generation:
     # ENV_NAME: ${{ secrets.ENV_NAME }}
     steps:
