@@ -1,13 +1,11 @@
 import { Project } from "@oetzidev/core/entities/projects";
 import { User } from "@oetzidev/core/entities/users";
-import { createMutation, createQueries, createQuery, useQueryClient } from "@tanstack/solid-query";
-import { Accessor, Setter, createContext, createEffect, createSignal, onCleanup, onMount, useContext } from "solid-js";
-import { z } from "zod";
-import { Mutations } from "../../utils/api/mutations";
-import { Queries, userProjects, session } from "../../utils/api/queries";
-import Dexie from "dexie";
-import { IDB } from "./IndexedDB";
+import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
 import dayjs from "dayjs";
+import { Accessor, Setter, createContext, createEffect, createSignal, onCleanup, useContext } from "solid-js";
+import { Mutations } from "../../utils/api/mutations";
+import { Queries } from "../../utils/api/queries";
+import { IDB } from "./IndexedDB";
 
 const DB_NAME = "oetzi.dev";
 export type UseAuth = {

@@ -1,8 +1,8 @@
 import { createQuery } from "@tanstack/solid-query";
-import { Queries } from "../utils/api/queries";
 import { For, Match, Switch, createEffect, createSignal, onCleanup } from "solid-js";
 import { PublicProject } from "../components/PublicProject";
 import { useAuth } from "../components/providers/OfflineFirst";
+import { Queries } from "../utils/api/queries";
 
 export default function Home() {
   const [load, setLoad] = createSignal(false);

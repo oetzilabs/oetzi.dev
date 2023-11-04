@@ -1,17 +1,14 @@
-import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
-import { For, Match, Show, Switch, createEffect, createSignal, onCleanup, onMount } from "solid-js";
-import { toast } from "solid-toast";
-import { useAuth } from "../../components/providers/OfflineFirst";
-import NewProject from "../../components/NewProject";
-import { Mutations } from "../../utils/api/mutations";
-import { Queries } from "../../utils/api/queries";
-import { cn } from "../../utils/cn";
+import { A } from "@solidjs/router";
+import { createMutation, useQueryClient } from "@tanstack/solid-query";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
-import { Project } from "../../components/Project";
-import { useOfflineFirst } from "../../components/providers/OfflineFirst";
+import { For, Match, Show, Switch, createSignal, onCleanup, onMount } from "solid-js";
+import { toast } from "solid-toast";
 import { FakeProgressBar } from "../../components/FakeProgressbar";
-import { A } from "@solidjs/router";
+import { Project } from "../../components/Project";
+import { useAuth, useOfflineFirst } from "../../components/providers/OfflineFirst";
+import { Mutations } from "../../utils/api/mutations";
+import { cn } from "../../utils/cn";
 dayjs.extend(advancedFormat);
 
 export default function DashboardPage() {

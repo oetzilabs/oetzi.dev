@@ -1,5 +1,5 @@
 import { Dialog } from "@kobalte/core";
-import { JSX, Setter, Show } from "solid-js";
+import { JSX, Show } from "solid-js";
 
 type ModalProps = {
   children: JSX.Element;

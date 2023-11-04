@@ -1,5 +1,5 @@
 import { createMutation } from "@tanstack/solid-query";
-import { createEffect, onMount } from "solid-js";
+import { createEffect } from "solid-js";
 import { useSearchParams } from "solid-start";
 import { useOfflineFirst } from "../components/providers/OfflineFirst";
 

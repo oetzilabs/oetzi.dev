@@ -3,14 +3,14 @@ import { Technology } from "@oetzidev/core/entities/technologies";
 import { debounce } from "@solid-primitives/scheduled";
 import { A } from "@solidjs/router";
 import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
+import "highlight.js/styles/obsidian.min.css";
 import { For, JSX, Match, Show, Switch, createSignal } from "solid-js";
 import { z } from "zod";
 import { Mutations } from "../utils/api/mutations";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
-import { useAuth } from "./providers/OfflineFirst";
 import Highlight from "./CodePreview";
-import "highlight.js/styles/obsidian.min.css";
+import { useAuth } from "./providers/OfflineFirst";
 
 const DefaultTemplate: Parameters<typeof Mutations.Stacks.create>[1] = {
   name: "",
