@@ -1,5 +1,5 @@
 import { useParams } from "solid-start";
-import DuplicateProject from "../../../../components/DuplicateProject";
+import DuplicateProject from "../../../../../components/DuplicateProject";
 
 const DuplicateProjectPage = () => {
   const { id } = useParams<{ id: string }>();

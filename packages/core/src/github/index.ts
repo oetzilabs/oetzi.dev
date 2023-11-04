@@ -103,10 +103,57 @@ export const isEmptyRepository = z.function(z.tuple([z.string(), z.string()])).i
   const octokit = new Octokit({
     auth,
   });
-  const { data } = await octokit.repos.getContent({ path: "", owner: repo.split("/")[0], repo: repo.split("/")[1] });
   let x = false;
-  if (Array.isArray(data)) {
-    x = data.length === 0;
+  const result:
+    | {
+        success: true;
+        data: Awaited<ReturnType<typeof octokit.repos.getContent>>["data"];
+        status: Awaited<ReturnType<typeof octokit.repos.getContent>>["status"];
+      }
+    | {
+        success: false;
+        error: string;
+      } = await octokit.repos
+    .getContent({
+      path: "/",
+      owner: repo.split("/")[0],
+      repo: repo.split("/")[1],
+    })
+    .then((r) => {
+      return {
+        success: true,
+        data: r.data,
+        status: r.status,
+      } as const;
+    })
+    .catch((e) => {
+      return {
+        success: false,
+        error: e.message,
+      } as const;
+    });
+
+  if (result.success) {
+    if (Array.isArray(result.data)) {
+      x = result.data.length === 0;
+    }
+  } else {
+    if (result.error === "This repository is empty.") {
+      x = true;
+    }
   }
+
   return x;
 });
+
+export const getRepositoriesFromOrganization = z
+  .function(z.tuple([z.string(), z.string()]))
+  .implement(async (auth, org) => {
+    const octokit = new Octokit({
+      auth,
+    });
+    const { data } = await octokit.repos.listForOrg({
+      org,
+    });
+    return data;
+  });

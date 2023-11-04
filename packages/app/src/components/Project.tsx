@@ -86,7 +86,12 @@ export const Project = (props: ProjectProps) => {
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal>
                 <DropdownMenu.Content class="z-50 ml-1 self-end w-fit bg-white dark:bg-black rounded-md border border-neutral-300 dark:border-neutral-800 shadow-md overflow-clip">
-                  <DropdownMenu.Item class="flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 font-medium items-center justify-start select-none min-w-[150px]">
+                  <DropdownMenu.Item
+                    class="flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 font-medium items-center justify-start select-none min-w-[150px]"
+                    onSelect={() => {
+                      navigator(`/dashboard/project/${props.project.id}/edit`);
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -107,7 +112,7 @@ export const Project = (props: ProjectProps) => {
                   <DropdownMenu.Item
                     class="flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 font-medium items-center justify-start select-none min-w-[150px]"
                     onSelect={() => {
-                      navigator(`/dashboard/project/configure/${props.project.id}/constructs`);
+                      navigator(`/dashboard/project/${props.project.id}/configure/constructs`);
                     }}
                   >
                     <svg
@@ -131,7 +136,7 @@ export const Project = (props: ProjectProps) => {
                   <DropdownMenu.Item
                     class="flex flex-row gap-2.5 p-2 py-1.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 font-medium items-center justify-start select-none min-w-[150px]"
                     onSelect={() => {
-                      navigator(`/dashboard/project/duplicate/${props.project.id}`);
+                      navigator(`/dashboard/project/${props.project.id}/duplicate`);
                     }}
                   >
                     <svg
@@ -205,7 +210,7 @@ export const Project = (props: ProjectProps) => {
           </Show>
         </div>
       </div>
-      <p class="text-md p-4 pt-2 border-b border-neutral-300 dark:border-neutral-800 select-none">
+      <p class="text-md p-4 pt-2 border-b border-neutral-300 dark:border-neutral-800 select-none flex-grow">
         {props.project.description}
       </p>
       <div class="flex flex-col gap-2 p-4 border-b border-neutral-300 dark:border-neutral-800">

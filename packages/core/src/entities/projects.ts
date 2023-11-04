@@ -103,8 +103,29 @@ export const all = z.function(z.tuple([])).implement(async () => {
       user: true,
       participants: true,
     },
+    orderBy(fields, order) {
+      return [order.desc(fields.updatedAt), order.desc(fields.createdAt)];
+    },
   });
 });
+
+export const allFromOrganization = z
+  .function(z.tuple([z.string(), z.string()]))
+  .implement(async (input, organization) => {
+    let result = [];
+    const projects = await GitHub.getRepositoriesFromOrganization(input, organization);
+    // check if the project has a file with `sst.config.ts` and if so, add it to the result with `type: sst`;
+    for await (const project of projects) {
+      const files = await GitHub.getFiles(input, project.full_name, ["sst.config.ts"]);
+      if (files.length > 0) {
+        result.push({
+          type: "sst",
+          ...project,
+        });
+      }
+    }
+    return result;
+  });
 
 export const AllWithFilterZod = z.object({
   visibility: z
@@ -128,6 +149,9 @@ export const allWithFilter = z.function(z.tuple([AllWithFilterZod.optional()])).
       user: true,
       participants: true,
     },
+    orderBy(fields, order) {
+      return [order.desc(fields.updatedAt), order.desc(fields.createdAt)];
+    },
   });
 });
 
@@ -138,6 +162,9 @@ export const allByUser = z.function(z.tuple([z.string().uuid()])).implement(asyn
       projects: {
         with: {
           user: true,
+        },
+        orderBy(fields, order) {
+          return [order.desc(fields.updatedAt), order.desc(fields.createdAt)];
         },
       },
       project_participants: {

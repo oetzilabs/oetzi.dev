@@ -88,24 +88,39 @@ export const PublicProject = (props: PublicProjectProps) => {
           </Match>
         </Switch>
       </div>
-      <div class="flex flex-col gap-1 p-4">
+      <div class="flex flex-col gap-1 p-4 border-b border-neutral-300 dark:border-neutral-800">
+        <div class="flex flex-row items-center justify-between gap-2.5">
+          <span class="text-md font-medium select-none">Created since {dayjs(props.project.createdAt).fromNow()}</span>
+          <div class="w-3 h-3 rounded-full bg-teal-500"></div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-1 ">
         <div class="flex flex-row items-center justify-between gap-2.5">
           <A
             href={props.project.remote}
             target="_blank"
             rel="noopener noreferrer external"
-            class="text-md font-medium select-none"
+            class="flex flex-row gap-2.5 w-full text-md font-medium select-none items-center justify-between p-4 hover:bg-neutral-50 dark:hover:bg-neutral-950"
           >
-            Open in {new URL(props.project.remote).hostname}
+            <span>Open in {new URL(props.project.remote).hostname}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" x2="21" y1="14" y2="3" />
+            </svg>
           </A>
         </div>
       </div>
-      {/* <div class="flex flex-col gap-1 p-4">
-        <div class="flex flex-row items-center justify-between gap-2.5">
-          <span class="text-md font-medium select-none">Online since {dayjs().subtract(2, "days").fromNow()}</span>
-          <div class="w-3 h-3 rounded-full bg-teal-500"></div>
-        </div>
-      </div> */}
     </div>
   );
 };

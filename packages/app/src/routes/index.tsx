@@ -35,22 +35,23 @@ export default function Home() {
 
   return (
     <div class="flex container mx-auto flex-col gap-10 py-10">
-      <div class="flex flex-row items-center justify-between">
-        <h1 class="text-4xl font-bold select-none">Welcome to my dev page</h1>
-        <div class="flex flex-row items-center gap-2.5"></div>
+      <div class="flex flex-col gap-10 py-32">
+        <div class="flex flex-row items-center justify-center">
+          <h1 class="text-9xl font-bold text-teal-300">OETZI.DEV</h1>
+        </div>
+        <div class="flex flex-col gap-4 items-center justify-center">
+          <span class="text-2xl font-medium">I'm Ötzi, a 27 year young developer from Germany.</span>
+          <span class="text-2xl font-medium">
+            I'm currently working on a few projects, some of them are listed below.
+          </span>
+          <span class="text-lg font-medium select-none opacity-60">
+            These are all my public projects. I will gradually add more projects to this list.
+          </span>
+        </div>
       </div>
-      <div class="flex flex-col gap-2">
-        <span class="text-lg font-medium select-none">
-          I'm Ötzi, a 27 year young developer from Germany. I'm currently working on a few projects, some of them are
-          listed below.
-        </span>
-        <span class="text-md font-medium select-none">
-          These are all my public projects. I will gradually add more projects to this list.
-        </span>
-      </div>
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-10 py-10">
         <h1 class="text-2xl font-bold select-none">Public Projects</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Switch>
             <Match when={projects.isLoading}>
               <div class="col-span-full flex flex-col items-center justify-center p-8">

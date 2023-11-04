@@ -7,6 +7,7 @@ import { Mutations } from "../../utils/api/mutations";
 import { Queries, userProjects, session } from "../../utils/api/queries";
 import Dexie from "dexie";
 import { IDB } from "./IndexedDB";
+import dayjs from "dayjs";
 
 const DB_NAME = "oetzi.dev";
 export type UseAuth = {
@@ -158,7 +159,13 @@ export const OfflineFirst = (props: { children: any }) => {
 
   createEffect(async () => {
     // update offlineUserProjects and load from db
-    const uPs = await db.projects.toArray();
+    const uPs = (await db.projects.toArray()).sort((a, b) => {
+      // sost by updatedAt and createdAt desc
+      const aDate = a.createdAt;
+      const bDate = b.createdAt;
+      if (!aDate || !bDate) return 0;
+      return dayjs(aDate).isBefore(dayjs(bDate)) ? 1 : -1;
+    });
     setOfflineUserProjects(uPs);
   });
 
@@ -191,7 +198,8 @@ export const OfflineFirst = (props: { children: any }) => {
   };
 
   const userProjects = () => {
-    let result = filterProjects(offlineUserProjects());
+    const ofPs = offlineUserProjects();
+    let result = filterProjects(ofPs);
     if (isOnline()) {
       if (uP.isLoading) return result;
       if (!uP.isSuccess) return result;

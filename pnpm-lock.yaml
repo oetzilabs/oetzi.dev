@@ -18,8 +18,8 @@ importers:
         specifier: 10.2.69
         version: 10.2.69
       sst:
-        specifier: ^2.33.2
-        version: 2.33.2
+        specifier: ^2.34.3
+        version: 2.34.3
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -118,8 +118,8 @@ importers:
         specifier: ^0.3.9
         version: 0.3.9(solid-start@0.3.9)(vite@4.5.0)
       solid-start-sst:
-        specifier: ^2.33.2
-        version: 2.33.2(solid-start@0.3.9)(vite@4.5.0)
+        specifier: ^2.34.3
+        version: 2.34.3(solid-start@0.3.9)(vite@4.5.0)
       tailwindcss:
         specifier: ^3.3.5
         version: 3.3.5
@@ -182,8 +182,8 @@ importers:
         specifier: ^0.19.13
         version: 0.19.13
       sst:
-        specifier: ^2.33.2
-        version: 2.33.2
+        specifier: ^2.34.3
+        version: 2.34.3
       vitest:
         specifier: ^0.34.6
         version: 0.34.6
@@ -234,8 +234,8 @@ importers:
         specifier: 9.0.5
         version: 9.0.5
       sst:
-        specifier: ^2.33.2
-        version: 2.33.2
+        specifier: ^2.34.3
+        version: 2.34.3
       vitest:
         specifier: ^0.34.6
         version: 0.34.6
@@ -5622,7 +5622,7 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       archiver-utils: 2.1.0
-      async: 3.2.4
+      async: 3.2.5
       buffer-crc32: 0.2.13
       readable-stream: 3.6.2
       readdir-glob: 1.1.3
@@ -5668,8 +5668,8 @@ packages:
     resolution: {integrity: sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==}
     dev: true
 
-  /async@3.2.4:
-    resolution: {integrity: sha512-iAB+JbDEGXhyIUavoDl9WP/Jj106Kz9DEn1DPgYw5ruDn0e3Wgi3sKFm55sASdGBNOQB8F59d9qQ7deqrHA8wQ==}
+  /async@3.2.5:
+    resolution: {integrity: sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==}
     dev: true
 
   /asynckit@0.4.0:
@@ -5698,7 +5698,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.22.1
-      caniuse-lite: 1.0.30001559
+      caniuse-lite: 1.0.30001561
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -5808,8 +5808,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /aws-sdk@2.1486.0:
-    resolution: {integrity: sha512-YVGhKGWP5mHWIla6/a7MXwHyKrjcy2xIo65Z6rCvG2uxVa3NxGz4Wo7yNRqA8QGCS6buYz9MmRJLv2KOtkb7JQ==}
+  /aws-sdk@2.1488.0:
+    resolution: {integrity: sha512-rRsOrIyqb/11T9VT65WSkTGC4yjI9z9IWKrwaZBhsqYJmqD2tj02CT9e1J6VNHqQbd+/rbKTddSKOWLjyjLXBQ==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       buffer: 4.9.2
@@ -5983,8 +5983,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001559
-      electron-to-chromium: 1.4.574
+      caniuse-lite: 1.0.30001561
+      electron-to-chromium: 1.4.576
       node-releases: 2.0.13
       update-browserslist-db: 1.0.13(browserslist@4.22.1)
 
@@ -6068,8 +6068,8 @@ packages:
     engines: {node: '>=14.16'}
     dev: true
 
-  /caniuse-lite@1.0.30001559:
-    resolution: {integrity: sha512-cPiMKZgqgkg5LY3/ntGeLFUpi6tzddBNS58A4tnTgQw1zON7u2sZMU7SzOeVH4tj20++9ggL+V6FDOFMTaFFYA==}
+  /caniuse-lite@1.0.30001561:
+    resolution: {integrity: sha512-NTt0DNoKe958Q0BE0j0c1V9jbUzhBxHIEJy7asmGrpE0yG63KTV7PLHPnK2E1O9RsQrQ081I3NLuXGS6zht3cw==}
 
   /case@1.6.3:
     resolution: {integrity: sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==}
@@ -6084,7 +6084,7 @@ packages:
       '@aws-cdk/cloud-assembly-schema': 2.101.1
       '@aws-cdk/cx-api': 2.101.1(@aws-cdk/cloud-assembly-schema@2.101.1)
       archiver: 5.3.2
-      aws-sdk: 2.1486.0
+      aws-sdk: 2.1488.0
       glob: 7.2.3
       mime: 2.6.0
       yargs: 16.2.0
@@ -6790,8 +6790,8 @@ packages:
   /ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  /electron-to-chromium@1.4.574:
-    resolution: {integrity: sha512-bg1m8L0n02xRzx4LsTTMbBPiUd9yIR+74iPtS/Ao65CuXvhVZHP0ym1kSdDG3yHFDXqHQQBKujlN1AQ8qZnyFg==}
+  /electron-to-chromium@1.4.576:
+    resolution: {integrity: sha512-yXsZyXJfAqzWk1WKryr0Wl0MN2D47xodPvEEwlVePBnhU5E7raevLQR+E6b9JAD3GfL/7MbAL9ZtWQQPcLx7wA==}
 
   /emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -8638,7 +8638,7 @@ packages:
     dependencies:
       lilconfig: 2.1.0
       postcss: 8.4.31
-      yaml: 2.3.3
+      yaml: 2.3.4
 
   /postcss-nested@6.0.1(postcss@8.4.31):
     resolution: {integrity: sha512-mEp4xPMi5bSWiMbsgoPfcP74lsWLHkQbZc3sY+jWYd65CUwXrUaTp0fmNpa01ZcETKlIgUdFN/MpS2xZtqL9dQ==}
@@ -8869,8 +8869,8 @@ packages:
   /reinterval@1.1.0:
     resolution: {integrity: sha512-QIRet3SYrGp0HUHO88jVskiG6seqUGC5iAG7AwI/BV4ypGcuqk9Du6YQBUOUqm9c8pw1eyLoIaONifRua1lsEQ==}
 
-  /remeda@1.28.0:
-    resolution: {integrity: sha512-QANcfxsEiRCdiN8PQ7LsPQvW1qVFAO2x4dXEpuWbZKPrzzRG2BA0SXReDnhppD2YZKgLWA/bLpHq0ANenXea1w==}
+  /remeda@1.29.0:
+    resolution: {integrity: sha512-M3LQ14KtMdQ1879lj/kKji3zBk158s7Rwg963mEkTfQFMxnKrIEAMxJfo/+0sp/+uGgN/KMVU2MBA4LNjqf8YQ==}
     dev: true
 
   /require-directory@2.1.1:
@@ -9181,8 +9181,8 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /solid-start-sst@2.33.2(solid-start@0.3.9)(vite@4.5.0):
-    resolution: {integrity: sha512-2HwuUXa5RAVbGLhAGIJ8gGRK8qXTxSSImTHmLmIQxxq5Yse8datUqUa+Ml3MKKeqWWD98suWfWo1WfGEFjFg4A==}
+  /solid-start-sst@2.34.3(solid-start@0.3.9)(vite@4.5.0):
+    resolution: {integrity: sha512-Q6zqoSPRdUclnoVNwykrJT/TB+3cKvonhVS7GN5fu6yH2w+vvjICQPFHfj1Gjdf5SFPp5hf/L3PnHxP7vBXPAQ==}
     peerDependencies:
       solid-start: '*'
       vite: '*'
@@ -9263,7 +9263,7 @@ packages:
       solid-js: 1.8.5
       solid-start-node: 0.3.9(solid-start@0.3.9)(vite@4.5.0)
       terser: 5.24.0
-      undici: 5.27.0
+      undici: 5.27.2
       vite: 4.5.0(@types/node@20.8.10)
       vite-plugin-inspect: 0.7.41(rollup@3.29.4)(vite@4.5.0)
       vite-plugin-solid: 2.7.2(solid-js@1.8.5)(vite@4.5.0)
@@ -9336,8 +9336,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /sst@2.33.2:
-    resolution: {integrity: sha512-2BlFcWK2Zgwyib6uO0B0j3izAZ235GmIT1r+r5C60tEnaDiPmwGqV0aXApgB73kpHeHC58qbXaym2BUQG4LGgA==}
+  /sst@2.34.3:
+    resolution: {integrity: sha512-rLUpvNNgOr1w4PLIlQWLR/8OHVstJRavoXkBQ9kxO952hBaN7HsN0+qQOgTiTI3o/rFc0wFQP0bp/BgPxbp+SA==}
     hasBin: true
     peerDependencies:
       '@sls-next/lambda-at-edge': ^3.7.0
@@ -9377,7 +9377,7 @@ packages:
       adm-zip: 0.5.10
       aws-cdk-lib: 2.101.1(constructs@10.2.69)
       aws-iot-device-sdk: 2.2.13
-      aws-sdk: 2.1486.0
+      aws-sdk: 2.1488.0
       builtin-modules: 3.2.0
       cdk-assets: 2.101.1
       chalk: 5.3.0
@@ -9406,10 +9406,10 @@ packages:
       openid-client: 5.6.1
       ora: 6.3.1
       react: 18.2.0
-      remeda: 1.28.0
+      remeda: 1.29.0
       sst-aws-cdk: 2.101.1
       tree-kill: 1.2.2
-      undici: 5.27.0
+      undici: 5.27.2
       uuid: 9.0.1
       ws: 8.14.2
       yargs: 17.7.2
@@ -9758,8 +9758,8 @@ packages:
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
-  /undici@5.27.0:
-    resolution: {integrity: sha512-l3ydWhlhOJzMVOYkymLykcRRXqbUaQriERtR70B9LzNkZ4bX52Fc8wbTDneMiwo8T+AemZXvXaTx+9o5ROxrXg==}
+  /undici@5.27.2:
+    resolution: {integrity: sha512-iS857PdOEy/y3wlM3yRp+6SNQQ6xU0mmZcwRSriqk+et/cwWAtwmIGf6WkoDN2EK/AMdCO/dfXzIwi+rFMrjjQ==}
     engines: {node: '>=14.0'}
     dependencies:
       '@fastify/busboy': 2.0.0
@@ -10229,8 +10229,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /yaml@2.3.3:
-    resolution: {integrity: sha512-zw0VAJxgeZ6+++/su5AFoqBbZbrEakwu+X0M5HmcwUiBL7AzcuPKjj5we4xfQLp78LkEMpD0cOnUhmgOVy3KdQ==}
+  /yaml@2.3.4:
+    resolution: {integrity: sha512-8aAvwVUSHpfEqTQ4w/KMlf3HcRdt50E5ODIQJBw1fQ5RL34xabzxtUlzTXVqc4rkZsPbvrXKWnABCD7kWSmocA==}
     engines: {node: '>= 14'}
 
   /yargs-parser@20.2.9:

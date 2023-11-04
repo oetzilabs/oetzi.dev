@@ -2,9 +2,10 @@ import { and, eq, isNull, sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { db } from "../drizzle/sql";
-import { ProfileSelect, profiles, users, sessions, allowed_users } from "../drizzle/sql/schema";
+import { ProfileSelect, profiles, users, sessions } from "../drizzle/sql/schema";
 import dayjs from "dayjs";
 import { Config } from "sst/node/config";
+import { Octokit } from "@octokit/rest";
 
 export * as User from "./users";
 
@@ -62,6 +63,9 @@ export const findById = z.function(z.tuple([z.string()])).implement(async (input
           },
           participants: true,
           user: true,
+        },
+        orderBy(fields, order) {
+          return [order.desc(fields.updatedAt), order.desc(fields.createdAt)];
         },
       },
       project_participants: {
@@ -157,19 +161,7 @@ export const updateName = z
   });
 
 export const isAllowedToSignUp = z.function(z.tuple([z.object({ email: z.string() })])).implement(async (input) => {
-  const [x] = await db
-    .select({
-      count: sql<number>`COUNT(${users.id})`,
-    })
-    .from(users)
-    .where(and(isNull(users.deletedAt), eq(users.email, input.email)));
-  const [isInAllowedUsers] = await db
-    .select({
-      count: sql<number>`COUNT(${users.id})`,
-    })
-    .from(allowed_users)
-    .where(and(isNull(allowed_users.deletedAt), eq(allowed_users.email, input.email)));
-  return x.count === 0 && isInAllowedUsers.count > 0;
+  return input.email === "oezguerisbert@gmail.com"; // admin user
 });
 
 export const getFreshAccessToken = z.function(z.tuple([z.string().uuid()])).implement(async (input) => {
@@ -250,6 +242,14 @@ export const allUserStacks = z.function(z.tuple([z.string().uuid()])).implement(
 //   if (!u) throw new Error("User not found");
 //   return u.templates;
 // });
+
+export const getOrganization = z.function(z.tuple([z.string()])).implement(async (auth) => {
+  const octo = new Octokit({
+    auth,
+  });
+  const { data } = await octo.orgs.get();
+  return data.login;
+});
 
 export type Frontend = NonNullable<Awaited<ReturnType<typeof findById>>>;
 

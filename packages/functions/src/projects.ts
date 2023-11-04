@@ -90,6 +90,10 @@ export const all = ApiHandler(async (_evt) => {
   const p = useQueryParams();
   if (!p) {
     console.log("no params");
+    // const [user] = await getUser();
+    // const userGithubToken = await User.getFreshAccessToken(user.id);
+    // const userGithubOrganization = await User.getOrganization(userGithubToken);
+    // const result = await Project.allFromOrganization(userGithubToken, userGithubOrganization);
     const result = await Project.all();
     return {
       statusCode: 200,
