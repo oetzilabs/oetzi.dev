@@ -47,6 +47,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
   DeployApp:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
