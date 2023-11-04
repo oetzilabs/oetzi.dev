@@ -1,11 +1,12 @@
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { Octokit } from "@octokit/rest";
+import dayjs from "dayjs";
+import { eq, sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
+import fetch from "node-fetch";
+import { Config } from "sst/node/config";
 import { z } from "zod";
 import { db } from "../drizzle/sql";
-import { ProfileSelect, profiles, users, sessions } from "../drizzle/sql/schema";
-import dayjs from "dayjs";
-import { Config } from "sst/node/config";
-import { Octokit } from "@octokit/rest";
+import { ProfileSelect, profiles, sessions, users } from "../drizzle/sql/schema";
 
 export * as User from "./users";
 
@@ -246,6 +247,9 @@ export const allUserStacks = z.function(z.tuple([z.string().uuid()])).implement(
 export const getOrganization = z.function(z.tuple([z.string()])).implement(async (auth) => {
   const octo = new Octokit({
     auth,
+    request: {
+      fetch,
+    },
   });
   const { data } = await octo.orgs.get();
   return data.login;

@@ -1,5 +1,6 @@
-import { z } from "zod";
 import { Octokit } from "@octokit/rest";
+import fetch from "node-fetch";
+import { z } from "zod";
 
 export * as GitHub from "./index";
 
@@ -18,6 +19,9 @@ export const createRepository = z
   .implement(async (auth, org, options) => {
     const octokit = new Octokit({
       auth,
+      request: {
+        fetch,
+      },
     });
     const { data } = await octokit.repos.createInOrg(Object.assign({ org }, options));
     return data;
@@ -26,6 +30,9 @@ export const createRepository = z
 export const removeRepository = z.function(z.tuple([z.string(), z.string()])).implement(async (auth, repo) => {
   const octokit = new Octokit({
     auth,
+    request: {
+      fetch,
+    },
   });
   const { status } = await octokit.repos.delete({
     owner: repo.split("/")[0],
@@ -37,6 +44,9 @@ export const removeRepository = z.function(z.tuple([z.string(), z.string()])).im
 export const getRepository = z.function(z.tuple([z.string(), z.string()])).implement(async (auth, repo) => {
   const octokit = new Octokit({
     auth,
+    request: {
+      fetch,
+    },
   });
   const { data } = await octokit.repos.get({
     owner: repo.split("/")[0],
@@ -50,6 +60,9 @@ export const getFiles = z
   .implement(async (auth, repo, paths) => {
     const octokit = new Octokit({
       auth,
+      request: {
+        fetch,
+      },
     });
     let files = [];
     for await (const path of paths) {
@@ -73,6 +86,9 @@ export const readFileContent = z
   .implement(async (auth, repo, path) => {
     const octokit = new Octokit({
       auth,
+      request: {
+        fetch,
+      },
     });
     const { data } = await octokit.repos.getContent({
       owner: repo.split("/")[0],
@@ -102,6 +118,9 @@ export const readFileContent = z
 export const isEmptyRepository = z.function(z.tuple([z.string(), z.string()])).implement(async (auth, repo) => {
   const octokit = new Octokit({
     auth,
+    request: {
+      fetch,
+    },
   });
   let x = false;
   const result:
@@ -151,6 +170,9 @@ export const getRepositoriesFromOrganization = z
   .implement(async (auth, org) => {
     const octokit = new Octokit({
       auth,
+      request: {
+        fetch,
+      },
     });
     const { data } = await octokit.repos.listForOrg({
       org,
