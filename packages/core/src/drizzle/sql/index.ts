@@ -12,5 +12,7 @@ export const db = drizzle(client, {
 });
 
 export const migrate = async () => {
-  return mig(db, { migrationsFolder: join(process.cwd(), "packages/core/src/drizzle/migrations") });
+  const stage = Config.STAGE;
+  const folder = stage === "dev" ? "packages/core/src/drizzle/migrations" : "drizzle/migrations";
+  return mig(db, { migrationsFolder: join(process.cwd(), folder) });
 };
