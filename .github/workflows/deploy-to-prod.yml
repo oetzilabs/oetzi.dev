@@ -50,7 +50,15 @@ jobs:
 
   DeployApp:
     needs: InstallDependencies
+    runs-on: ubuntu-latest
     steps:
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
