@@ -12,7 +12,7 @@ permissions:
     contents: read # This is required for actions/checkout
 
 jobs:
-  DeployApp:
+  InstallDependencies:
     runs-on: ubuntu-latest
     #env:
     #Define your envs needed for static generation:
@@ -47,13 +47,15 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
+  DeployApp:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::836832476545:role/GitHub
           role-duration-seconds: 14390 #adjust as needed for your build time
           aws-region: eu-central-1
+        needs: InstallDependencies
 
       - name: Deploy app to Production
+        needs: InstallDependencies
         run: pnpm run sst deploy --stage production
