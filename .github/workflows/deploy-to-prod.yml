@@ -27,5 +27,6 @@ jobs:
           role-duration-seconds: 14390 #adjust as needed for your build time
           aws-region: eu-central-1
       - name: Deploy app to Production
+        uses: pnpm/action-setup@v2
         run: |
-          npm i && npx sst deploy --stage production
+          pnpm i && pnpx sst deploy --stage production
