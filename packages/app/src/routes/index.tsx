@@ -72,7 +72,7 @@ export default function Home() {
               </div>
             </Match>
             <Match when={projects.isError}>
-              <div class="col-span-full flex flex-col items-center justify-center border border-neutral-200 dark:border-neutral-800 rounded-md p-8 gap-4">
+              <div class="col-span-full flex flex-col items-center justify-center border border-neutral-200 dark:border-neutral-800 p-8 gap-4">
                 <h3 class="text-xl font-bold select-none">An error occured while fetching the projects.</h3>
                 <p class="text-md font-medium select-none">{(projects.error as Error)?.message}</p>
               </div>

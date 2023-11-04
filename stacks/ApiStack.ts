@@ -1,8 +1,7 @@
-import { Api, Config, SolidStartSite, StackContext, use } from "sst/constructs";
+import { Api, Config, StackContext, use } from "sst/constructs";
 import { Auth } from "sst/constructs/future";
 import { StorageStack } from "./StorageStack";
 import { DNSStack } from "./DNSStack";
-import { SolidStartStack } from "./SolidStartStack";
 
 export function ApiStack({ stack }: StackContext) {
   const dns = use(DNSStack);
