@@ -26,6 +26,6 @@ jobs:
           role-to-assume: arn:aws:iam::836832476545:role/GitHub
           role-duration-seconds: 14390 #adjust as needed for your build time
           aws-region: eu-central-1
-      - name: Deploy app
+      - name: Deploy app to Production
         run: |
           npm i && npx sst deploy --stage production
