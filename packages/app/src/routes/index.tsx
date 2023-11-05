@@ -3,6 +3,7 @@ import { For, Match, Switch, createEffect, createSignal, onCleanup } from "solid
 import { PublicProject } from "../components/PublicProject";
 import { useAuth } from "../components/providers/OfflineFirst";
 import { Queries } from "../utils/api/queries";
+import Logo from "../components/Logo";
 
 export default function Home() {
   const [load, setLoad] = createSignal(false);
@@ -35,9 +36,9 @@ export default function Home() {
 
   return (
     <div class="flex container mx-auto flex-col gap-10 py-10">
-      <div class="flex flex-col gap-10 py-32">
-        <div class="flex flex-row items-center justify-center">
-          <h1 class="text-9xl font-bold text-teal-300">OETZI.DEV</h1>
+      <div class="flex flex-col gap-10 py-24">
+        <div class="flex flex-row items-center justify-center py-20">
+          <Logo />
         </div>
         <div class="flex flex-col gap-4 items-center justify-center">
           <span class="text-2xl font-medium">I'm Ötzi, a 27 year young developer from Germany.</span>

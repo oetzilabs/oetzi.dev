@@ -280,7 +280,7 @@ export const Project = (props: ProjectProps) => {
       <div class="flex flex-col gap-1 p-4">
         <div class="flex flex-row items-center justify-between gap-2.5">
           <span class="text-md font-medium select-none">
-            Online since {dayjs(props.project.updatedAt || props.project.createdAt).fromNow()}
+            Online {dayjs(props.project.updatedAt || props.project.createdAt).fromNow()}
           </span>
           <div class="w-3 h-3 rounded-full bg-teal-500"></div>
         </div>

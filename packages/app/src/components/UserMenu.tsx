@@ -5,6 +5,7 @@ import { Match, Show, Suspense, Switch, createEffect, createSignal } from "solid
 import { parseCookie } from "solid-start";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
+import Logo from "./Logo";
 import { useAuth } from "./providers/OfflineFirst";
 
 export const UserMenu = () => {
@@ -86,9 +87,9 @@ export const UserMenu = () => {
 
   return (
     <div class="flex w-full flex-row items-center justify-between">
-      <div class="flex">
+      <div class="flex items-center gap-4">
         <A href="/" class="hover:underline">
-          oetzi.dev
+          <Logo small />
         </A>
         <Show when={AuthStore().isAuthenticated && AuthStore().user}>
           <A href="/dashboard" class="ml-2 hover:underline">
