@@ -121,7 +121,6 @@ export default function DuplicateProject(props: DuplicateProjectProps) {
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries(["projects"]);
-        await queryClient.invalidateQueries(["user_projects"]);
       },
     }
   );

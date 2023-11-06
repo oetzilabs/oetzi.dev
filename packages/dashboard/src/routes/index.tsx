@@ -1,84 +1,50 @@
 import { A } from "@solidjs/router";
-import { createMutation, useQueryClient } from "@tanstack/solid-query";
+import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
-import { For, Match, Show, Switch, createSignal, onCleanup, onMount } from "solid-js";
+import { For, Match, Show, Switch, createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import { toast } from "solid-toast";
 import { FakeProgressBar } from "../components/FakeProgressbar";
 import { Project } from "../components/Project";
-import { useAuth, useOfflineFirst } from "../components/providers/OfflineFirst";
+import { useAuth } from "../components/providers/OfflineFirst";
 import { Mutations } from "../utils/api/mutations";
-import { cn } from "../utils/cn";
+import { Queries } from "../utils/api/queries";
+import { debounce } from "@solid-primitives/scheduled";
 dayjs.extend(advancedFormat);
 
 export default function DashboardPage() {
   const [user] = useAuth();
-  const offlineFirst = useOfflineFirst();
-  const [timer, setTimer] = createSignal(false);
-  const [timerInterval, setTimerInterval] = createSignal(5);
   const queryClient = useQueryClient();
 
-  const syncProjects = createMutation(
+  const [filterProjectSearch, filterProjects] = createSignal("");
+
+  const projects = createQuery(
+    () => ["projects", { search: filterProjectSearch() }],
     async () => {
       const u = user();
       const token = u.token;
       if (!token) return Promise.reject("You are not logged in.");
-      return Mutations.Projects.sync(token);
+      const search = filterProjectSearch();
+      return Queries.userProjects(token, {
+        search,
+      });
     },
     {
-      onSuccess: () => {
-        setTimer(false);
-        setTimerInterval(5);
-        setTimeout(() => {
-          syncProjects.reset();
-        }, 3000);
+      get enabled() {
+        const u = user();
+        return u.isAuthenticated;
       },
-      onError: () => {
-        setTimer(true);
-        setTimerInterval(5);
-        const interval = setInterval(() => {
-          setTimerInterval((prev) => prev - 1);
-        }, 1000);
-
-        setTimeout(() => {
-          setTimer(false);
-          clearInterval(interval);
-          syncProjects.reset();
-        }, 5500);
-      },
+      keepPreviousData: true,
+      // refetchInterval: 10_000,
     }
   );
 
-  const deleteProject = createMutation(
-    async (id: string) => {
-      const u = user();
-      const token = u.token;
-      if (!token) return Promise.reject("You are not logged in.");
-      return Mutations.Projects.remove(token, id);
-    },
-    {
-      onSuccess: () => {
-        setTimer(false);
-        setTimerInterval(5);
-        setTimeout(() => {
-          syncProjects.reset();
-        }, 3000);
-      },
-      onError: () => {
-        setTimer(true);
-        setTimerInterval(5);
-        const interval = setInterval(() => {
-          setTimerInterval((prev) => prev - 1);
-        }, 1000);
-
-        setTimeout(() => {
-          setTimer(false);
-          clearInterval(interval);
-          syncProjects.reset();
-        }, 5500);
-      },
-    }
-  );
+  const deleteProject = createMutation(async (id: string) => {
+    const u = user();
+    const token = u.token;
+    if (!token) return Promise.reject("You are not logged in.");
+    return Mutations.Projects.remove(token, id);
+  });
 
   const confirmRemoveProject = async (id: string) => {
     // use toast
@@ -100,7 +66,7 @@ export default function DashboardPage() {
             class="bg-red-50 dark:bg-red-950 rounded-md text-red-900 dark:text-red-50 hover:bg-red-50 dark:hover:bg-red-900 active:bg-red-50 dark:active:bg-red-800 px-2 py-1 font-bold"
             onClick={async () => {
               await deleteProject.mutateAsync(id);
-              if (queryClient) await queryClient.invalidateQueries(["user_projects"]);
+              if (queryClient) await queryClient.invalidateQueries(["projects"]);
             }}
             aria-label="Delete Project"
           >
@@ -138,6 +104,7 @@ export default function DashboardPage() {
       window.removeEventListener("keydown", handler);
     });
   });
+  const setFilterProjects = debounce(filterProjects, 500);
 
   return (
     <div class="container mx-auto flex flex-col gap-8 py-10">
@@ -148,118 +115,69 @@ export default function DashboardPage() {
         <h2 class="text-2xl font-bold">Projects</h2>
         <div class="flex flex-row gap-2.5">
           <input
+            disabled={user().isLoading}
             ref={searchRef!}
             type="text"
-            class="px-2 py-1 rounded-md border border-black/10 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 bg-white dark:bg-black"
+            class="px-2 py-1 rounded-sm border border-black/10 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 bg-white dark:bg-black"
             placeholder="Search"
-            onInput={(e) => {
-              offlineFirst.filterProjects({
-                search: e.target.value,
-              });
-            }}
+            onInput={(e) => setFilterProjects(e.currentTarget.value)}
           />
-          <button
-            class={cn(
-              "flex flex-row items-center justify-center gap-3 px-2.5 py-1",
-              // disabled state
-              "disabled:cursor-not-allowed disabled:opacity-20",
-              {
-                "bg-black dark:bg-white hover:bg-neutral-950 rounded-md active:bg-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-200 text-white dark:text-black":
-                  !syncProjects.isLoading,
-                "bg-neutral-100 dark:bg-neutral-950 rounded-md text-black dark:text-white cursor-not-allowed hover:bg-neutral-100 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 disabled:opacity-100":
-                  syncProjects.isLoading || timer(),
-                "bg-green-200 dark:bg-green-900 rounded-md text-green-900 dark:text-green-50 cursor-not-allowed hover:bg-green-200 dark:hover:bg-green-900 active:bg-green-50 dark:active:bg-green-800":
-                  syncProjects.isSuccess,
-                "bg-red-50 dark:bg-red-950 rounded-md text-red-900 dark:text-red-50 cursor-not-allowed hover:bg-red-50 dark:hover:bg-red-900 active:bg-red-50 dark:active:bg-red-800":
-                  syncProjects.isError,
-              }
-            )}
-            disabled={offlineFirst.isSyncing() || syncProjects.isLoading || timer() || user().isLoading}
-            onClick={async () => {
-              await offlineFirst.syncProjects();
-            }}
-          >
-            <Switch
-              fallback={
-                <div class="flex flex-row items-center justify-center gap-2.5">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class={cn("animate-none", {
-                      "animate-spin": offlineFirst.isSyncing() || syncProjects.isLoading,
-                    })}
-                  >
-                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                    <path d="M21 3v5h-5" />
-                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                    <path d="M8 16H3v5" />
-                  </svg>
-                  <span class="font-bold select-none">Sync</span>
-                </div>
-              }
+          <Show when={user().isAuthenticated}>
+            <A
+              href={`/project/create`}
+              class="flex flex-row gap-2.5 items-center justify-center bg-black dark:bg-white p-2 py-1 rounded-sm hover:bg-neutral-950 active:bg-neutral-900 dark:hover:bg-neutral-100 dark:active:bg-neutral-200 text-white dark:text-black"
             >
-              <Match when={syncProjects.isSuccess}>
-                <div class="flex flex-row items-center justify-center gap-2.5">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M18 6 7 17l-5-5" />
-                    <path d="m22 10-7.5 7.5L13 16" />
-                  </svg>
-                  <span class="font-bold select-none">Synced {syncProjects.data?.length} Projects</span>
-                </div>
-              </Match>
-              <Match when={syncProjects.isError}>
-                <div class="flex flex-row items-center justify-center gap-2.5">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" x2="12" y1="8" y2="12" />
-                    <line x1="12" x2="12.01" y1="16" y2="16" />
-                  </svg>
-                  <span class="font-bold select-none">Failed, retry again in {timerInterval()}s</span>
-                </div>
-              </Match>
-            </Switch>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+              </svg>
+              <span class="text-md font-bold select-none">Add Project</span>
+            </A>
+          </Show>
         </div>
       </div>
-      <div class="grid grid-cols-4 w-full gap-4">
-        <For
-          each={offlineFirst.userProjects()}
+      <div class="w-full flex flex-col">
+        <Show
+          when={user().isAuthenticated && projects.isSuccess && projects.data.length > 0}
           fallback={
             <Switch>
-              <Match when={user().isLoading}>
-                <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.01] gap-6 rounded-md backdrop-blur-sm border border-black/5 dark:border-white/5">
-                  <h3 class="text-xl font-bold">No Projects</h3>
-                  <p class="text-lg font-medium">Oetzi has no projects to view.</p>
+              <Match when={user().isLoading || projects.isLoading}>
+                <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center gap-6 rounded-sm backdrop-blur-sm border border-neutral-200 dark:border-neutral-800">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="animate-spin"
+                  >
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                  </svg>
+                  <h3 class="text-lg font-medium">Loading</h3>
                 </div>
               </Match>
-              <Match when={user().isAuthenticated && offlineFirst.projectsFilter().search?.length === 0}>
+              <Match
+                when={
+                  user().isAuthenticated &&
+                  projects.isSuccess &&
+                  projects.data.length > 0 &&
+                  filterProjectSearch().length === 0
+                }
+              >
                 <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.01] gap-6 rounded-md backdrop-blur-sm border border-black/5 dark:border-white/5">
                   <h3 class="text-xl font-bold">No Projects</h3>
                   <p class="text-lg font-medium">You have no projects.</p>
@@ -285,17 +203,15 @@ export default function DashboardPage() {
                   </A>
                 </div>
               </Match>
-              <Match when={user().isAuthenticated && offlineFirst.projectsFilter().search?.length > 0}>
+              <Match when={user().isAuthenticated && filterProjectSearch().length > 0}>
                 <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center bg-black/[0.01] dark:bg-white/[0.01] gap-6 rounded-md backdrop-blur-sm border border-black/5 dark:border-white/5">
-                  <h3 class="text-xl font-bold">No Projects for '{offlineFirst.projectsFilter().search}'</h3>
+                  <h3 class="text-xl font-bold">No Projects for '{filterProjectSearch()}'</h3>
                   <p class="text-lg font-medium">There are no projects with your search parameter.</p>
                   <button
                     class="px-2 py-1 rounded-md bg-black dark:bg-white text-white dark:text-black font-bold hover:bg-black/90 dark:hover:bg-white/90 active:bg-black/90 dark:active:bg-white/90"
                     onClick={() => {
                       searchRef.value = "";
-                      offlineFirst.filterProjects({
-                        search: "",
-                      });
+                      setFilterProjects("");
                     }}
                   >
                     <span class="font-bold select-none">Clear Search</span>
@@ -305,38 +221,28 @@ export default function DashboardPage() {
             </Switch>
           }
         >
-          {(project) => (
-            <Project
-              project={project}
-              confirmRemoveProject={confirmRemoveProject}
-              isDeleting={deleteProject.isLoading}
-              withMenu
-            />
-          )}
-        </For>
-        <Show when={user().isAuthenticated && offlineFirst.userProjects().length > 0}>
-          <A
-            href={`/project/create`}
-            class="flex flex-col text-black dark:text-white border border-neutral-300 dark:border-neutral-800 overflow-clip items-center justify-center hover:bg-neutral-50 dark:hover:bg-neutral-950 cursor-pointer"
-          >
-            <div class="flex flex-row gap-4 items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-              </svg>
-              <span class="text-md font-bold select-none">Add Project</span>
-            </div>
-          </A>
+          <table class="w-full table-auto border-spacing-4 border-collapse border border-neutral-200 dark:border-neutral-800 p-2">
+            <thead class="border-b border-neutral-200 dark:border-neutral-800">
+              <tr class="text-md font-bold select-none w-full">
+                <th class="p-4 text-left w-min">Status</th>
+                <th class="p-4 text-left">Name</th>
+                <th class="p-4 text-right w-min">Stack</th>
+                <th class="p-4 text-right w-min">Last Updated</th>
+                <th class="p-4 text-right w-min">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <For each={projects.data}>
+                {(project) => (
+                  <Project
+                    project={project}
+                    confirmRemoveProject={confirmRemoveProject}
+                    isDeleting={deleteProject.isLoading}
+                  />
+                )}
+              </For>
+            </tbody>
+          </table>
         </Show>
       </div>
     </div>

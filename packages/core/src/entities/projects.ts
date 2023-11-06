@@ -61,8 +61,14 @@ export const remove = z
       where: (projects, operations) => operations.eq(projects.id, projectId),
     });
     if (!project) throw new Error("Project not found");
-    const repo = await GitHub.removeRepository(freshAccessToken, project.name);
-    if (!repo) throw new Error("Could not remove repository");
+    const repositoryExistsOnGitHub = await GitHub.repositoryExists(freshAccessToken, project.name);
+
+    if (repositoryExistsOnGitHub) {
+      console.log(`Attempting to remove repository ${project.name} from GitHub`);
+      const repo = await GitHub.removeRepository(freshAccessToken, project.name);
+      if (!repo) throw new Error("Could not remove repository");
+      else console.log(`Removed repository ${project.name} from GitHub`);
+    }
 
     const [x] = await db.delete(projects).where(eq(projects.id, projectId)).returning();
     return x;
@@ -155,32 +161,53 @@ export const allWithFilter = z.function(z.tuple([AllWithFilterZod.optional()])).
   });
 });
 
-export const allByUser = z.function(z.tuple([z.string().uuid()])).implement(async (input) => {
-  let u = await db.query.users.findFirst({
-    where: (users, operations) => operations.eq(users.id, input),
-    with: {
-      projects: {
-        with: {
-          user: true,
+export const allByUser = z
+  .function(
+    z.tuple([
+      z.string().uuid(),
+      z
+        .object({
+          search: z.string().optional(),
+        })
+        .optional(),
+    ])
+  )
+  .implement(async (input, options) => {
+    let u = await db.query.users.findFirst({
+      where: (users, operations) => operations.eq(users.id, input),
+      with: {
+        projects: {
+          with: {
+            user: true,
+          },
+          where: (projects, operations) =>
+            operations.and(
+              operations.eq(projects.deletedAt, isNull(projects.deletedAt)),
+              typeof options !== "undefined" && typeof options.search !== "undefined"
+                ? operations.or(
+                    operations.like(projects.name, `%${options.search}%`),
+                    operations.like(projects.description, `%${options.search}%`)
+                  )
+                : undefined
+            ),
+          orderBy(fields, order) {
+            return [order.desc(fields.updatedAt), order.desc(fields.createdAt)];
+          },
         },
-        orderBy(fields, order) {
-          return [order.desc(fields.updatedAt), order.desc(fields.createdAt)];
-        },
-      },
-      project_participants: {
-        with: {
-          project: {
-            with: {
-              user: true,
+        project_participants: {
+          with: {
+            project: {
+              with: {
+                user: true,
+              },
             },
           },
         },
       },
-    },
+    });
+    if (!u) return [];
+    return u.projects.concat(u.project_participants.map((x) => x.project));
   });
-  if (!u) return [];
-  return u.projects.concat(u.project_participants.map((x) => x.project));
-});
 
 const update = z
   .function(
