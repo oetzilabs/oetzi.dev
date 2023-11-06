@@ -18,8 +18,8 @@ importers:
         specifier: 10.2.69
         version: 10.2.69
       sst:
-        specifier: ^2.34.3
-        version: 2.34.3
+        specifier: ^2.34.7
+        version: 2.34.7
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -118,8 +118,8 @@ importers:
         specifier: ^0.3.9
         version: 0.3.9(solid-start@0.3.9)(vite@4.5.0)
       solid-start-sst:
-        specifier: ^2.34.3
-        version: 2.34.3(solid-start@0.3.9)(vite@4.5.0)
+        specifier: ^2.34.7
+        version: 2.34.7(solid-start@0.3.9)(vite@4.5.0)
       tailwindcss:
         specifier: ^3.3.5
         version: 3.3.5
@@ -182,11 +182,117 @@ importers:
         specifier: ^0.19.13
         version: 0.19.13
       sst:
-        specifier: ^2.34.3
-        version: 2.34.3
+        specifier: ^2.34.7
+        version: 2.34.7
       vitest:
         specifier: ^0.34.6
         version: 0.34.6
+
+  packages/dashboard:
+    dependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.441.0
+        version: 3.441.0
+      '@internationalized/date':
+        specifier: ^3.5.0
+        version: 3.5.0
+      '@kobalte/core':
+        specifier: ^0.11.2
+        version: 0.11.2(solid-js@1.8.5)
+      '@kobalte/tailwindcss':
+        specifier: ^0.8.0
+        version: 0.8.0(tailwindcss@3.3.5)
+      '@kobalte/utils':
+        specifier: ^0.9.0
+        version: 0.9.0(solid-js@1.8.5)
+      '@solid-devtools/overlay':
+        specifier: ^0.27.9
+        version: 0.27.9(solid-js@1.8.5)
+      '@solid-primitives/event-bus':
+        specifier: ^1.0.8
+        version: 1.0.8(solid-js@1.8.5)
+      '@solid-primitives/idle':
+        specifier: ^0.0.105
+        version: 0.0.105(solid-js@1.8.5)
+      '@solid-primitives/scheduled':
+        specifier: ^1.4.1
+        version: 1.4.1(solid-js@1.8.5)
+      '@solidjs/meta':
+        specifier: ^0.29.1
+        version: 0.29.1(solid-js@1.8.5)
+      '@solidjs/router':
+        specifier: ^0.8.3
+        version: 0.8.3(solid-js@1.8.5)
+      '@t3-oss/env-core':
+        specifier: ^0.6.1
+        version: 0.6.1(typescript@4.9.5)(zod@3.22.4)
+      '@tanstack/solid-query':
+        specifier: 4.35.3
+        version: 4.35.3(solid-js@1.8.5)
+      clsx:
+        specifier: ^2.0.0
+        version: 2.0.0
+      dayjs:
+        specifier: ^1.11.10
+        version: 1.11.10
+      dexie:
+        specifier: ^3.2.4
+        version: 3.2.4
+      highlight.js:
+        specifier: ^11.9.0
+        version: 11.9.0
+      node-fetch:
+        specifier: 3.3.2
+        version: 3.3.2
+      solid-highlight:
+        specifier: ^0.1.12
+        version: 0.1.12
+      solid-js:
+        specifier: ^1.8.5
+        version: 1.8.5
+      solid-start:
+        specifier: ^0.3.9
+        version: 0.3.9(@solidjs/meta@0.29.1)(@solidjs/router@0.8.3)(solid-js@1.8.5)(solid-start-node@0.3.9)(vite@4.5.0)
+      solid-toast:
+        specifier: ^0.5.0
+        version: 0.5.0(solid-js@1.8.5)
+      solid-transition-group:
+        specifier: ^0.2.3
+        version: 0.2.3(solid-js@1.8.5)
+      tailwind-merge:
+        specifier: ^1.14.0
+        version: 1.14.0
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@types/aws-lambda':
+        specifier: 8.10.124
+        version: 8.10.124
+      '@types/node-fetch':
+        specifier: 2.6.6
+        version: 2.6.6
+      autoprefixer:
+        specifier: ^10.4.16
+        version: 10.4.16(postcss@8.4.31)
+      postcss:
+        specifier: ^8.4.31
+        version: 8.4.31
+      solid-start-node:
+        specifier: ^0.3.9
+        version: 0.3.9(solid-start@0.3.9)(vite@4.5.0)
+      solid-start-sst:
+        specifier: ^2.34.7
+        version: 2.34.7(solid-start@0.3.9)(vite@4.5.0)
+      tailwindcss:
+        specifier: ^3.3.5
+        version: 3.3.5
+      typescript:
+        specifier: ^4.9.5
+        version: 4.9.5
+      vite:
+        specifier: ^4.5.0
+        version: 4.5.0(@types/node@20.8.10)
 
   packages/functions:
     dependencies:
@@ -234,8 +340,8 @@ importers:
         specifier: 9.0.5
         version: 9.0.5
       sst:
-        specifier: ^2.34.3
-        version: 2.34.3
+        specifier: ^2.34.7
+        version: 2.34.7
       vitest:
         specifier: ^0.34.6
         version: 0.34.6
@@ -359,14 +465,14 @@ packages:
     resolution: {integrity: sha512-IzSgsrxUcsrejQbPVilIKy16kAT52EwB6zSaI+M3xxIhKh5+aldEyvI+z6erM7TCLB2BJsFrtHjp6/4/sr+3dA==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/types': 3.428.0
       tslib: 1.14.1
 
   /@aws-crypto/crc32c@3.0.0:
     resolution: {integrity: sha512-ENNPPManmnVJ4BTXlOjAgD7URidbAznURqD0KvfREyc4o20DPYdEldU1f5cQ7Jbj0CJJSPaMIk/9ZshdB3210w==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/types': 3.428.0
       tslib: 1.14.1
 
   /@aws-crypto/ie11-detection@3.0.0:
@@ -392,7 +498,7 @@ packages:
       '@aws-crypto/sha256-js': 3.0.0
       '@aws-crypto/supports-web-crypto': 3.0.0
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/types': 3.428.0
       '@aws-sdk/util-locate-window': 3.310.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
@@ -401,7 +507,7 @@ packages:
     resolution: {integrity: sha512-PnNN7os0+yd1XvXAy23CFOmTbMaDxgxXtTKHybrJ39Y8kGzBATgBFibWJKH6BhytLI/Zyszs87xCOBNyBig6vQ==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/types': 3.428.0
       tslib: 1.14.1
 
   /@aws-crypto/sha256-js@5.2.0:
@@ -421,7 +527,7 @@ packages:
   /@aws-crypto/util@3.0.0:
     resolution: {integrity: sha512-2OJlpeJpCR48CC8r+uKVChzs9Iungj9wkZrl8Z041DWEWvyIHILYKCPNzJghKsivj+S3mLo6BVc7mBNzdxA46w==}
     dependencies:
-      '@aws-sdk/types': 3.433.0
+      '@aws-sdk/types': 3.428.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
 
@@ -1885,7 +1991,6 @@ packages:
     dependencies:
       '@smithy/types': 2.4.0
       tslib: 2.6.2
-    dev: false
 
   /@aws-sdk/types@3.433.0:
     resolution: {integrity: sha512-0jEE2mSrNDd8VGFjTc1otYrwYPIkzZJEIK90ZxisKvQ/EURGBhNzWn7ejWB9XCMFT6XumYLBR0V9qq5UPisWtA==}
@@ -8298,8 +8403,8 @@ packages:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  /nanoid@3.3.6:
-    resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
+  /nanoid@3.3.7:
+    resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -8663,7 +8768,7 @@ packages:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
-      nanoid: 3.3.6
+      nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
 
@@ -9181,8 +9286,8 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /solid-start-sst@2.34.3(solid-start@0.3.9)(vite@4.5.0):
-    resolution: {integrity: sha512-Q6zqoSPRdUclnoVNwykrJT/TB+3cKvonhVS7GN5fu6yH2w+vvjICQPFHfj1Gjdf5SFPp5hf/L3PnHxP7vBXPAQ==}
+  /solid-start-sst@2.34.7(solid-start@0.3.9)(vite@4.5.0):
+    resolution: {integrity: sha512-rJjTJRTfPaC9y7j9M1E0tbDDGfBFRGRHYPNmM8m/qB8pyxgTpWZ0kcxcLr3Fr+TgkE1rhyRBKWvLnk/P8WDhqw==}
     peerDependencies:
       solid-start: '*'
       vite: '*'
@@ -9336,8 +9441,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /sst@2.34.3:
-    resolution: {integrity: sha512-rLUpvNNgOr1w4PLIlQWLR/8OHVstJRavoXkBQ9kxO952hBaN7HsN0+qQOgTiTI3o/rFc0wFQP0bp/BgPxbp+SA==}
+  /sst@2.34.7:
+    resolution: {integrity: sha512-n2Iiwpt1QXjn2UifHNXo1CpakIKlyWuYK40DRfdq24ibrFqg1OyO3mwk8+b2T3CpYhSNNFK9I48K/zeQWDbU5A==}
     hasBin: true
     peerDependencies:
       '@sls-next/lambda-at-edge': ^3.7.0

@@ -1,37 +1,35 @@
 import { createQuery } from "@tanstack/solid-query";
 import { For, Match, Switch, createEffect, createSignal, onCleanup } from "solid-js";
 import { PublicProject } from "../components/PublicProject";
-import { useAuth } from "../components/providers/OfflineFirst";
 import { Queries } from "../utils/api/queries";
 import Logo from "../components/Logo";
 
 export default function Home() {
-  const [load, setLoad] = createSignal(false);
-  const [user] = useAuth();
-  const projects = createQuery(
-    () => ["public_projects"],
-    () => {
-      return Queries.projectsWithFilter();
-    },
-    {
-      get enabled() {
-        const x = load();
-        return x;
-      },
-      refetchOnWindowFocus: false,
-      cacheTime: 1000 * 60 * 5,
-      refetchInterval: 1000 * 60 * 5,
-    }
-  );
+  const [isLoading, setIsLoading] = createSignal(true);
+  const [isError, setIsError] = createSignal(false);
+  const [error, setError] = createSignal<Error>();
+  const [projects, setProjects] = createSignal<Awaited<ReturnType<typeof Queries["projects"]>>>();
+  Queries.projectsWithFilter().then((x) => {
+    setProjects(x);
+    setIsLoading(false);
+  }).catch((e) => {
+    setError(e);
+    setIsError(true);
+    setIsLoading(false);
+  });
 
   createEffect(() => {
-    setTimeout(() => {
-      setLoad(true);
-    }, 1000);
-
-    onCleanup(() => {
-      setLoad(false);
-    });
+    const interval = setInterval(() => {
+      Queries.projectsWithFilter().then((x) => {
+        setIsLoading(false);
+        setProjects(x);
+      }).catch((e) => {
+        setError(e);
+        setIsError(true);
+        setIsLoading(false);
+      });
+    }, 60_000);
+    onCleanup(() => clearInterval(interval));
   });
 
   return (
@@ -54,7 +52,7 @@ export default function Home() {
         <h1 class="text-2xl font-bold select-none">Public Projects</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Switch>
-            <Match when={projects.isLoading}>
+            <Match when={isLoading()}>
               <div class="col-span-full flex flex-col items-center justify-center p-8">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -72,13 +70,13 @@ export default function Home() {
                 </svg>
               </div>
             </Match>
-            <Match when={projects.isError}>
+            <Match when={isError()}>
               <div class="col-span-full flex flex-col items-center justify-center border border-neutral-200 dark:border-neutral-800 p-8 gap-4">
                 <h3 class="text-xl font-bold select-none">An error occured while fetching the projects.</h3>
-                <p class="text-md font-medium select-none">{(projects.error as Error)?.message}</p>
+                <p class="text-md font-medium select-none">{error()?.message}</p>
               </div>
             </Match>
-            <Match when={projects.isSuccess && projects.data}>
+            <Match when={projects()}>
               {(data) => (
                 <For
                   each={data()}
