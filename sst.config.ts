@@ -3,7 +3,7 @@ import { ApiStack } from "./stacks/ApiStack";
 import { StorageStack } from "./stacks/StorageStack";
 import { DashboardSolidStartStack } from "./stacks/DashboardSolidStartStack";
 import { DNSStack } from "./stacks/DNSStack";
-import { PublicSolidStartStack } from "./stacks/PublicSolidStartStack";
+import { SolidStartStack } from "./stacks/PublicSolidStartStack";
 
 export default {
   config(_input) {
@@ -20,6 +20,6 @@ export default {
       .stack(StorageStack)
       .stack(ApiStack)
       .stack(DashboardSolidStartStack)
-      .stack(PublicSolidStartStack);
+      .stack(SolidStartStack);
   },
 } satisfies SSTConfig;

@@ -4,7 +4,7 @@ import { ApiStack } from "./ApiStack";
 import { StorageStack } from "./StorageStack";
 import { DNSStack } from "./DNSStack";
 
-export function PublicSolidStartStack({ stack, app }: StackContext) {
+export function SolidStartStack({ stack, app }: StackContext) {
   const dns = use(DNSStack);
   const { api, auth } = use(ApiStack);
   // const { db } = use(DatabaseStack);
