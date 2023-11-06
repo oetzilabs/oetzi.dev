@@ -18,7 +18,10 @@ let gitHubFilesCache: Record<
 
 export const allProjects = ApiHandler(async (_evt) => {
   const [user] = await getUser();
-  const result = await Project.allByUser(user.id);
+  const searchParam = useQueryParam("search");
+  const search = searchParam ? searchParam : "";
+
+  const result = await Project.allByUser(user.id, { search });
   return {
     statusCode: 200,
     headers: {
@@ -30,7 +33,11 @@ export const allProjects = ApiHandler(async (_evt) => {
 
 export const participatedProjects = ApiHandler(async (_evt) => {
   const [user] = await getUser();
-  const result = await Project.allByUser(user.id);
+  const searchParam = useQueryParam("search");
+  const search = searchParam ? searchParam : "";
+  const result = await Project.allByUser(user.id, {
+    search,
+  });
   return {
     statusCode: 200,
     headers: {
@@ -42,7 +49,11 @@ export const participatedProjects = ApiHandler(async (_evt) => {
 
 export const syncProjects = ApiHandler(async (_evt) => {
   const [user] = await getUser();
-  const result = await Project.allByUser(user.id);
+  const searchParam = useQueryParam("search");
+  const search = searchParam ? searchParam : "";
+  const result = await Project.allByUser(user.id, {
+    search,
+  });
   return {
     statusCode: 200,
     headers: {

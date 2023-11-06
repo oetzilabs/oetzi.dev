@@ -55,6 +55,20 @@ export const getRepository = z.function(z.tuple([z.string(), z.string()])).imple
   return data;
 });
 
+export const repositoryExists = z.function(z.tuple([z.string(), z.string()])).implement(async (auth, repo) => {
+  const octokit = new Octokit({
+    auth,
+    request: {
+      fetch,
+    },
+  });
+  const exists = await octokit.repos
+    .listForOrg({ org: repo.split("/")[0] })
+    .then((r) => r.data.map((d) => d.name).includes(repo.split("/")[1]))
+    .catch(() => false);
+  return exists;
+});
+
 export const getFiles = z
   .function(z.tuple([z.string(), z.string(), z.array(z.string())]))
   .implement(async (auth, repo, paths) => {

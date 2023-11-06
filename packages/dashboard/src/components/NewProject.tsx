@@ -31,7 +31,6 @@ export default function NewProject() {
     {
       onSuccess: async () => {
         await queryClient.invalidateQueries(["projects"]);
-        await queryClient.invalidateQueries(["user_projects"]);
       },
     }
   );

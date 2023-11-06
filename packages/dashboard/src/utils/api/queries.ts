@@ -32,13 +32,24 @@ export const projectsWithFilter = z.function(z.tuple([])).implement(async () =>
     }).toString()}`
   ).then((res) => res.json() as Promise<NonNullable<Project.Frontend>[]>)
 );
-export const userProjects = z.function(z.tuple([z.string()])).implement(async (token) =>
-  fetch(`${API_BASE}/user/projects/all`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json() as Promise<NonNullable<User.Frontend>["projects"]>)
-);
+export const userProjects = z
+  .function(
+    z.tuple([
+      z.string(),
+      z
+        .object({
+          search: z.string().optional(),
+        })
+        .optional(),
+    ])
+  )
+  .implement(async (token, options) =>
+    fetch(`${API_BASE}/user/projects/all?${new URLSearchParams(options).toString()}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json() as Promise<NonNullable<User.Frontend>["projects"]>)
+  );
 
 export const isAvailableRepositoryName = z
   .function(z.tuple([z.string(), z.string(), z.string()]))
