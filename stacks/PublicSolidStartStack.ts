@@ -10,7 +10,7 @@ export function PublicSolidStartStack({ stack, app }: StackContext) {
   // const { db } = use(DatabaseStack);
   const { bucket } = use(StorageStack);
 
-  const publicSolidStartApp = new SolidStartSite(stack, `${app.name}-public-app`, {
+  const publicSolidStartApp = new SolidStartSite(stack, `${app.name}-app`, {
     bind: [bucket, api, auth],
     path: "packages/app",
     buildCommand: "pnpm build",
