@@ -6,6 +6,7 @@ import { Link } from "@oetzidev/core/entities/links";
 import { z } from "zod";
 import { SessionResult } from "../../../../functions/src/session";
 import { ConstructIcons } from "../../components/ConstructsIcons";
+import type { PluginConfig, PluginConfigT } from "../../../../functions/src/plugins";
 
 export * as Queries from "./queries";
 
@@ -176,6 +177,16 @@ export const Templates = {
       headers: {
         authorization: `Bearer ${token}`,
       },
-    }).then((res) => res.json() as Promise<Link.Frontend[]>)
+    }).then((res) => res.json() as Promise<any[]>)
+  ),
+};
+
+export const Plugins = {
+  all: z.function(z.tuple([z.string()])).implement(async (token) =>
+    fetch(`${API_BASE}/plugins/all`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json() as Promise<PluginConfig<Record<string, PluginConfigT>>[]>)
   ),
 };
