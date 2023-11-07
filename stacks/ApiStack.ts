@@ -239,6 +239,12 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the link handler function",
         },
       },
+      "GET /plugins/all": {
+        function: {
+          handler: "packages/functions/src/plugins.all",
+          description: "This is the plugins all function",
+        },
+      },
     },
     cors: {
       allowOrigins: ["*", "http://localhost:3000"],

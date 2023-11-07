@@ -9,13 +9,14 @@
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
   },
   "devDependencies": {
-    "@tsconfig/node18": "^18.2.2",
+    "@tsconfig/node18": "18.2.2",
     "aws-cdk-lib": "2.95.1",
     "constructs": "10.2.69",
-    "sst": "^2.34.7",
+    "sst": "2.35.1",
     "typescript": "^5.2.2"
   },
   "workspaces": [
