@@ -91,11 +91,6 @@ export const UserMenu = () => {
         <A href="/" class="hover:underline">
           <Logo small />
         </A>
-        <Show when={AuthStore().isAuthenticated && AuthStore().user}>
-          <A href="/dashboard" class="ml-2 hover:underline">
-            Dashboard
-          </A>
-        </Show>
       </div>
       <Suspense
         fallback={
