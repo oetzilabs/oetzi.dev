@@ -151,6 +151,43 @@ export default function DashboardPage() {
           when={user().isAuthenticated && projects.isSuccess && projects.data.length > 0}
           fallback={
             <Switch>
+              <Match when={!user().isLoading && !user().isAuthenticated}>
+                <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center gap-4 rounded-sm backdrop-blur-sm border border-neutral-200 dark:border-neutral-800">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4" />
+                    <path d="M5 19.5C5.5 18 6 15 6 12c0-.7.12-1.37.34-2" />
+                    <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
+                    <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
+                    <path d="M8.65 22c.21-.66.45-1.32.57-2" />
+                    <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+                    <path d="M2 16h.01" />
+                    <path d="M21.8 16c.2-2 .131-5.354 0-6" />
+                    <path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2" />
+                  </svg>
+                  <h3 class="text-lg font-medium">You are not logged in</h3>
+                  <A
+                    href={`${
+                      import.meta.env.VITE_AUTH_URL
+                    }/authorize?provider=github&response_type=code&client_id=github&redirect_uri=${
+                      window.location.origin
+                    }/auth${encodeURIComponent(`?redirect=${window.location.pathname}`)}`}
+                    rel="noreferrer"
+                    class="py-1 px-2 rounded-sm bg-black dark:bg-white text-white dark:text-black font-bold hover:bg-black/90 dark:hover:bg-white/90 active:bg-black/90 dark:active:bg-white/90"
+                  >
+                    Sign in with GitHub
+                  </A>
+                </div>
+              </Match>
               <Match when={user().isLoading || projects.isLoading}>
                 <div class="col-span-4 w-full p-20 flex flex-col items-center justify-center gap-6 rounded-sm backdrop-blur-sm border border-neutral-200 dark:border-neutral-800">
                   <svg
