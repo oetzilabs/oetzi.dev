@@ -55,43 +55,20 @@ export const findById = z.function(z.tuple([z.string()])).implement(async (input
       profile: true,
       projects: {
         with: {
-          stack: {
+          techsByProject: {
             with: {
-              usedByTechnologies: {
-                with: { technology: true },
+              tech: {
+                with: { usedByProjects: true },
               },
             },
           },
-          participants: true,
           user: true,
         },
         orderBy(fields, order) {
           return [order.desc(fields.updatedAt), order.desc(fields.createdAt)];
         },
       },
-      project_participants: {
-        with: {
-          project: {
-            with: {
-              user: true,
-            },
-          },
-        },
-      },
       sessions: true,
-      stacks: {
-        with: {
-          stack: {
-            with: {
-              usedByTechnologies: {
-                with: {
-                  technology: true,
-                },
-              },
-            },
-          },
-        },
-      },
     },
   });
 });
@@ -210,39 +187,6 @@ export const getFreshAccessToken = z.function(z.tuple([z.string().uuid()])).impl
   if (!access_token) throw new Error("No access token found");
   return access_token;
 });
-
-export const allUserStacks = z.function(z.tuple([z.string().uuid()])).implement(async (userId) => {
-  const u = await db.query.users.findFirst({
-    where: (users, operations) => operations.eq(users.id, userId),
-    with: {
-      stacks: {
-        with: {
-          stack: {
-            with: {
-              usedByTechnologies: {
-                with: {
-                  technology: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-  if (!u) throw new Error("User not found");
-  return u.stacks;
-});
-
-// export const allTemplates = z.function(z.tuple([z.string().uuid()])).implement(async (userId) => {
-//   const u = await db.query.users.findFirst({
-//     where: (users, operations) => operations.eq(users.id, userId),
-//     with: {
-//     },
-//   });
-//   if (!u) throw new Error("User not found");
-//   return u.templates;
-// });
 
 export const getOrganization = z.function(z.tuple([z.string()])).implement(async (auth) => {
   const octo = new Octokit({

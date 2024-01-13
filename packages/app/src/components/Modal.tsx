@@ -12,7 +12,7 @@ type ModalProps = {
 
 export function Modal(props: ModalProps) {
   return (
-    <Dialog.Root open={props.open} onOpenChange={props.onOpenChange ? props.onOpenChange : (open) => {}}>
+    <Dialog.Root preventScroll open={props.open} onOpenChange={props.onOpenChange ? props.onOpenChange : (open) => {}}>
       <Dialog.Trigger class="">{props.trigger}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay class="fixed inset-0 bg-black/[0.02] backdrop-blur-sm z-50" />
