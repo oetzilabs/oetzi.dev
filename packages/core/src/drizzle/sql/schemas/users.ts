@@ -4,8 +4,6 @@ import { relations } from "drizzle-orm";
 import { profiles } from "./profile";
 import { sessions } from "./session";
 import { projects } from "./project";
-import { project_participants } from "./project_participants";
-import { stackUsedByUsers } from "./stackUsedByUsers";
 
 export const users = sqliteTable("users", {
   ...Entity.defaults,
@@ -24,6 +22,4 @@ export const userRelation = relations(users, ({ one, many }) => ({
   }),
   sessions: many(sessions),
   projects: many(projects),
-  stacks: many(stackUsedByUsers),
-  project_participants: many(project_participants),
 }));

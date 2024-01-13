@@ -2,12 +2,12 @@ import { eq, sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { db } from "../drizzle/sql";
-import { TechnologySelect, technologies, users } from "../drizzle/sql/schema";
+import { techs, users } from "../drizzle/sql/schema";
 
 export * as Technology from "./technologies";
 
-export const create = z.function(z.tuple([createInsertSchema(technologies)])).implement(async (input) => {
-  const [x] = await db.insert(technologies).values(input).returning();
+export const create = z.function(z.tuple([createInsertSchema(techs)])).implement(async (input) => {
+  const [x] = await db.insert(techs).values(input).returning();
   return {
     ...x,
   };
@@ -16,20 +16,19 @@ export const create = z.function(z.tuple([createInsertSchema(technologies)])).im
 export const countAll = z.function(z.tuple([])).implement(async () => {
   const [x] = await db
     .select({
-      count: sql`COUNT(${technologies.id})`,
+      count: sql`COUNT(${techs.id})`,
     })
-    .from(technologies);
+    .from(techs);
   return x.count;
 });
 
 export const findById = z.function(z.tuple([z.string()])).implement(async (input) => {
-  return db.query.technologies.findFirst({
-    where: (technologies, operations) => operations.eq(technologies.id, input),
+  return db.query.techs.findFirst({
+    where: (techs, operations) => operations.eq(techs.id, input),
     with: {
-      stacks: {
+      usedByProjects: {
         with: {
-          stack: true,
-          technology: true,
+          project: true,
         },
       },
     },
@@ -37,12 +36,11 @@ export const findById = z.function(z.tuple([z.string()])).implement(async (input
 });
 
 export const all = z.function(z.tuple([])).implement(async () => {
-  return db.query.technologies.findMany({
+  return db.query.techs.findMany({
     with: {
-      stacks: {
+      usedByProjects: {
         with: {
-          stack: true,
-          technology: true,
+          project: true,
         },
       },
     },
@@ -52,7 +50,7 @@ export const all = z.function(z.tuple([])).implement(async () => {
 const update = z
   .function(
     z.tuple([
-      createInsertSchema(technologies)
+      createInsertSchema(techs)
         .partial()
         .omit({ createdAt: true, updatedAt: true })
         .merge(z.object({ id: z.string().uuid() })),
@@ -60,9 +58,9 @@ const update = z
   )
   .implement(async (input) => {
     let [u] = await db
-      .update(technologies)
+      .update(techs)
       .set({ ...input, updatedAt: new Date() })
-      .where(eq(technologies.id, input.id))
+      .where(eq(techs.id, input.id))
       .returning();
     return u;
   });
@@ -79,4 +77,4 @@ export const updateName = z
 
 export type Frontend = NonNullable<Awaited<ReturnType<typeof findById>>>;
 
-export type Technology = TechnologySelect;
+export type Technology = typeof techs.$inferSelect;

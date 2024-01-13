@@ -95,12 +95,6 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the migrator function",
         },
       },
-      "GET /user/organizations/all": {
-        function: {
-          handler: "packages/functions/src/user.allOrganizations",
-          description: "This is the all user organizations function",
-        },
-      },
       "GET /user/projects/all": {
         function: {
           handler: "packages/functions/src/user.allProjects",
@@ -113,12 +107,6 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the get user project function",
         },
       },
-      // "GET /user/projects/analyze": {
-      //   function: {
-      //     handler: "packages/functions/src/projects.analyze",
-      //     description: "This is the analyze project function",
-      //   },
-      // },
       "POST /user/projects/create": {
         function: {
           handler: "packages/functions/src/projects.create",
@@ -137,112 +125,16 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the is available function",
         },
       },
-      "POST /user/projects/sync": {
-        function: {
-          handler: "packages/functions/src/user.syncProjects",
-          description: "This is the sync projects function",
-        },
-      },
-      "POST /user/project/sync": {
-        function: {
-          handler: "packages/functions/src/projects.syncById",
-          description: "This is the sync project function",
-        },
-      },
-      "GET /user/projects/participated": {
-        function: {
-          handler: "packages/functions/src/user.participatedProjects",
-          description: "This is the participated projects function",
-        },
-      },
-      "GET /user/stacks/all": {
-        function: {
-          handler: "packages/functions/src/user.allUserStacks",
-          description: "This is the all stacks of the user function",
-        },
-      },
-      "POST /user/stacks/create": {
-        function: {
-          handler: "packages/functions/src/user.createStack",
-          description: "This is the create user-stacks function",
-        },
-      },
       "GET /projects/all": {
         function: {
           handler: "packages/functions/src/projects.all",
           description: "This is the all projects function",
         },
       },
-      "GET /stacks/all": {
-        function: {
-          handler: "packages/functions/src/stacks.all",
-          description: "This is the all stacks function",
-        },
-      },
-      "POST /stacks/check-url": {
-        function: {
-          handler: "packages/functions/src/stacks.checkUrl",
-          description: "This is the checkUrl stacks function",
-        },
-      },
-      "POST /stacks/check-file": {
-        function: {
-          handler: "packages/functions/src/stacks.checkFile",
-          description: "This is the checkFile stacks function",
-        },
-      },
-      "GET /stacks/calculate-version": {
-        function: {
-          handler: "packages/functions/src/stacks.calculateVersion",
-          description: "This is the calculateVersion stacks function",
-        },
-      },
       "GET /technologies/all": {
         function: {
           handler: "packages/functions/src/technologies.all",
           description: "This is the all technologies function",
-        },
-      },
-      "GET /links/all": {
-        function: {
-          handler: "packages/functions/src/links.all",
-          description: "This is the all link handler function",
-        },
-      },
-      "GET /link/get": {
-        function: {
-          handler: "packages/functions/src/links.get",
-          description: "This is the get link handler function",
-        },
-      },
-      "POST /links/create": {
-        function: {
-          handler: "packages/functions/src/links.create",
-          description: "This is the create link handler function",
-        },
-      },
-      "PUT /links/update": {
-        function: {
-          handler: "packages/functions/src/links.update",
-          description: "This is the update link handler function",
-        },
-      },
-      "DELETE /links/remove": {
-        function: {
-          handler: "packages/functions/src/links.remove",
-          description: "This is the remove link handler function",
-        },
-      },
-      "GET /link/{element}": {
-        function: {
-          handler: "packages/functions/src/links.handler",
-          description: "This is the link handler function",
-        },
-      },
-      "GET /plugins/all": {
-        function: {
-          handler: "packages/functions/src/plugins.all",
-          description: "This is the plugins all function",
         },
       },
     },

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "dd1f1839-d550-4631-a805-aafd318d511b",
+  "id": "0bc56c13-fcc5-4048-90bf-22025a390288",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "projects": {
@@ -36,13 +36,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "synced_at": {
-          "name": "synced_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "owner_id": {
           "name": "owner_id",
           "type": "text",
@@ -64,13 +57,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "protected": {
-          "name": "protected",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "visibility": {
           "name": "visibility",
           "type": "text",
@@ -80,13 +66,6 @@
         },
         "remote": {
           "name": "remote",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "stack_id": {
-          "name": "stack_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -107,181 +86,8 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
-        },
-        "projects_stack_id_stacks_id_fk": {
-          "name": "projects_stack_id_stacks_id_fk",
-          "tableFrom": "projects",
-          "tableTo": "stacks",
-          "columnsFrom": [
-            "stack_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "project_participants": {
-      "name": "project_participants",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(strftime('%s', 'now'))"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "project_id": {
-          "name": "project_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "project_participants_user_id_users_id_fk": {
-          "name": "project_participants_user_id_users_id_fk",
-          "tableFrom": "project_participants",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "project_participants_project_id_projects_id_fk": {
-          "name": "project_participants_project_id_projects_id_fk",
-          "tableFrom": "project_participants",
-          "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "links": {
-      "name": "links",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(strftime('%s', 'now'))"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "group": {
-          "name": "group",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "url": {
-          "name": "url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "active": {
-          "name": "active",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": false
-        },
-        "protected": {
-          "name": "protected",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "meta": {
-          "name": "meta",
-          "type": "blob",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -513,8 +319,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "stacks": {
-      "name": "stacks",
+    "techs": {
+      "name": "techs",
       "columns": {
         "id": {
           "name": "id",
@@ -543,13 +349,6 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
-        },
-        "version": {
-          "name": "version",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
           "autoincrement": false
         },
         "name": {
@@ -565,21 +364,6 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
-        },
-        "hidden": {
-          "name": "hidden",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": false
-        },
-        "protected": {
-          "name": "protected",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
         }
       },
       "indexes": {},
@@ -587,8 +371,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "stack_used_by_users": {
-      "name": "stack_used_by_users",
+    "stack_used_by_projects": {
+      "name": "stack_used_by_projects",
       "columns": {
         "id": {
           "name": "id",
@@ -619,15 +403,15 @@
           "notNull": false,
           "autoincrement": false
         },
-        "user_id": {
-          "name": "user_id",
+        "project_id": {
+          "name": "project_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "stack_id": {
-          "name": "stack_id",
+        "tech_id": {
+          "name": "tech_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -636,12 +420,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "stack_used_by_users_user_id_users_id_fk": {
-          "name": "stack_used_by_users_user_id_users_id_fk",
-          "tableFrom": "stack_used_by_users",
-          "tableTo": "users",
+        "stack_used_by_projects_project_id_projects_id_fk": {
+          "name": "stack_used_by_projects_project_id_projects_id_fk",
+          "tableFrom": "stack_used_by_projects",
+          "tableTo": "projects",
           "columnsFrom": [
-            "user_id"
+            "project_id"
           ],
           "columnsTo": [
             "id"
@@ -649,91 +433,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "stack_used_by_users_stack_id_stacks_id_fk": {
-          "name": "stack_used_by_users_stack_id_stacks_id_fk",
-          "tableFrom": "stack_used_by_users",
-          "tableTo": "stacks",
+        "stack_used_by_projects_tech_id_techs_id_fk": {
+          "name": "stack_used_by_projects_tech_id_techs_id_fk",
+          "tableFrom": "stack_used_by_projects",
+          "tableTo": "techs",
           "columnsFrom": [
-            "stack_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "stack_used_by_technologies": {
-      "name": "stack_used_by_technologies",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(strftime('%s', 'now'))"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "technology_id": {
-          "name": "technology_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "stack_id": {
-          "name": "stack_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "stack_used_by_technologies_technology_id_technologies_id_fk": {
-          "name": "stack_used_by_technologies_technology_id_technologies_id_fk",
-          "tableFrom": "stack_used_by_technologies",
-          "tableTo": "technologies",
-          "columnsFrom": [
-            "technology_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "stack_used_by_technologies_stack_id_stacks_id_fk": {
-          "name": "stack_used_by_technologies_stack_id_stacks_id_fk",
-          "tableFrom": "stack_used_by_technologies",
-          "tableTo": "stacks",
-          "columnsFrom": [
-            "stack_id"
+            "tech_id"
           ],
           "columnsTo": [
             "id"
@@ -742,87 +447,6 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "technologies": {
-      "name": "technologies",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(strftime('%s', 'now'))"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "version": {
-          "name": "version",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "template": {
-          "name": "template",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "hidden": {
-          "name": "hidden",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": false
-        },
-        "protected": {
-          "name": "protected",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     }
