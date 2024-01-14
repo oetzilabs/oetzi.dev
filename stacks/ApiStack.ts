@@ -95,70 +95,52 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the migrator function",
         },
       },
-      "GET /user/projects/all": {
-        function: {
-          handler: "packages/functions/src/user.allProjects",
-          description: "This is the all user projects function",
-        },
-      },
-      "GET /user/projects/get": {
-        function: {
-          handler: "packages/functions/src/user.getProject",
-          description: "This is the get user project function",
-        },
-      },
-      "POST /user/projects/create": {
-        function: {
-          handler: "packages/functions/src/projects.create",
-          description: "This is the create project function",
-        },
-      },
-      "POST /user/projects/remove": {
-        function: {
-          handler: "packages/functions/src/projects.remove",
-          description: "This is the remove project function",
-        },
-      },
-      "GET /user/blogs/all": {
-        function: {
-          handler: "packages/functions/src/user.allBlogs",
-          description: "This is the all user blogs function",
-        },
-      },
-      "GET /user/blogs/get": {
-        function: {
-          handler: "packages/functions/src/user.getBlog",
-          description: "This is the get user blog function",
-        },
-      },
-      "POST /user/blogs/create": {
-        function: {
-          handler: "packages/functions/src/blogs.create",
-          description: "This is the create blog function",
-        },
-      },
-      "POST /user/blogs/remove": {
-        function: {
-          handler: "packages/functions/src/blogs.remove",
-          description: "This is the remove blog function",
-        },
-      },
-      "GET /user/projects/is-available": {
-        function: {
-          handler: "packages/functions/src/user.projectIsAvailable",
-          description: "This is the is available function",
-        },
-      },
       "GET /projects/all": {
         function: {
           handler: "packages/functions/src/projects.all",
           description: "This is the all projects function",
         },
       },
+      "POST /projects/create": {
+        function: {
+          handler: "packages/functions/src/projects.create",
+          description: "This is the create project function",
+        },
+      },
+      "POST /projects/remove": {
+        function: {
+          handler: "packages/functions/src/projects.remove",
+          description: "This is the remove project function",
+        },
+      },
       "GET /blogs/all": {
         function: {
           handler: "packages/functions/src/blogs.all",
           description: "This is the all blogs function",
+        },
+      },
+      "GET /blogs/get": {
+        function: {
+          handler: "packages/functions/src/blogs.getBlog",
+          description: "This is the get user blog function",
+        },
+      },
+      "POST /blogs/create": {
+        function: {
+          handler: "packages/functions/src/blogs.create",
+          description: "This is the create blog function",
+        },
+      },
+      "POST /blogs/remove": {
+        function: {
+          handler: "packages/functions/src/blogs.remove",
+          description: "This is the remove blog function",
+        },
+      },
+      "POST /blogs/update": {
+        function: {
+          handler: "packages/functions/src/blogs.update",
+          description: "This is the update blog function",
         },
       },
       "GET /technologies/all": {

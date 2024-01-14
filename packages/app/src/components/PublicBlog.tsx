@@ -34,9 +34,28 @@ export const PublicBlog = (props: PublicBlogProps) => {
           </A>
           <div class="flex flex-row items-center gap-2.5">
             <Show when={isLoggedIn}>
+              <A
+                href={`/blog/${props.blog.id}/configure`}
+                class="flex flex-row gap-2.5 p-2 border border-neutral-300 dark:border-neutral-800 rounded-md"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                </svg>
+              </A>
               <form action={Blogs.remove} method="post">
                 <input type="hidden" name="id" value={props.blog.id} />
-                <button type="submit" class="flex flex-row gap-2.5 text-rose-500">
+                <button type="submit" class="flex flex-row gap-2.5 text-rose-500 p-2 border border-rose-500 rounded-md">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"

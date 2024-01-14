@@ -8,7 +8,7 @@ import { Queries } from "../../../utils/api/queries";
 
 export default function ProjectPage() {
   const { id } = useParams();
-  if (!id) return redirect("./");
+  if (!id) return redirect("/notfound", { status: 404 });
   const blog = createQuery(() => ({
     queryKey: ["blog"],
     queryFn: () => Queries.blog(id),

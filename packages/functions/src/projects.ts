@@ -1,16 +1,17 @@
-import { ApiHandler, useFormData, useQueryParam, useQueryParams } from "sst/node/api";
+import { ApiHandler, useFormData, useQueryParams } from "sst/node/api";
 import { AllWithFilterZod, Project } from "../../core/src/entities/projects";
-import { getUser, json } from "./utils";
+import { error, getUser, json } from "./utils";
 
 export const create = ApiHandler(async (_evt) => {
   const [user] = await getUser();
+  if (!user) return error("Not logged in");
   const form = useFormData();
-  if (!form) throw new Error("No form data");
+  if (!form) return error("No form data");
   const d = Object.fromEntries(form.entries());
   const projectInput = Project.safeParse(d);
   if (!projectInput.success) {
     console.log(d, projectInput.error.flatten().fieldErrors);
-    throw new Error("Invalid data");
+    return error("Invalid data");
   }
 
   const result = await Project.create(user.id, projectInput.data);
@@ -20,10 +21,11 @@ export const create = ApiHandler(async (_evt) => {
 
 export const remove = ApiHandler(async (_evt) => {
   const [user] = await getUser();
+  if (!user) return error("Not logged in");
   const form = useFormData();
-  if (!form) throw new Error("No form data");
+  if (!form) return error("No form data");
   const projectId = form.get("id");
-  if (!projectId) throw new Error("No project id");
+  if (!projectId) return error("No project id");
   const result = await Project.remove(user.id, projectId);
 
   return json(result);
