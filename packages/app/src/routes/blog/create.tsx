@@ -1,33 +1,26 @@
 import { useSubmission } from "@solidjs/router";
-import { Project } from "../../utils/api/project";
+import { Blogs } from "../../utils/api/blog";
 
 export default function CreateProjectPage() {
-  const createProjectSubmission = useSubmission(Project.create);
+  const createProjectSubmission = useSubmission(Blogs.create);
   return (
     <main class="flex container mx-auto flex-col gap-10 py-10">
-      <form action={Project.create} method="post" class="flex flex-col gap-2">
+      <form action={Blogs.create} method="post" class="flex flex-col gap-2">
         <input
           type="text"
-          name="name"
-          placeholder="Name"
-          class="bg-white dark:bg-black text-sm rounded-sm px-2 py-1 font-medium border border-neutral-300 dark:border-neutral-800"
-        />
-        <input
-          type="text"
-          name="description"
-          placeholder="Description"
-          class="bg-white dark:bg-black text-sm rounded-sm px-2 py-1 font-medium border border-neutral-300 dark:border-neutral-800"
-        />
-        <input
-          type="text"
-          name="remote"
-          placeholder="Remote"
+          name="title"
+          placeholder="Title"
           class="bg-white dark:bg-black text-sm rounded-sm px-2 py-1 font-medium border border-neutral-300 dark:border-neutral-800"
         />
         <input
           type="text"
           name="visibility"
-          placeholder="Visibility: public, private"
+          placeholder="Visibility: public or private"
+          class="bg-white dark:bg-black text-sm rounded-sm px-2 py-1 font-medium border border-neutral-300 dark:border-neutral-800"
+        />
+        <textarea
+          name="content"
+          placeholder="Name"
           class="bg-white dark:bg-black text-sm rounded-sm px-2 py-1 font-medium border border-neutral-300 dark:border-neutral-800"
         />
         <button

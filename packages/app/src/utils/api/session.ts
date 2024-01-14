@@ -27,8 +27,7 @@ export function isLoggedIn() {
     return () => false;
   }
   const c = getCookie(event, "session");
-  const loggedIn = () => c !== undefined;
-  return loggedIn;
+  return c !== undefined;
 }
 
 export async function logout() {
@@ -47,6 +46,21 @@ export async function getProjects() {
   "use server";
   const response = await Queries.projects();
   return response;
+}
+export async function getBlogs() {
+  "use server";
+  const response = await Queries.blogs();
+  return response;
+}
+
+export async function getIndex() {
+  "use server";
+  const projects = await Queries.projects();
+  const blogs = await Queries.blogs();
+  return {
+    projects,
+    blogs,
+  };
 }
 
 export * as Session from "./session";

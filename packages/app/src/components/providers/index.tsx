@@ -1,10 +1,7 @@
 import { MetaProvider } from "@solidjs/meta";
-import { A, action, cache, createAsync } from "@solidjs/router";
+import { A, action } from "@solidjs/router";
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import { Match, Switch } from "solid-js";
-import { getRequestEvent } from "solid-js/web";
-import { Toaster } from "solid-toast";
-import { getCookie } from "vinxi/server";
 import { Session } from "../../utils/api/session";
 
 const queryClient = new QueryClient();
@@ -22,7 +19,7 @@ export const Providers = (props: { children: any }) => {
                 oetzi.dev
               </A>
               <Switch>
-                <Match when={loggedIn()}>
+                <Match when={loggedIn}>
                   <form action={logoutAction} method="post">
                     <button
                       class="bg-black dark:bg-white text-white dark:text-black text-sm rounded-sm px-2 py-1 font-medium"
@@ -32,7 +29,7 @@ export const Providers = (props: { children: any }) => {
                     </button>
                   </form>
                 </Match>
-                <Match when={!loggedIn()}>
+                <Match when={!loggedIn}>
                   <a
                     href={import.meta.env.VITE_AUTH_URL}
                     class="bg-black dark:bg-white text-white dark:text-black text-sm rounded-sm px-2 py-1 font-medium"

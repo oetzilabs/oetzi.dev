@@ -119,6 +119,30 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the remove project function",
         },
       },
+      "GET /user/blogs/all": {
+        function: {
+          handler: "packages/functions/src/user.allBlogs",
+          description: "This is the all user blogs function",
+        },
+      },
+      "GET /user/blogs/get": {
+        function: {
+          handler: "packages/functions/src/user.getBlog",
+          description: "This is the get user blog function",
+        },
+      },
+      "POST /user/blogs/create": {
+        function: {
+          handler: "packages/functions/src/blogs.create",
+          description: "This is the create blog function",
+        },
+      },
+      "POST /user/blogs/remove": {
+        function: {
+          handler: "packages/functions/src/blogs.remove",
+          description: "This is the remove blog function",
+        },
+      },
       "GET /user/projects/is-available": {
         function: {
           handler: "packages/functions/src/user.projectIsAvailable",
@@ -129,6 +153,12 @@ export function ApiStack({ stack }: StackContext) {
         function: {
           handler: "packages/functions/src/projects.all",
           description: "This is the all projects function",
+        },
+      },
+      "GET /blogs/all": {
+        function: {
+          handler: "packages/functions/src/blogs.all",
+          description: "This is the all blogs function",
         },
       },
       "GET /technologies/all": {
