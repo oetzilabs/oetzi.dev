@@ -40,24 +40,8 @@ export const blogsWithFilter = z.function(z.tuple([])).implement(async () =>
   ).then((res) => res.json() as Promise<Blog.Frontend[]>)
 );
 
-export const userProjects = z.function(z.tuple([z.string()])).implement(async (token) =>
-  fetch(`${API_BASE}/user/projects/all`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json() as Promise<User.Frontend["projects"]>)
-);
-
-export const userBlogs = z.function(z.tuple([z.string()])).implement(async (token) =>
-  fetch(`${API_BASE}/user/blogs/all`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json() as Promise<User.Frontend["projects"]>)
-);
-
 export const project = z.function(z.tuple([z.string(), z.string()])).implement(async (token, id) =>
-  fetch(`${API_BASE}/user/projects/get?id=${encodeURIComponent(id)}`, {
+  fetch(`${API_BASE}/projects/get?id=${encodeURIComponent(id)}`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -67,5 +51,5 @@ export const project = z.function(z.tuple([z.string(), z.string()])).implement(a
 export const blog = z
   .function(z.tuple([z.string()]))
   .implement(async (id) =>
-    fetch(`${API_BASE}/user/blogs/get?id=${encodeURIComponent(id)}`).then((res) => res.json() as Promise<Blog.Frontend>)
+    fetch(`${API_BASE}/blogs/get?id=${encodeURIComponent(id)}`).then((res) => res.json() as Promise<Blog.Frontend>)
   );

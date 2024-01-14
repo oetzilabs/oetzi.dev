@@ -123,7 +123,7 @@ export const allWithSearch = z
     return u.blogs;
   });
 
-const update = z
+export const update = z
   .function(
     z.tuple([
       createInsertSchema(blogs)
@@ -146,9 +146,9 @@ export const markAsDeleted = z.function(z.tuple([z.object({ id: z.string().uuid(
 });
 
 export const updateTitle = z
-  .function(z.tuple([z.object({ id: z.string().uuid(), name: z.string() })]))
+  .function(z.tuple([z.object({ id: z.string().uuid(), title: z.string() })]))
   .implement(async (input) => {
-    return update({ id: input.id, title: input.name });
+    return update({ id: input.id, title: input.title });
   });
 
 export const parse = CreateBlogZod.parse;

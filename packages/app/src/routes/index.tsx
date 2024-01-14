@@ -3,17 +3,19 @@ import { For, Show, createSignal } from "solid-js";
 import { PublicProject } from "../components/PublicProject";
 import { Session } from "../utils/api/session";
 import { PublicBlog } from "../components/PublicBlog";
-
-const getIndex = cache(Session.getIndex, "index");
-
-export const route = {
-  load: () => getIndex(),
-};
+import { createQuery } from "@tanstack/solid-query";
+import { Queries } from "../utils/api/queries";
 
 export default function Home() {
-  const indexData = createAsync(getIndex);
-  const projects = () => indexData()?.projects ?? [];
-  const blogs = () => indexData()?.blogs ?? [];
+  const projects = createQuery(() => ({
+    queryKey: ["projects"],
+    queryFn: () => Queries.projects(),
+  }));
+
+  const blogs = createQuery(() => ({
+    queryKey: ["blogs"],
+    queryFn: () => Queries.blogs(),
+  }));
   const isLoggedIn = Session.isLoggedIn();
 
   return (
@@ -34,7 +36,7 @@ export default function Home() {
         </div>
         <div class="flex flex-col gap-4">
           <For
-            each={blogs()}
+            each={blogs.isSuccess && blogs.data}
             fallback={
               <div class="col-span-full flex flex-col items-start justify-center rounded-sm p-10 gap-8 border border-neutral-300 dark:border-neutral-800">
                 <h3 class="text-xl font-bold">No blogs found.</h3>
@@ -62,7 +64,7 @@ export default function Home() {
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <For
-            each={projects()}
+            each={projects.isSuccess && projects.data}
             fallback={
               <div class="col-span-full flex flex-col items-start justify-center rounded-sm p-10 gap-8 border border-neutral-300 dark:border-neutral-800">
                 <h3 class="text-xl font-bold">No projects found.</h3>

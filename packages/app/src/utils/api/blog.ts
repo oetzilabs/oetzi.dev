@@ -24,6 +24,25 @@ export const create = action(async (formdata: FormData) => {
   return redirect(`/blog/${createdBlog.id}`);
 });
 
+export const update = action(async (formdata: FormData) => {
+  "use server";
+  const event = getRequestEvent();
+  if (!event) {
+    throw new Error("No request event");
+  }
+  const token = getCookie(event, "session");
+  if (!token) {
+    throw new Error("Not logged in");
+  }
+  const data = Object.fromEntries(formdata.entries());
+  const validation = Mutations.BlogsUpdateZod.safeParse(data);
+  if (!validation.success) {
+    throw validation.error;
+  }
+  const createdBlog = await Mutations.Blogs.update(token, validation.data);
+  return redirect(`/blog/${createdBlog.id}`);
+});
+
 export const remove = action(async (formdata: FormData) => {
   "use server";
   const event = getRequestEvent();
