@@ -3,10 +3,6 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { db } from "../drizzle/sql";
 import { ProjectSelect, projects, techUsedByProjects, techs } from "../drizzle/sql/schema";
-import { GitHub } from "../github";
-import { GitHubUtils } from "../github/utils";
-import { User } from "./users";
-import { Link } from "./links";
 
 export * as Project from "./projects";
 
@@ -19,8 +15,6 @@ export type CreateProjectInput = z.infer<typeof CreateProjectZod>;
 export const create = z
   .function(z.tuple([z.string().uuid(), CreateProjectZod]))
   .implement(async (userId, projectInput) => {
-    const freshAccessToken = await User.getFreshAccessToken(userId);
-
     const [x] = await db
       .insert(projects)
       .values({
@@ -34,7 +28,6 @@ export const create = z
 export const remove = z
   .function(z.tuple([z.string().uuid(), z.string().uuid()]))
   .implement(async (userId, projectId) => {
-    const freshAccessToken = await User.getFreshAccessToken(userId);
     const project = await db.query.projects.findFirst({
       where: (projects, operations) => operations.eq(projects.id, projectId),
     });

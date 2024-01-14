@@ -36,3 +36,34 @@ export const Projects = {
     }).then((res) => res.json() as Promise<Project>);
   }),
 };
+
+export const BlogsCreateZod = z.object({
+  title: z.string(),
+  content: z.string(),
+  visibility: z.enum(["public", "private"]),
+});
+
+export const BlogsRemoveZod = z.object({
+  id: z.string(),
+});
+
+export const Blogs = {
+  create: z.function(z.tuple([z.string(), BlogsCreateZod])).implement((token, blog) => {
+    return fetch(`${API_BASE}/user/blogs/create`, {
+      method: "POST",
+      body: new URLSearchParams(blog),
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json() as Promise<Project>);
+  }),
+  remove: z.function(z.tuple([z.string(), z.string().uuid()])).implement((token, id) => {
+    return fetch(`${API_BASE}/user/blogs/remove`, {
+      method: "POST",
+      body: new URLSearchParams({ id }),
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json() as Promise<Project>);
+  }),
+};

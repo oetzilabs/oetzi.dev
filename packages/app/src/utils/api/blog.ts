@@ -3,7 +3,7 @@ import { Mutations } from "./mutations";
 import { getCookie } from "vinxi/server";
 import { getRequestEvent } from "solid-js/web";
 
-export * as Project from "./project";
+export * as Blogs from "./blog";
 
 export const create = action(async (formdata: FormData) => {
   "use server";
@@ -16,12 +16,12 @@ export const create = action(async (formdata: FormData) => {
     throw new Error("Not logged in");
   }
   const data = Object.fromEntries(formdata.entries());
-  const validation = Mutations.ProjectsCreateZod.safeParse(data);
+  const validation = Mutations.BlogsCreateZod.safeParse(data);
   if (!validation.success) {
     throw validation.error;
   }
-  const createdProject = await Mutations.Projects.create(token, validation.data);
-  return redirect(`/project/${createdProject.id}`);
+  const createdBlog = await Mutations.Blogs.create(token, validation.data);
+  return redirect(`/blog/${createdBlog.id}`);
 });
 
 export const remove = action(async (formdata: FormData) => {
@@ -35,11 +35,11 @@ export const remove = action(async (formdata: FormData) => {
     throw new Error("Not logged in");
   }
   const data = Object.fromEntries(formdata.entries());
-  const validation = Mutations.ProjectsRemoveZod.safeParse(data);
+  const validation = Mutations.BlogsRemoveZod.safeParse(data);
   if (!validation.success) {
     console.log(validation.error.flatten().fieldErrors);
     throw validation.error;
   }
-  const removedProject = await Mutations.Projects.remove(token, validation.data.id);
-  return removedProject;
+  const removedBlog = await Mutations.Blogs.remove(token, validation.data.id);
+  return removedBlog;
 });

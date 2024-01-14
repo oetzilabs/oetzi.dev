@@ -13,15 +13,25 @@ type PublicProjectProps = {
 
 export const PublicProject = (props: PublicProjectProps) => {
   const isLoggedIn = Session.isLoggedIn();
-  const deleteProject = action(Project.remove);
   return (
     <div class="flex flex-col text-black dark:text-white border border-neutral-300 dark:border-neutral-800 overflow-clip">
       <div class="flex flex-row items-center justify-between p-4 pb-2">
-        <div class="w-full flex flex-row items-center justify-between gap-2.5" title={props.project.visibility}>
-          <h3 class="text-xl font-bold ">{props.project.name}</h3>
+        <div class="w-full flex flex-row items-center justify-between gap-2.5">
+          <A
+            href={
+              props.project.visibility === "public"
+                ? `/project/${props.project.id}`
+                : isLoggedIn
+                ? `/project/${props.project.id}/configure`
+                : `/project/${props.project.id}`
+            }
+            class="text-xl font-bold hover:underline "
+          >
+            {props.project.name}
+          </A>
           <div class="flex flex-row items-center gap-2.5">
-            <Show when={isLoggedIn() && isLoggedIn()}>
-              <form action={deleteProject} method="post">
+            <Show when={isLoggedIn}>
+              <form action={Project.remove} method="post">
                 <input type="hidden" name="id" value={props.project.id} />
                 <button type="submit" class="flex flex-row gap-2.5 text-rose-500">
                   <svg
@@ -58,8 +68,16 @@ export const PublicProject = (props: PublicProjectProps) => {
                   <For
                     each={tech().map((tech) => tech.tech)}
                     fallback={
-                      <div class="col-span-full w-full flex flex-col gap-6 bg-neutral-100 dark:bg-neutral-900 p-8 rounded-md items-center justify-center border border-neutral-300 dark:border-neutral-800">
+                      <div class="col-span-full w-full flex flex-col gap-4 bg-neutral-100 dark:bg-neutral-900 p-8 rounded-md items-center justify-center border border-neutral-300 dark:border-neutral-800">
                         <span>This Project is unconfigured.</span>
+                        <Show when={isLoggedIn}>
+                          <A
+                            href={`/project/${props.project.id}/configure`}
+                            class="bg-emerald-200 dark:bg-emerald-900 px-4 py-1 rounded-lg font-medium hover:underline"
+                          >
+                            Configure
+                          </A>
+                        </Show>
                       </div>
                     }
                   >
