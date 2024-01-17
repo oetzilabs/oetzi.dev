@@ -9,6 +9,6 @@ export default defineConfig({
     ssr: true,
   },
   ssr: {
-    noExternal: ["@kobalte/core", "@internationalized/message"],
+    noExternal: ["@kobalte/core", "@internationalized/message", "@milkdown/design-system"],
   },
 });

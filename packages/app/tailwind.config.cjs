@@ -8,5 +8,6 @@ module.exports = {
   plugins: [
     // default prefix is "ui"
     require("@kobalte/tailwindcss"),
+    require("@tailwindcss/typography"),
   ],
 };

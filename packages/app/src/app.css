@@ -6,3 +6,11 @@ pre {
   width: 100%;
   text-align: left;
 }
+
+.milkdown {
+  @apply bg-transparent px-2 py-4 m-5 ;
+}
+
+.editor {
+  @apply focus:outline-none focus:ring-0;
+}

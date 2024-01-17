@@ -10,11 +10,13 @@ export default function Home() {
   const projects = createQuery(() => ({
     queryKey: ["projects"],
     queryFn: () => Queries.projects(),
+    staleTime: Infinity,
   }));
 
   const blogs = createQuery(() => ({
     queryKey: ["blogs"],
     queryFn: () => Queries.blogs(),
+    staleTime: Infinity,
   }));
   const isLoggedIn = Session.isLoggedIn();
 
