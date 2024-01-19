@@ -1,4 +1,4 @@
-import { A } from "@solidjs/router";
+import { A } from "solid-start";
 import { JSX, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import Markdown from "solid-marked/component";

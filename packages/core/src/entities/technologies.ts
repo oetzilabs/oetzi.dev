@@ -75,6 +75,8 @@ export const updateName = z
     return update({ id: input.id, name: input.name });
   });
 
+export const safeParse = createInsertSchema(techs).safeParse;
+
 export type Frontend = NonNullable<Awaited<ReturnType<typeof findById>>>;
 
 export type Technology = typeof techs.$inferSelect;

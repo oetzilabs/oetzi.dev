@@ -1,4 +1,4 @@
-import { A, useNavigate } from "@solidjs/router";
+import { A, useNavigate } from "solid-start";
 import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
 import { For, Match, Switch } from "solid-js";
 import { useAuth } from "../../components/providers/OfflineFirst";

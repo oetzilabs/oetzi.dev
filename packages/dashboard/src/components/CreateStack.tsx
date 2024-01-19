@@ -1,7 +1,7 @@
 import { Checkbox, RadioGroup, TextField } from "@kobalte/core";
 import { Technology } from "@oetzidev/core/entities/technologies";
 import { debounce } from "@solid-primitives/scheduled";
-import { A } from "@solidjs/router";
+import { A } from "solid-start";
 import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
 import "highlight.js/styles/obsidian.min.css";
 import { For, JSX, Match, Show, Switch, createSignal } from "solid-js";

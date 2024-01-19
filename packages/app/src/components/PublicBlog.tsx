@@ -1,13 +1,12 @@
+import { Blog } from "@oetzidev/core/entities/blogs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { For, JSX, Match, Show, Switch } from "solid-js";
-import Markdown from "solid-marked/component";
-import { Blogs } from "../utils/api/blog";
-import { A, action } from "@solidjs/router";
-import { Session } from "../utils/api/session";
-import { Blog } from "@oetzidev/core/entities/blogs";
+import { JSX, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
+import Markdown from "solid-marked/component";
+import { A } from "solid-start";
 import { cn } from "../utils/cn";
+import { isLoggedIn } from "./providers/Auth";
 dayjs.extend(relativeTime);
 
 type PublicBlogProps = {
@@ -15,7 +14,6 @@ type PublicBlogProps = {
 };
 
 export const PublicBlog = (props: PublicBlogProps) => {
-  const isLoggedIn = Session.isLoggedIn();
   return (
     <div class="flex flex-col text-black dark:text-white border border-neutral-300 dark:border-neutral-800 overflow-clip">
       <div class="flex flex-row items-center justify-between p-4 pb-2">
@@ -24,7 +22,7 @@ export const PublicBlog = (props: PublicBlogProps) => {
             href={
               props.blog.visibility === "public"
                 ? `/blog/${props.blog.id}`
-                : isLoggedIn
+                : isLoggedIn()
                 ? `/blog/${props.blog.id}/configure`
                 : `/blog/${props.blog.id}`
             }
@@ -33,7 +31,7 @@ export const PublicBlog = (props: PublicBlogProps) => {
             {props.blog.title}
           </A>
           <div class="flex flex-row items-center gap-2.5">
-            <Show when={isLoggedIn}>
+            <Show when={isLoggedIn()}>
               <A
                 href={`/blog/${props.blog.id}/configure`}
                 class="flex flex-row gap-2.5 p-2 border border-neutral-300 dark:border-neutral-800 rounded-md"
@@ -53,7 +51,7 @@ export const PublicBlog = (props: PublicBlogProps) => {
                   <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
                 </svg>
               </A>
-              <form action={Blogs.remove} method="post">
+              <form>
                 <input type="hidden" name="id" value={props.blog.id} />
                 <button type="submit" class="flex flex-row gap-2.5 text-rose-500 p-2 border border-rose-500 rounded-md">
                   <svg

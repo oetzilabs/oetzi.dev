@@ -1,1 +1,1 @@
-/// <reference types="@solidjs/start/env" />
+/// <reference types="solid-start/env" />

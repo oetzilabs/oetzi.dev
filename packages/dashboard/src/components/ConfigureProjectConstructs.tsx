@@ -1,4 +1,4 @@
-import { A } from "@solidjs/router";
+import { A } from "solid-start";
 import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
 import { Mutations } from "../utils/api/mutations";

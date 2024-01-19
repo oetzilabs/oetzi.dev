@@ -1,6 +1,4 @@
-import { redirect } from "@solidjs/router";
-import { APIEvent } from "@solidjs/start/server";
-import { login } from "../../../utils/api/session";
+import { APIEvent, redirect } from "solid-start";
 
 export const GET = async (event: APIEvent) => {
   const url = new URL(event.request.url);
@@ -18,7 +16,11 @@ export const GET = async (event: APIEvent) => {
     }),
   }).then((r) => r.json());
 
-  await login(response.access_token);
-
-  return redirect("/");
+  return redirect("/", {
+    headers: {
+      "Set-Cookie": `session=${response.access_token}; Path=/; Expires=${new Date(
+        Date.now() + response.expires_in * 1000
+      ).toUTCString()}; `,
+    },
+  });
 };

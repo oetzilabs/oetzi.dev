@@ -1,14 +1,14 @@
-import { defineConfig } from "@solidjs/start/config";
+import solid from "solid-start/vite";
+import { defineConfig } from "vite";
+import aws from "solid-start-sst";
 
 export default defineConfig({
-  start: {
-    server: {
-      preset: "aws-lambda",
-      plugins: ["solid-start-ssr"],
-    },
-    ssr: true,
-  },
+  plugins: [
+    solid({
+      adapter: aws(),
+    }),
+  ],
   ssr: {
-    noExternal: ["@kobalte/core", "@internationalized/message", "@milkdown/design-system"],
+    noExternal: ["@kobalte/core", "@internationalized/message"],
   },
 });

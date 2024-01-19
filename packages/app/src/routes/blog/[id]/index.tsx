@@ -1,4 +1,4 @@
-import { A, redirect, useParams } from "@solidjs/router";
+import { A, redirect, useParams } from "solid-start";
 
 import { createQuery } from "@tanstack/solid-query";
 import Mdd from "../../../components/Markdown";

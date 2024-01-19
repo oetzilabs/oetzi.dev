@@ -1,4 +1,4 @@
-import { A } from "@solidjs/router";
+import { A } from "solid-start";
 import { createQuery } from "@tanstack/solid-query";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
