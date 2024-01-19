@@ -5,7 +5,7 @@ import { Mutations } from "../utils/api/mutations";
 import { Queries } from "../utils/api/queries";
 import { cn } from "../utils/cn";
 import { useAuth } from "./providers/OfflineFirst";
-import { useNavigate } from "@solidjs/router";
+import { useNavigate } from "solid-start";
 
 const DefaultProject = {
   name: "",

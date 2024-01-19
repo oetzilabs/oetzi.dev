@@ -1,6 +1,7 @@
-import { ApiHandler, useFormData, useQueryParams } from "sst/node/api";
+import { ApiHandler, useFormData, useQueryParam, useQueryParams } from "sst/node/api";
 import { AllWithFilterZod, Project } from "../../core/src/entities/projects";
 import { error, getUser, json } from "./utils";
+import { StatusCodes } from "http-status-codes";
 
 export const create = ApiHandler(async (_evt) => {
   const [user] = await getUser();
@@ -44,4 +45,16 @@ export const all = ApiHandler(async (_evt) => {
   }
 
   return json([]);
+});
+export const get = ApiHandler(async (_evt) => {
+  const p = useQueryParam("id");
+  if (!p) {
+    return error("No id");
+  }
+  const result = await Project.findById(p);
+  if (result) {
+    return json(result);
+  }
+
+  return error("Project not found", StatusCodes.NOT_FOUND);
 });

@@ -1,20 +1,15 @@
 // @refresh reload
-import { Router } from "@solidjs/router";
 import { Suspense, createEffect, createSignal, onCleanup } from "solid-js";
+import { Body, ErrorBoundary, FileRoutes, Head, Html, Meta, Routes, Scripts, Title } from "solid-start";
 import { Providers } from "./components/providers";
-import { FileRoutes } from "@solidjs/start";
-import "./app.css";
+import "./root.css";
 
-export default function App() {
+export default function Root() {
   // colormode
   const [colorMode, setColorMode] = createSignal<"dark" | "light">("dark");
   const toggleColorMode = async () => {
     const cm = colorMode() === "light" ? "dark" : "light";
     setColorMode(cm);
-    const html = document.querySelector("html");
-    if (html) {
-      html.classList.toggle("dark");
-    }
     // store color mode in local storage
     window.localStorage.setItem("colorMode", cm);
   };
@@ -42,16 +37,24 @@ export default function App() {
   });
 
   return (
-    <Router
-      root={(props) => (
-        <>
-          <Suspense>
-            <Providers>{props.children}</Providers>
-          </Suspense>
-        </>
-      )}
-    >
-      <FileRoutes />
-    </Router>
+    <Html lang="en" classList={{ dark: colorMode() === "dark" }}>
+      <Head>
+        <Title>oetzi.dev</Title>
+        <Meta charset="utf-8" />
+        <Meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <Body class="bg-white dark:bg-black text-black dark:text-white">
+        <Suspense>
+          <ErrorBoundary>
+            <Providers>
+              <Routes>
+                <FileRoutes />
+              </Routes>
+            </Providers>
+          </ErrorBoundary>
+        </Suspense>
+        <Scripts />
+      </Body>
+    </Html>
   );
 }

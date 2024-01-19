@@ -1,6 +1,7 @@
 import { sessions } from "./auth";
 import { User } from "@oetzidev/core/entities/users";
 import { StatusCodes } from "http-status-codes";
+import { useHeader } from "sst/node/api";
 
 export const getUser = async () => {
   const s = sessions.use();

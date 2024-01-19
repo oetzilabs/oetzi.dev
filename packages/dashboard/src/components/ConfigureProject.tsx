@@ -5,7 +5,7 @@ import { useAuth } from "./providers/OfflineFirst";
 import { cn } from "../utils/cn";
 import { Mutations } from "../utils/api/mutations";
 import { ConstructIcons } from "./ConstructsIcons";
-import { A } from "@solidjs/router";
+import { A } from "solid-start";
 
 type ConfigureProjectProps = {
   projectId: string;

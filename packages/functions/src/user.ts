@@ -3,14 +3,6 @@ import { Project } from "@oetzidev/core/entities/projects";
 import { ApiHandler, useQueryParam } from "sst/node/api";
 import { error, getUser, json } from "./utils";
 
-let gitHubFilesCache: Record<
-  string,
-  {
-    content: string;
-    path: string;
-  }[]
-> = {};
-
 export const allProjects = ApiHandler(async (_evt) => {
   const [user] = await getUser();
   const searchParam = useQueryParam("search");

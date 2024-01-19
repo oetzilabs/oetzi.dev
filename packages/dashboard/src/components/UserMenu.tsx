@@ -1,5 +1,5 @@
 import { DropdownMenu } from "@kobalte/core";
-import { A } from "@solidjs/router";
+import { A } from "solid-start";
 import { createQuery } from "@tanstack/solid-query";
 import { Match, Show, Suspense, Switch, createEffect, createSignal } from "solid-js";
 import { parseCookie } from "solid-start";

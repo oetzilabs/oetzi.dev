@@ -1,9 +1,9 @@
 import { DropdownMenu } from "@kobalte/core";
-import { A } from "@solidjs/router";
+import { A } from "solid-start";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { For, Match, Show, Switch } from "solid-js";
-import { useNavigate } from "@solidjs/router";
+import { useNavigate } from "solid-start";
 import * as Projects from "../../../core/src/entities/projects";
 import * as Users from "../../../core/src/entities/users";
 import { cn } from "../utils/cn";

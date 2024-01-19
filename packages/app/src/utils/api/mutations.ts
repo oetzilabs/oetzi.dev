@@ -1,4 +1,4 @@
-import { Project } from "@oetzidev/core/entities/projects";
+import { type Project } from "@oetzidev/core/entities/projects";
 import { z } from "zod";
 
 export * as Mutations from "./mutations";
@@ -94,6 +94,51 @@ export const Blogs = {
     return fetch(`${API_BASE}/blogs/update`, {
       method: "POST",
       body: new URLSearchParams(blog),
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json() as Promise<Project>);
+  }),
+};
+
+export const TechnologiesCreateZod = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+});
+
+export const TechnologiesRemoveZod = z.object({
+  id: z.string(),
+});
+
+export const TechnologiesUpdateZod = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+});
+
+export const Technologies = {
+  create: z.function(z.tuple([z.string(), TechnologiesCreateZod])).implement((token, technology) => {
+    return fetch(`${API_BASE}/technologies/create`, {
+      method: "POST",
+      body: new URLSearchParams(technology),
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json() as Promise<Project>);
+  }),
+  remove: z.function(z.tuple([z.string(), z.string().uuid()])).implement((token, id) => {
+    return fetch(`${API_BASE}/technologies/remove`, {
+      method: "POST",
+      body: new URLSearchParams({ id }),
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json() as Promise<Project>);
+  }),
+  update: z.function(z.tuple([z.string(), TechnologiesUpdateZod])).implement((token, technology) => {
+    return fetch(`${API_BASE}/technologies/update`, {
+      method: "POST",
+      body: new URLSearchParams(technology),
       headers: {
         Authorization: `Bearer ${token}`,
       },

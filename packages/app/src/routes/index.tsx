@@ -1,24 +1,21 @@
-import { A, cache, createAsync } from "@solidjs/router";
-import { For, Show, createSignal } from "solid-js";
-import { PublicProject } from "../components/PublicProject";
-import { Session } from "../utils/api/session";
-import { PublicBlog } from "../components/PublicBlog";
+import { A } from "solid-start";
 import { createQuery } from "@tanstack/solid-query";
+import { For, Show } from "solid-js";
+import { PublicBlog } from "../components/PublicBlog";
+import { PublicProject } from "../components/PublicProject";
+import { isLoggedIn } from "../components/providers/Auth";
 import { Queries } from "../utils/api/queries";
 
 export default function Home() {
   const projects = createQuery(() => ({
     queryKey: ["projects"],
     queryFn: () => Queries.projects(),
-    staleTime: Infinity,
   }));
 
   const blogs = createQuery(() => ({
     queryKey: ["blogs"],
     queryFn: () => Queries.blogs(),
-    staleTime: Infinity,
   }));
-  const isLoggedIn = Session.isLoggedIn();
 
   return (
     <main class="flex container mx-auto flex-col gap-10 py-10">
@@ -26,13 +23,13 @@ export default function Home() {
         <div class="w-full flex flex-row gap-2 items-center justify-between">
           <h1 class="text-4xl font-bold select-none">Blogs</h1>
           <div class="flex flex-row gap-2 items-center">
-            <Show when={isLoggedIn}>
-              <A
+            <Show when={isLoggedIn()}>
+              <a
                 href="/blog/create"
                 class="bg-black dark:bg-white text-white dark:text-black text-sm rounded-sm px-2 py-1 font-medium"
               >
                 Create Blog
-              </A>
+              </a>
             </Show>
           </div>
         </div>
@@ -54,7 +51,7 @@ export default function Home() {
         <div class="w-full flex flex-row gap-2 items-center justify-between">
           <h1 class="text-4xl font-bold select-none">Projects</h1>
           <div class="flex flex-row gap-2 items-center">
-            <Show when={isLoggedIn}>
+            <Show when={isLoggedIn()}>
               <A
                 href="/project/create"
                 class="bg-black dark:bg-white text-white dark:text-black text-sm rounded-sm px-2 py-1 font-medium"

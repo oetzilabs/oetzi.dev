@@ -1,11 +1,9 @@
-import { useSubmission } from "@solidjs/router";
-import { Blogs } from "../../utils/api/blog";
+import { Blogs } from "~/utils/api/blog";
 
-export default function CreateProjectPage() {
-  const createProjectSubmission = useSubmission(Blogs.create);
+export default function CreateBlogPage() {
   return (
     <main class="flex container mx-auto flex-col gap-10 py-10">
-      <form action={Blogs.create} method="post" class="flex flex-col gap-2">
+      <form method="post" class="flex flex-col gap-2">
         <input
           type="text"
           name="title"
@@ -26,7 +24,7 @@ export default function CreateProjectPage() {
         <button
           type="submit"
           class="bg-black dark:bg-white text-white dark:text-black text-sm rounded-sm px-2 py-1 font-medium hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={createProjectSubmission.pending}
+          // disabled={createProjectSubmission.pending}
         >
           Create
         </button>

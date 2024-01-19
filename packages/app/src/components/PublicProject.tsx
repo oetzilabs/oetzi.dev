@@ -3,8 +3,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { For, Match, Show, Switch } from "solid-js";
 import * as Projects from "../../../core/src/entities/projects";
 import { Project } from "../utils/api/project";
-import { A, action } from "@solidjs/router";
-import { Session } from "../utils/api/session";
+import { A } from "solid-start";
+import { createMutation } from "@tanstack/solid-query";
+import { isLoggedIn } from "./providers/Auth";
 dayjs.extend(relativeTime);
 
 type PublicProjectProps = {
@@ -12,7 +13,11 @@ type PublicProjectProps = {
 };
 
 export const PublicProject = (props: PublicProjectProps) => {
-  const isLoggedIn = Session.isLoggedIn();
+  const deleteProject = createMutation(() => ({
+    mutationKey: ["deleteProject"],
+    mutationFn: (id: string) => Project.remove(id),
+  }));
+
   return (
     <div class="flex flex-col text-black dark:text-white border border-neutral-300 dark:border-neutral-800 overflow-clip">
       <div class="flex flex-row items-center justify-between p-4 pb-2">
@@ -21,7 +26,7 @@ export const PublicProject = (props: PublicProjectProps) => {
             href={
               props.project.visibility === "public"
                 ? `/project/${props.project.id}`
-                : isLoggedIn
+                : isLoggedIn()
                 ? `/project/${props.project.id}/configure`
                 : `/project/${props.project.id}`
             }
@@ -30,29 +35,31 @@ export const PublicProject = (props: PublicProjectProps) => {
             {props.project.name}
           </A>
           <div class="flex flex-row items-center gap-2.5">
-            <Show when={isLoggedIn}>
-              <form action={Project.remove} method="post">
-                <input type="hidden" name="id" value={props.project.id} />
-                <button type="submit" class="flex flex-row gap-2.5 text-rose-500">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M3 6h18" />
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                    <line x1="10" x2="10" y1="11" y2="17" />
-                    <line x1="14" x2="14" y1="11" y2="17" />
-                  </svg>
-                </button>
-              </form>
+            <Show when={isLoggedIn()}>
+              <button
+                class="flex flex-row gap-2.5 text-rose-500"
+                onClick={async () => {
+                  await deleteProject.mutateAsync(props.project.id);
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 6h18" />
+                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                  <line x1="10" x2="10" y1="11" y2="17" />
+                  <line x1="14" x2="14" y1="11" y2="17" />
+                </svg>
+              </button>
             </Show>
           </div>
         </div>
@@ -70,7 +77,7 @@ export const PublicProject = (props: PublicProjectProps) => {
                     fallback={
                       <div class="col-span-full w-full flex flex-col gap-4 bg-neutral-100 dark:bg-neutral-900 p-8 rounded-md items-center justify-center border border-neutral-300 dark:border-neutral-800">
                         <span>This Project is unconfigured.</span>
-                        <Show when={isLoggedIn}>
+                        <Show when={isLoggedIn()}>
                           <A
                             href={`/project/${props.project.id}/configure`}
                             class="bg-emerald-200 dark:bg-emerald-900 px-4 py-1 rounded-lg font-medium hover:underline"

@@ -107,6 +107,12 @@ export function ApiStack({ stack }: StackContext) {
           description: "This is the create project function",
         },
       },
+      "GET /projects/get": {
+        function: {
+          handler: "packages/functions/src/projects.get",
+          description: "This is the get projects function",
+        },
+      },
       "POST /projects/remove": {
         function: {
           handler: "packages/functions/src/projects.remove",
@@ -147,6 +153,12 @@ export function ApiStack({ stack }: StackContext) {
         function: {
           handler: "packages/functions/src/technologies.all",
           description: "This is the all technologies function",
+        },
+      },
+      "POST /technologies/create": {
+        function: {
+          handler: "packages/functions/src/technologies.create",
+          description: "This is the create technologies function",
         },
       },
     },
