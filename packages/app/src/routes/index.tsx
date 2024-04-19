@@ -1,78 +1,42 @@
-import { A } from "solid-start";
-import { createQuery } from "@tanstack/solid-query";
-import { For, Show } from "solid-js";
-import { PublicBlog } from "../components/PublicBlog";
-import { PublicProject } from "../components/PublicProject";
-import { isLoggedIn } from "../components/providers/Auth";
-import { Queries } from "../utils/api/queries";
+import { A } from "@solidjs/router";
+import ModeToggle from "@/components/ModeToggle";
+import { Image, ImageFallback, ImageRoot } from "../components/ui/image";
 
 export default function Home() {
-  const projects = createQuery(() => ({
-    queryKey: ["projects"],
-    queryFn: () => Queries.projects(),
-  }));
-
-  const blogs = createQuery(() => ({
-    queryKey: ["blogs"],
-    queryFn: () => Queries.blogs(),
-  }));
-
+  // I'm trying to tell the user that I'm a developer, and this is just a placeholder webpage for now. I use this domain to host my personal projects and different utilities. I will be using this domain for my personal website in the future.
   return (
-    <main class="flex container mx-auto flex-col gap-10 py-10">
-      <div class="w-full flex flex-col gap-10 py-4">
-        <div class="w-full flex flex-row gap-2 items-center justify-between">
-          <h1 class="text-4xl font-bold select-none">Blogs</h1>
-          <div class="flex flex-row gap-2 items-center">
-            <Show when={isLoggedIn()}>
-              <a
-                href="/blog/create"
-                class="bg-black dark:bg-white text-white dark:text-black text-sm rounded-sm px-2 py-1 font-medium"
-              >
-                Create Blog
-              </a>
-            </Show>
+    <main class="flex flex-col gap-2 py-10 items-center justify-center h-screen w-screen">
+      <div class="w-max flex flex-col gap-4 items-center justify-center md:-mt-24">
+        <div class="w-full flex flex-col gap-4 items-center justify-center border border-neutral-300 dark:border-neutral-700 p-2 rounded-lg shadow-xl z-0">
+          <div class="w-full flex grow flex-row gap-2 items-center justify-between">
+            <div class="w-full flex flex-row gap-2 items-center">
+              <ImageRoot class="size-8">
+                <Image src="/avatar.png" />
+                <ImageFallback></ImageFallback>
+              </ImageRoot>
+              <span class="text-lg font-bold font-mono">oetzi.dev</span>
+            </div>
+            <div class="w-max">
+              <ModeToggle />
+            </div>
+          </div>
+          <div class="flex flex-col gap-2 items-center justify-center bg-muted p-4 rounded-sm font-mono">
+            <span class="text-xs font-semibold">I use this domain to host my development</span>
+            <span class="text-xs font-semibold">projects and different utilities.</span>
           </div>
         </div>
-        <div class="flex flex-col gap-4">
-          <For
-            each={blogs.isSuccess && blogs.data}
-            fallback={
-              <div class="col-span-full flex flex-col items-start justify-center rounded-sm p-10 gap-8 border border-neutral-300 dark:border-neutral-800">
-                <h3 class="text-xl font-bold">No blogs found.</h3>
-                <p class="text-md font-medium">I currently have no blogs published.</p>
-              </div>
-            }
-          >
-            {(blog) => <PublicBlog blog={blog} />}
-          </For>
-        </div>
-      </div>
-      <div class="w-full flex flex-col gap-10 py-4">
-        <div class="w-full flex flex-row gap-2 items-center justify-between">
-          <h1 class="text-4xl font-bold select-none">Projects</h1>
-          <div class="flex flex-row gap-2 items-center">
-            <Show when={isLoggedIn()}>
-              <A
-                href="/project/create"
-                class="bg-black dark:bg-white text-white dark:text-black text-sm rounded-sm px-2 py-1 font-medium"
-              >
-                Create Project
+        <div class="w-full flex flex-col gap-4 items-center justify-center border border-neutral-300 dark:border-neutral-700 p-2 rounded-lg z-10 bg-background shadow-xl">
+          <div class="w-full flex grow flex-col gap-2 items-center justify-center font-mono">
+            <span class="text-sm">You can also find me on:</span>
+            <div class="flex flex-row gap-2 items-center justify-center">
+              <A href="https://github.com/oezguerisbert" class="text-xs font-semibold">
+                GitHub
               </A>
-            </Show>
+              <A href="https://twitter.com/oezguerisbert" class="text-xs font-semibold">
+                Twitter
+              </A>
+            </div>
           </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <For
-            each={projects.isSuccess && projects.data}
-            fallback={
-              <div class="col-span-full flex flex-col items-start justify-center rounded-sm p-10 gap-8 border border-neutral-300 dark:border-neutral-800">
-                <h3 class="text-xl font-bold">No projects found.</h3>
-                <p class="text-md font-medium">I currently have no projects published.</p>
-              </div>
-            }
-          >
-            {(project) => <PublicProject project={project} />}
-          </For>
         </div>
       </div>
     </main>
