@@ -12,9 +12,9 @@
     "strict": true,
     "types": ["vinxi/client"],
     "isolatedModules": true,
+    "baseUrl": "./",
     "paths": {
-      "~/*": ["./src/*"],
-      "@oetzidev/core/*": ["../core/src/*"]
+      "@/*": ["./src/*"]
     }
   }
 }

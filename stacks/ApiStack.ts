@@ -2,42 +2,15 @@ import { Api, Config, StackContext, use } from "sst/constructs";
 import { Auth } from "sst/constructs/future";
 import { StorageStack } from "./StorageStack";
 import { DNSStack } from "./DNSStack";
+import { SecretsStack } from "./SecretsStack";
+import { AuthStack } from "./AuthStack";
 
 export function ApiStack({ stack }: StackContext) {
   const dns = use(DNSStack);
-  const secrets = Config.Secret.create(
-    stack,
-    "GITHUB_CLIENT_ID",
-    "GITHUB_CLIENT_SECRET",
-    "GITHUB_APP_CLIENT_ID",
-    "GITHUB_APP_CLIENT_SECRET",
-    "DATABASE_URL",
-    "DATABASE_AUTH_TOKEN"
-  );
+  const secrets = use(SecretsStack);
+  const auth = use(AuthStack);
 
-  const { bucket } = use(StorageStack);
-
-  const auth = new Auth(stack, "auth", {
-    authenticator: {
-      nodejs: {
-        install: ["@libsql/linux-x64-gnu", "@libsql/client"],
-        // esbuild: { external: ["@libsql/linux-x64-gnu"] },
-      },
-      bind: [
-        secrets.GITHUB_CLIENT_ID,
-        secrets.GITHUB_CLIENT_SECRET,
-        secrets.GITHUB_APP_CLIENT_ID,
-        secrets.GITHUB_APP_CLIENT_SECRET,
-        secrets.DATABASE_URL,
-        secrets.DATABASE_AUTH_TOKEN,
-      ],
-      handler: "packages/functions/src/auth.handler",
-    },
-    customDomain: {
-      domainName: "auth." + dns.domain,
-      hostedZone: dns.zone.zoneName,
-    },
-  });
+  const storage = use(StorageStack);
 
   const api = new Api(stack, "api", {
     customDomain: {
@@ -59,7 +32,7 @@ export function ApiStack({ stack }: StackContext) {
           auth,
           secrets.DATABASE_URL,
           secrets.DATABASE_AUTH_TOKEN,
-          bucket,
+          storage,
         ],
         copyFiles: [
           {
