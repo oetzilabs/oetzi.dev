@@ -25,7 +25,7 @@ export default function Home() {
             <span class="text-xs font-semibold">projects and different utilities.</span>
           </div>
         </div>
-        <div class="w-full flex flex-col gap-4 items-center justify-center border border-neutral-300 dark:border-neutral-700 p-2 rounded-lg z-10 bg-background shadow-xl">
+        <div class="w-full flex flex-col gap-4 items-center justify-center border border-neutral-300 dark:border-neutral-700 p-2 py-4 rounded-lg z-10 bg-background shadow-xl">
           <div class="w-full flex grow flex-col gap-2 items-center justify-center font-mono">
             <span class="text-sm">You can also find me on:</span>
             <div class="flex flex-row gap-2 items-center justify-center">
