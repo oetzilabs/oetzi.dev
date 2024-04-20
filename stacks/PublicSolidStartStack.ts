@@ -16,6 +16,7 @@ export function SolidStartStack({ stack, app }: StackContext) {
       domainName: dns.domain,
       hostedZone: dns.zone.zoneName,
     },
+    runtime: "nodejs20.x",
   });
 
   stack.addOutputs({
