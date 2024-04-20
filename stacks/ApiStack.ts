@@ -13,6 +13,7 @@ export function ApiStack({ stack }: StackContext) {
     defaults: {
       function: {
         bind: [storage],
+        runtime: "nodejs20.x",
       },
     },
     routes: {
