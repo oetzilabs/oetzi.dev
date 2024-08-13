@@ -13,18 +13,28 @@
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
   },
   "devDependencies": {
-    "@tsconfig/node18": "18.2.2",
-    "aws-cdk-lib": "2.132.1",
-    "constructs": "10.3.0",
-    "sst": "2.41.4",
-    "typescript": "^5.2.2"
+    "@tsconfig/node22": "22.0.0",
+    "sst": "0.1.95",
+    "typescript": "5.5.4",
+    "prettier": "3.3.3"
   },
-  "updateConfig": {
-    "ignoreDependencies": [
-      "sst",
-      "constructs",
-      "aws-cdk-lib"
-    ]
+  "resolutions": {
+    "nitropack": "npm:nitropack-nightly@latest"
+  },
+  "overrides": {
+    "vinxi": {
+      "nitropack": "npm:nitropack-nightly@latest",
+      "nitro": "npm:nitro-nightly@latest"
+    }
+  },
+  "pnpm": {
+    "overrides": {
+      "nitropack": "npm:nitropack-nightly@latest",
+      "nitro": "npm:nitro-nightly@latest"
+    },
+    "resolutions": {
+      "nitropack": "npm:nitropack-nightly@latest"
+    }
   },
   "workspaces": [
     "packages/*"

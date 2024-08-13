@@ -7,8 +7,7 @@
     "typecheck": "tsc -noEmit"
   },
   "devDependencies": {
-    "sst": "2.41.4",
-    "vitest": "0.34.6"
+    "vitest": "2.0.5"
   },
   "dependencies": {}
 }

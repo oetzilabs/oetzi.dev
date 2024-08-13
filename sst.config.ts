@@ -1,21 +1,28 @@
-import { SSTConfig } from "sst";
-import { DNSStack } from "./stacks/DNSStack";
-import { SolidStartStack } from "./stacks/PublicSolidStartStack";
-import { StorageStack } from "./stacks/StorageStack";
+/// <reference path="./.sst/platform/config.d.ts" />
 
-export default {
-  config(_input) {
+export default $config({
+  app(input) {
     return {
       name: "oetzidev",
-      region: "eu-central-1",
+      removal: input?.stage === "production" ? "retain" : "remove",
+      home: "aws",
+      providers: {
+        aws: {
+          region: "eu-central-1",
+        },
+        cloudflare: {
+          version: "5.24.1",
+        },
+      },
     };
   },
-  stacks(app) {
-    app.setDefaultRemovalPolicy("destroy");
-    app
-      //
-      .stack(DNSStack)
-      .stack(StorageStack)
-      .stack(SolidStartStack);
+  async run() {
+    const solidStart = await import("./stacks/SolidStart");
+    const api = await import("./stacks/Api");
+
+    return {
+      solidStartUrl: $dev ? "http://localhost:3000" : solidStart.solidStartApp.url,
+      apiUrl: api.api.url,
+    };
   },
-} satisfies SSTConfig;
+});
