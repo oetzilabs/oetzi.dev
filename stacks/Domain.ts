@@ -1,10 +1,13 @@
-export const domain = "oetzi.dev" as const;
+export const domain =
+  {
+    production: "oetzi.dev",
+    dev: "dev.oetzi.dev",
+  }[$app.stage] || $app.stage + ".dev.oetzi.dev";
 
-export const subdomain = "" as const;
+export const zone = cloudflare.getZoneOutput({
+  name: "oetzi.dev",
+});
 
-export const stagedomain = !$dev ? `${subdomain}` : `${$app.stage}.dev.${subdomain}`;
-
-export const cloudflare = sst.cloudflare.dns({
-  zone: "6f659090c4a868d00656d51dbb55facf",
-  override: true,
+export const cf = sst.cloudflare.dns({
+  zone: zone.zoneId,
 });

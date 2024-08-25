@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@tsconfig/node22": "22.0.0",
-    "sst": "0.1.95",
+    "sst": "3.0.68",
     "typescript": "5.5.4",
     "prettier": "3.3.3"
   },

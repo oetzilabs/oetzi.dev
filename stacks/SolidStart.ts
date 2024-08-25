@@ -1,13 +1,13 @@
-import { cloudflare, domain, stagedomain, subdomain } from "./Domain";
+import { cf, domain } from "./Domain";
 
-const main_app_url = $dev ? "http://localhost:3000" : `https://${stagedomain}${domain}`;
+const main_app_url = $dev ? "http://localhost:3000" : `https://${domain}`;
 
 export const solidStartApp = new sst.aws.SolidStart(`SolidStartApp`, {
   path: "packages/web",
   buildCommand: "pnpm build",
   domain: {
-    name: `${stagedomain}${domain}`,
-    dns: cloudflare,
+    name: domain,
+    dns: cf,
   },
   invalidation: {
     paths: "all",

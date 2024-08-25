@@ -1,9 +1,9 @@
-import { cloudflare, domain, stagedomain, subdomain } from "./Domain";
+import { cf, domain } from "./Domain";
 
 export const api = new sst.aws.ApiGatewayV2(`Api`, {
   domain: {
-    name: `api.${stagedomain}${domain}`,
-    dns: cloudflare,
+    name: `api.${domain}`,
+    dns: cf,
   },
   cors: {
     allowOrigins: ["*", "http://localhost:3000"],
