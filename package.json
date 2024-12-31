@@ -14,29 +14,15 @@
   },
   "devDependencies": {
     "@tsconfig/node22": "22.0.0",
-    "sst": "3.0.68",
+    "sst": "3.4.44",
     "typescript": "5.5.4",
     "prettier": "3.3.3"
   },
-  "resolutions": {
-    "nitropack": "npm:nitropack-nightly@latest"
-  },
-  "overrides": {
-    "vinxi": {
-      "nitropack": "npm:nitropack-nightly@latest",
-      "nitro": "npm:nitro-nightly@latest"
-    }
-  },
-  "pnpm": {
-    "overrides": {
-      "nitropack": "npm:nitropack-nightly@latest",
-      "nitro": "npm:nitro-nightly@latest"
-    },
-    "resolutions": {
-      "nitropack": "npm:nitropack-nightly@latest"
-    }
-  },
   "workspaces": [
     "packages/*"
+  ],
+  "trustedDependencies": [
+    "@parcel/watcher",
+    "esbuild"
   ]
 }

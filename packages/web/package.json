@@ -30,8 +30,8 @@
     "@kobalte/tailwindcss": "0.9.0",
     "@kobalte/utils": "0.9.0",
     "@solidjs/meta": "0.29.4",
-    "@solidjs/router": "0.14.2",
-    "@solidjs/start": "1.0.6",
+    "@solidjs/router": "0.15.2",
+    "@solidjs/start": "1.0.10",
     "class-variance-authority": "0.7.0",
     "clsx": "2.1.1",
     "cmdk-solid": "^1.1.0",
@@ -44,7 +44,7 @@
     "tailwind-merge": "2.2.1",
     "tailwindcss-animate": "1.0.7",
     "unstorage": "1.10.2",
-    "vinxi": "0.4.1"
+    "vinxi": "0.4.3"
   },
   "engines": {
     "node": ">=20"

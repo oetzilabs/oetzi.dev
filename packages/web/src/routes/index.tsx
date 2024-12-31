@@ -11,7 +11,7 @@ export default function Home() {
           <div class="w-full flex grow flex-row gap-2 items-center justify-between">
             <div class="w-full flex flex-row gap-2 items-center">
               <ImageRoot class="size-8">
-                <Image src="/avatar.png" />
+                <Image src="/images/avatar.png" />
                 <ImageFallback></ImageFallback>
               </ImageRoot>
               <span class="text-lg font-bold font-mono">oetzi.dev</span>
@@ -23,6 +23,7 @@ export default function Home() {
           <div class="flex flex-col gap-2 items-center justify-center bg-muted p-4 rounded-sm font-mono">
             <span class="text-xs font-semibold">I use this domain to host my development</span>
             <span class="text-xs font-semibold">projects and different utilities.</span>
+            <span class="text-xs font-semibold">Thanks for visiting my dev page!</span>
           </div>
         </div>
         <div class="w-full flex flex-col gap-4 items-center justify-center border border-neutral-300 dark:border-neutral-700 p-2 py-4 rounded-lg z-10 bg-background shadow-xl">
@@ -32,8 +33,8 @@ export default function Home() {
               <A href="https://github.com/oezguerisbert" class="text-xs font-semibold">
                 GitHub
               </A>
-              <A href="https://twitter.com/oezguerisbert" class="text-xs font-semibold">
-                Twitter
+              <A href="https://bsky.app/profile/oetzi.bsky.social" class="text-xs font-semibold">
+                Bluesky
               </A>
             </div>
           </div>
